@@ -39,7 +39,7 @@ class CategoryDetailedPane extends React.Component<Props, State> {
             };
             return element;
         }).toList();
-        
+
         return (
             <div className={className}>
                 {this.buildDisplayLabel("Category Name:", category ? category.title : "", "title")}
