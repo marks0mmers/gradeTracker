@@ -153,8 +153,8 @@ class Header extends React.Component<Props, State> {
         }
     }
 
-    private handleFileOpened(files: string[]) {
-        const file = files[0];
+    private handleFileOpened(files?: string[]) {
+        const file = files && files[0];
         this.setState({
             file,
         });

@@ -106,17 +106,19 @@ export default styled(CategoryDetailedPane)`
     background: ${(props) => props.theme.hover};
 
     .label-container {
-        padding: 10px 0;
-        display: flex;
-        justify-content: flex-end;
+        padding: 10px;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-areas: "label value";
     }
 
     .prop-label {
         color: ${(props) => props.theme.primaryText};
+        grid-area: label;
     }
 
     .prop-value {
-        width: 200px;
+        grid-area: value;
         display: flex;
         justify-content: flex-end;
         color: ${(props) => props.theme.primaryText};
