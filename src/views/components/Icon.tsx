@@ -27,6 +27,6 @@ class Icon extends React.Component<Props> {
 }
 
 export default styled(Icon)`
-    margin: ${(props) => props.margin ? `${props.margin}px` : `auto`};
+    margin: auto ${(props) => props.margin ? `${props.margin}px` : `auto`};
     font-size: ${(props) => props.size}px;
 `;

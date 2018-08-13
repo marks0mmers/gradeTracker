@@ -8,8 +8,8 @@ import { SessionActionTypes as types } from "./actions";
 const SessionStateRecord = Record({
     activeTheme: darkTheme,
     themes: Map({
-        dark: darkTheme,
-        light: lightTheme,
+        Dark: darkTheme,
+        Light: lightTheme,
     }),
 });
 

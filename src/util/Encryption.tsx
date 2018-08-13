@@ -1,11 +1,21 @@
-import * as CryptoJS from "crypto-js";
 
 export const encryptByDES = (message: string) => {
-    const words = CryptoJS.enc.Utf8.parse(message); // WordArray object
-    return CryptoJS.enc.Base64.stringify(words); // string: 'SGVsbG8gd29ybGQ='
+    const charCodeArray: number[] = [];
+    // tslint:disable-next-line:prefer-for-of
+    for (let i = 0; i < message.length; i++) {
+        // tslint:disable-next-line:no-bitwise
+        charCodeArray.push(message.charCodeAt(i) << 5);
+    }
+    return JSON.stringify(charCodeArray);
 };
 
 export const decryptByDES = (encoded: string) => {
-    const words = CryptoJS.enc.Base64.parse(encoded);
-    return CryptoJS.enc.Utf8.stringify(words);
+    const encodedArray: number[] = JSON.parse(encoded.substring(1));
+    const charCodeArray: number[] = [];
+    // tslint:disable-next-line:prefer-for-of
+    for (let i = 0; i < encodedArray.length; i++) {
+        // tslint:disable-next-line:no-bitwise
+        charCodeArray.push(encodedArray[i] >> 5);
+    }
+    return String.fromCharCode(...charCodeArray);
 };

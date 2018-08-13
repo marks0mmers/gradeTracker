@@ -82,8 +82,8 @@ class QuickActions extends React.Component<Props, State> {
 
     private handleSave() {
         const { courses } = this.props;
-        const encrypted = encryptByDES(JSON.stringify(courses));
-        const file = new File([encrypted], "test.txt", {type: "text/plain;charset=utf-8"});
+        const courseString = encryptByDES(JSON.stringify(courses));
+        const file = new File([courseString], "test.txt", {type: "text/plain;charset=utf-8"});
         FileSaver.saveAs(file);
     }
 
@@ -97,6 +97,7 @@ class QuickActions extends React.Component<Props, State> {
 }
 
 export default styled(QuickActions)`
+    display: flex;
     width: 60px;
     position: relative;
     :hover {

@@ -1,3 +1,6 @@
+// tslint:disable-next-line:no-any
+const electron = (window as any).require("electron");
+const fs = electron.remote.require("fs");
 import { List, Map } from "immutable";
 import * as React from "react";
 import styled from "styled-components";
@@ -7,6 +10,7 @@ import { Theme } from "../../models/Theme";
 import { ClearCoursesCreator, SetCoursesCreator } from "../../state/ducks/data/courses";
 import { SetActiveThemeCreator } from "../../state/ducks/session/actions";
 import { decryptByDES } from "../../util/Encryption";
+import Icon from "../components/Icon";
 import QuickActions from "./QuickActions";
 
 const ThemeSelector = styled.div`
@@ -19,6 +23,15 @@ const ThemeSelector = styled.div`
     .theme-selector {
         width: 80px;
         margin: auto;
+    }
+`;
+
+const FileSelector = styled.span`
+    display: flex;
+    line-height: 60px;
+    padding: 0 10px;
+    :hover {
+        background: ${(props) => props.theme.hover}
     }
 `;
 
@@ -35,7 +48,7 @@ interface Props {
 }
 
 interface State {
-    file: File | null;
+    file?: string;
 }
 
 class Header extends React.Component<Props, State> {
@@ -46,9 +59,10 @@ class Header extends React.Component<Props, State> {
         this.handleThemeChange = this.handleThemeChange.bind(this);
         this.handleFileOpened = this.handleFileOpened.bind(this);
         this.handleClearCourses = this.handleClearCourses.bind(this);
+        this.handleShowDialog = this.handleShowDialog.bind(this);
 
         this.state = {
-            file: null,
+            file: "",
         };
     }
 
@@ -65,6 +79,9 @@ class Header extends React.Component<Props, State> {
             file,
         } = this.state;
 
+        const endFileArray = file && file.split("/");
+        let selectedFile = endFileArray && endFileArray[endFileArray.length - 1];
+        selectedFile = selectedFile && selectedFile.split(".")[0];
         return (
             <div id="header" className={className}>
                 {
@@ -76,13 +93,15 @@ class Header extends React.Component<Props, State> {
                     />
                 }
                 {title && <span className="title">{title}</span>}
-                <input
-                    type="file"
-                    id="file-chooser"
-                    onChange={this.handleFileOpened}
-                    className="file-chooser"
-                    value={file ? file.path : ""}
-                />
+                <FileSelector
+                    onClick={this.handleShowDialog}
+                >
+                    <span>{selectedFile ? selectedFile : "Open File"}</span>
+                    <Icon
+                        iconName="folder"
+                        margin={5}
+                    />
+                </FileSelector>
                 <ThemeSelector>
                     <select
                         className="theme-selector"
@@ -99,13 +118,27 @@ class Header extends React.Component<Props, State> {
         );
     }
 
+    private handleShowDialog() {
+        const { dialog } = electron.remote;
+        dialog.showOpenDialog(
+            {
+                properties: [
+                    "openFile",
+                    "createDirectory",
+                ],
+                title: "Open Course File",
+            },
+            this.handleFileOpened,
+        );
+    }
+
     private handleClearCourses() {
         const handler = this.props.clearCourses;
         if (handler) {
             handler();
         }
         this.setState({
-            file: null,
+            file: undefined,
         });
     }
 
@@ -120,40 +153,35 @@ class Header extends React.Component<Props, State> {
         }
     }
 
-    private handleFileOpened(event: React.ChangeEvent<HTMLInputElement>) {
-        const { files } = event.target;
-        if (files) {
-            const file = files.item(0);
-            this.setState({
-                file,
-            });
-            const reader = new FileReader();
-            if (file) {
-                reader.readAsBinaryString(file);
-                reader.onloadend = () => {
-                    const decrypted = decryptByDES((reader.result as string).substring(3));
-                    let newCourses = JSON.parse(decrypted) as Course[];
-                    newCourses = newCourses.map((value: Course) => {
-                        return new Course({
-                            ...value,
-                            categories: value.categories ? List(
-                                value.categories.map((category) => {
-                                    return new GradeCategory({
-                                        ...category,
-                                        grades: category ? Map({
-                                            ...category.grades,
-                                        }) : undefined,
-                                    });
-                                }),
-                            ) : List(),
-                        });
+    private handleFileOpened(files: string[]) {
+        const file = files[0];
+        this.setState({
+            file,
+        });
+        if (file) {
+            fs.readFile(file, (error: NodeJS.ErrnoException, data: Buffer) => {
+                const decrypted = decryptByDES(data.toString());
+                let newCourses = JSON.parse(decrypted) as Course[];
+                newCourses = newCourses.map((value: Course) => {
+                    return new Course({
+                        ...value,
+                        categories: value.categories ? List(
+                            value.categories.map((category) => {
+                                return new GradeCategory({
+                                    ...category,
+                                    grades: category ? Map({
+                                        ...category.grades,
+                                    }) : undefined,
+                                });
+                            }),
+                        ) : List(),
                     });
-                    const handler = this.props.setCourses;
-                    if (handler) {
-                        handler(List(newCourses));
-                    }
-                };
-            }
+                });
+                const handler = this.props.setCourses;
+                if (handler) {
+                    handler(List(newCourses));
+                }
+            });
         }
     }
 
