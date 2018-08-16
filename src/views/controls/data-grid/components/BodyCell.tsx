@@ -44,6 +44,7 @@ class BodyCell extends React.Component<BodyCellProps> {
 
 export default styled(BodyCell)`
     display: flex;
+    flex: 1;
     width: ${(props) => props.width}px;
     height: ${(props) => props.height}px;
     color: ${(props) => props.theme.primaryText};

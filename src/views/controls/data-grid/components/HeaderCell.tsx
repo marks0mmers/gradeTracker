@@ -31,7 +31,8 @@ class HeaderCell extends React.Component<Props> {
 
 export default styled(HeaderCell)`
     display: flex;
-    background: ${(props) => props.theme.quaternary}
+    flex: 1;
+    background: ${(props) => props.theme.quaternary};
     width: ${(props) => props.width}px;
     height: ${(props) => props.height}px;
     border-bottom: solid ${(props) => props.theme.black} 1px;
