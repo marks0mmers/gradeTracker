@@ -98,12 +98,30 @@ class CourseOverviewButton extends React.Component<Props> {
                         {
                             mode === CourseOverviewMode.DISPLAY
                             ? <>
-                            <Button icon="create" size={40} />
-                            <Button icon="delete_sweep" size={40} />
+                            <Button
+                                icon="create"
+                                height={40}
+                                width={60}
+                            />
+                            <Button
+                                icon="delete_sweep"
+                                height={40}
+                                width={60}
+                            />
                             </>
                             : <>
-                            <Button icon="clear" size={40} onClick={this.handleCancel}/>
-                            <Button icon="save" size={40} onClick={this.handleExecute}/>
+                            <Button
+                                icon="clear"
+                                height={40}
+                                width={60}
+                                onClick={this.handleCancel}
+                            />
+                            <Button
+                                icon="save"
+                                height={40}
+                                width={60}
+                                onClick={this.handleExecute}
+                            />
                             </>
                         }
                     </div>

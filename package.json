@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "grade-tracker",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -27,6 +27,7 @@
     "crypto-js": "^3.1.9-1",
     "crypto-json": "^2.0.1",
     "date-fns": "1.29.0",
+    "electron-devtools-installer": "^2.2.4",
     "electron-is-dev": "^0.3.0",
     "enzyme": "3.3.0",
     "fetch-mock": "6.4.4",
@@ -93,7 +94,7 @@
     "preelectron-pack": "yarn build"
   },
   "build": {
-    "appId": "com.example.electron-cra",
+    "appId": "com.example.grade-tracker",
     "files": [
       "build/**/*",
       "node_modules/**/*"

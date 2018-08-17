@@ -10,21 +10,29 @@ import Input from "../styled-inputs/Input";
 
 interface Props {
     className?: string;
-    formValues: Map<string, string>;
+    formValues?: Map<string, string>;
     course?: Course;
 
-    handleFormChange: typeof CreateCategoryFormChangeCreator;
-    handleFormSave: typeof CreateCategoryCreator;
-    handleCancelCreate: () => void;
+    handleFormChange?: typeof CreateCategoryFormChangeCreator;
+    handleFormSave?: typeof CreateCategoryCreator;
+    handleCancelCreate?: () => void;
 }
 
-class CourseCategoryForm extends React.Component<Props> {
+interface State {
+    isInvalidInput?: boolean;
+}
+
+class CourseCategoryForm extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
 
         this.handleSave = this.handleSave.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+
+        this.state = {
+            isInvalidInput: false,
+        };
     }
 
     public render() {
@@ -32,7 +40,12 @@ class CourseCategoryForm extends React.Component<Props> {
             className,
         } = this.props;
 
+        const {
+            isInvalidInput,
+        } = this.state;
+
         return (
+            <>
             <div className={className}>
                 <div className="form-input">
                     <span className="label">Category Name:</span>
@@ -47,16 +60,20 @@ class CourseCategoryForm extends React.Component<Props> {
                     {this.buildInput("numberOfGrades", 100, 20)}
                 </div>
                 <Button
-                    size={30}
+                    width={50}
+                    height={30}
                     icon="clear"
                     onClick={this.props.handleCancelCreate}
                 />
                 <Button
-                    size={30}
+                    width={50}
+                    height={30}
                     icon="save"
                     onClick={this.handleSave}
                 />
             </div>
+            {isInvalidInput && <span className="error">Invalid Numerical Value</span>}
+            </>
         );
     }
 
@@ -76,22 +93,41 @@ class CourseCategoryForm extends React.Component<Props> {
     private handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
         const { name, value } = event.target;
         const handler = this.props.handleFormChange;
-        handler(name, value);
+        if (handler) {
+            handler(name, value);
+        }
     }
 
     private handleSave() {
         const handler = this.props.handleFormSave;
         const { course, formValues } = this.props;
-        const category = new GradeCategory({
-            grades: Map(),
-            numberOfGrades: +formValues.get("numberOfGrades"),
-            percentage: +formValues.get("percentage"),
-            title: formValues.get("name"),
-        });
-        if (course) {
-            handler(course, category);
+        if (formValues) {
+            const numberOfGrades = !isNaN(+formValues.get("numberOfGrades")) && +formValues.get("numberOfGrades");
+            const percentage = !isNaN(+formValues.get("percentage")) && +formValues.get("percentage");
+            const title: string | undefined = formValues.get("name", undefined);
+            if (numberOfGrades && percentage && name) {
+                this.setState({
+                    isInvalidInput: false,
+                });
+                const category = new GradeCategory({
+                    grades: Map(),
+                    numberOfGrades,
+                    percentage,
+                    title,
+                });
+                if (course && handler) {
+                    handler(course, category);
+                }
+                const clear = this.props.handleCancelCreate;
+                if (clear) {
+                    clear();
+                }
+            } else {
+                this.setState({
+                    isInvalidInput: true,
+                });
+            }
         }
-        this.props.handleCancelCreate();
     }
 }
 
@@ -108,5 +144,9 @@ export default styled(CourseCategoryForm)`
     .label {
         color: ${(props) => props.theme.primaryText};
         margin-right: 10px;
+    }
+
+    .error {
+        color: red;
     }
 `;

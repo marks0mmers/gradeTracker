@@ -1,12 +1,11 @@
 import { CourseControlActionTypes as types } from ".";
-import { GradeCategory } from "../../../../../models/GradeCategory";
 
 export interface SelectGradeCategory {
-    gradeCategory: GradeCategory;
+    gradeCategory: string;
     type: types.SELECT_GRADE_CATEGORY;
 }
 
-export const SelectGradeCategoryCreator = (gradeCategory?: GradeCategory) => ({
+export const SelectGradeCategoryCreator = (gradeCategory?: string) => ({
     gradeCategory,
     type: types.SELECT_GRADE_CATEGORY,
 });

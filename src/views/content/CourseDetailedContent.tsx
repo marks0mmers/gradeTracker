@@ -10,7 +10,11 @@ import {
     SelectGradeCategoryCreator,
     SetActiveCourseCreator,
 } from "../../state/ducks/control/courses";
-import { CreateCategoryCreator } from "../../state/ducks/data/courses";
+import {
+    AddGradeToCategoryCreator,
+    CreateCategoryCreator,
+    DeleteGradeFromCategoryCreator,
+} from "../../state/ducks/data/courses";
 import CategoryDetailedPane from "../components/category/CategoryDetailedPane";
 import CourseCategoryForm from "../components/category/CourseCategoryForm";
 import Divider from "../components/Divider";
@@ -27,8 +31,10 @@ interface Props {
     categoryColumns: List<DataGridColumnDefinition<GradeCategory>>;
     categoryElements: List<DataGridElement<GradeCategory>>;
     formValues: Map<string, string>;
-    selectedCategory?: GradeCategory;
+    selectedCategory?: string;
 
+    handleAddNewGrade: typeof AddGradeToCategoryCreator;
+    handleDeleteGrade: typeof DeleteGradeFromCategoryCreator;
     handleFormChange: typeof CreateCategoryFormChangeCreator;
     handleFormClear: typeof CreateCategoryFormClearCreator;
     setActiveCourse: typeof SetActiveCourseCreator;
@@ -80,7 +86,7 @@ class CourseDetailedContent extends React.Component<Props, State> {
             isCreating,
         } = this.state;
 
-        const course = courses && courses.find((value: Course) => value.title === detailedCourse);
+        const course: Course | undefined = courses && courses.find((value: Course) => value.title === detailedCourse);
 
         return (
             <div id={`${course ? course.title : ""}-detailed`} className={className}>
@@ -95,16 +101,19 @@ class CourseDetailedContent extends React.Component<Props, State> {
                     <span className="button-label">Grade Category Actions:</span>
                     <Button
                         icon="add"
-                        size={30}
+                        height={30}
+                        width={50}
                         onClick={this.handleCreate}
                     />
                     <Button
                         icon="create"
-                        size={30}
+                        height={30}
+                        width={50}
                     />
                     <Button
                         icon="delete_sweep"
-                        size={30}
+                        height={30}
+                        width={50}
                     />
                 </div>
                 <Divider
@@ -136,7 +145,10 @@ class CourseDetailedContent extends React.Component<Props, State> {
                             bottom={10}
                         />
                         <CategoryDetailedPane
-                            category={selectedCategory}
+                            handleAddNewGrade={this.props.handleAddNewGrade}
+                            handleDeleteGrade={this.props.handleDeleteGrade}
+                            selectedCategory={selectedCategory}
+                            course={course}
                         />
                         </>
                     }
@@ -157,7 +169,9 @@ class CourseDetailedContent extends React.Component<Props, State> {
             const category = course && course.categories && course.categories.find((value: GradeCategory) => {
                 return value.title === payload.title;
             });
-            handler(category);
+            if (category) {
+                handler(category.title);
+            }
         }
     }
 

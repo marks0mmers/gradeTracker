@@ -73,7 +73,12 @@ class HomePage extends React.Component<Props, State> {
                         !isCreating &&
                         <>
                         <span className="button-label">Create New Course:</span>
-                        <Button icon="add" size={30} onClick={this.handleNewCourseClick}/>
+                        <Button
+                            icon="add"
+                            height={30}
+                            width={50}
+                            onClick={this.handleNewCourseClick}
+                        />
                         </>
                     }
                 </ButtonWrapper>

@@ -62,7 +62,7 @@ export class CourseControlState extends CourseControlStateRecord {
     public createFormValues: Map<string, string>;
     public createCategoryFormValues: Map<string, string>;
     public detailedColumns: List<DataGridColumnDefinition<GradeCategory>>;
-    public selectedGradeCategory: GradeCategory;
+    public selectedGradeCategory: string;
 }
 
 export const CourseControlReducer = (

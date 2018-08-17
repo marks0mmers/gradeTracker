@@ -16,7 +16,9 @@ interface Props {
     margin?: number;
     footerContent?: JSX.Element;
     showInputRow?: boolean;
-    onRowSave?: (primary: string, secondary: string) => void;
+
+    onRowClick?: (primary: string, secondary?: string) => void;
+    onRowSave?: (primary: string, secondary?: string) => void;
 }
 
 class ListControl extends React.Component<Props> {
@@ -60,6 +62,7 @@ class ListControl extends React.Component<Props> {
                                     primaryProperty={value.primaryProperty}
                                     secondaryProperty={value.secondaryProperty}
                                     isSelected={value.isSelected}
+                                    onClick={this.props.onRowClick}
                                 />
                             );
                         }).toArray()

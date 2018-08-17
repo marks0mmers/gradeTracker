@@ -27,6 +27,6 @@ export const darkTheme: Theme = {
 
     quinary: "#c96567",
     quinaryActive: "",
-    quinaryHover: "",
+    quinaryHover: "#e37f81",
     quinaryText: "#fff",
 };

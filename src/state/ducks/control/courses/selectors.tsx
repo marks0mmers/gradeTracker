@@ -17,27 +17,39 @@ export const getDetailedCourseElements = createSelector(
     (
         courses: List<Course>,
         activeCourse: string,
-        selectedGradeCategory: GradeCategory,
+        selectedGradeCategory: string,
     ) => {
         let elements: List<DataGridElement<GradeCategory>> = List();
         const course = courses.find((value: Course) => value.title === activeCourse);
         (course && course.categories) ? course.categories.forEach((category: GradeCategory) => {
             const calculatedCategory = new GradeCategory({
-                currentAverage: category.grades.reduce(
+                currentAverage: !isNaN(category.grades.reduce(
                     (total: number, value: number) => total + value, 0,
-                ) / category.grades.size,
+                ) / category.grades.size)
+                ? category.grades.reduce(
+                    (total: number, value: number) => total + value, 0,
+                ) / category.grades.size
+                : 0,
 
-                guarenteedAverage: category.grades.reduce(
+                guarenteedAverage: !isNaN(category.grades.reduce(
                     (total: number, value: number) => total + value, 0,
-                ) / category.numberOfGrades,
+                ) / category.numberOfGrades)
+                ? category.grades.reduce(
+                    (total: number, value: number) => total + value, 0,
+                ) / category.numberOfGrades
+                : 0,
 
                 numberOfGrades: category.numberOfGrades,
 
                 percentage: category.percentage,
 
-                potentialAverage: (category.grades.reduce(
+                potentialAverage: !isNaN((category.grades.reduce(
                     (total: number, value: number) => total + value, 0,
-                ) + ((category.numberOfGrades - category.grades.size) * 100)) / category.numberOfGrades,
+                ) + ((category.numberOfGrades - category.grades.size) * 100)) / category.numberOfGrades)
+                ? (category.grades.reduce(
+                    (total: number, value: number) => total + value, 0,
+                ) + ((category.numberOfGrades - category.grades.size) * 100)) / category.numberOfGrades
+                : 0,
 
                 remainingGrades: category.numberOfGrades - category.grades.size,
 
@@ -46,7 +58,7 @@ export const getDetailedCourseElements = createSelector(
             elements = elements.push(
                 new DataGridElement({
                     isSelected: selectedGradeCategory
-                        ? calculatedCategory.title === selectedGradeCategory.title
+                        ? calculatedCategory.title === selectedGradeCategory
                         : false,
                     payload: calculatedCategory,
                 }),
