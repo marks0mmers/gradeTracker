@@ -13,6 +13,7 @@ import {
 import {
     AddGradeToCategoryCreator,
     CreateCategoryCreator,
+    DeleteCategoryCreator,
     DeleteGradeFromCategoryCreator,
 } from "../../state/ducks/data/courses";
 import CategoryDetailedPane from "../components/category/CategoryDetailedPane";
@@ -34,6 +35,7 @@ interface Props {
     selectedCategory?: string;
 
     handleAddNewGrade: typeof AddGradeToCategoryCreator;
+    handleDeleteCategory: typeof DeleteCategoryCreator;
     handleDeleteGrade: typeof DeleteGradeFromCategoryCreator;
     handleFormChange: typeof CreateCategoryFormChangeCreator;
     handleFormClear: typeof CreateCategoryFormClearCreator;
@@ -55,6 +57,7 @@ class CourseDetailedContent extends React.Component<Props, State> {
         this.handleBodyCellClick = this.handleBodyCellClick.bind(this);
         this.handleRootClick = this.handleRootClick.bind(this);
         this.handleCreate = this.handleCreate.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
         this.handleCancelCreate = this.handleCancelCreate.bind(this);
 
         this.state = {
@@ -114,6 +117,7 @@ class CourseDetailedContent extends React.Component<Props, State> {
                         icon="delete_sweep"
                         height={30}
                         width={50}
+                        onClick={this.handleDelete}
                     />
                 </div>
                 <Divider
@@ -179,6 +183,15 @@ class CourseDetailedContent extends React.Component<Props, State> {
         this.setState({
             isCreating: true,
         });
+    }
+
+    private handleDelete() {
+        const { courses, detailedCourse, selectedCategory } = this.props;
+        const course: Course | undefined = courses && courses.find((value: Course) => value.title === detailedCourse);
+        const handler = this.props.handleDeleteCategory;
+        if (handler && course && selectedCategory) {
+            handler(course.title, selectedCategory);
+        }
     }
 
     private handleCancelCreate() {

@@ -4,6 +4,7 @@ import Icon from "../../../components/Icon";
 
 interface Props {
     className?: string;
+    id?: string;
     text?: string;
     icon?: string;
     width?: number;
@@ -24,11 +25,12 @@ class Button extends React.Component<Props> {
             text,
             icon,
             onClick,
+            id,
         } = this.props;
 
         return (
             <button
-                id="button"
+                id={id}
                 className={className}
                 onClick={onClick}
             >

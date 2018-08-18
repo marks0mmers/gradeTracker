@@ -18,6 +18,7 @@ import {
 } from "../../state/ducks/control/courses";
 import {
     CreateCourseCreator,
+    DeleteCourseCreator,
     getCourses,
 } from "../../state/ducks/data/courses";
 import { RootState } from "../../state/rootReducer";
@@ -31,10 +32,11 @@ interface PropsFromState {
 }
 
 interface PropsFromDispatch {
-    createCourse: typeof CreateCourseCreator;
-    createCourseFormChange: typeof CreateCourseFormChangeCreator;
-    createCourseFormClear: typeof CreateCourseFormClearCreator;
-    setActiveCourse: typeof SetActiveCourseCreator;
+    handleCreateCourse: typeof CreateCourseCreator;
+    handleDeleteCourse: typeof DeleteCourseCreator;
+    handleCreateCourseFormChange: typeof CreateCourseFormChangeCreator;
+    handleCreateCourseFormClear: typeof CreateCourseFormClearCreator;
+    handleSetActiveCourse: typeof SetActiveCourseCreator;
     push: typeof push;
 }
 
@@ -67,12 +69,13 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
     return bindActionCreators({
-        createCourse: CreateCourseCreator,
-        createCourseFormChange: CreateCourseFormChangeCreator,
-        createCourseFormClear: CreateCourseFormClearCreator,
+        handleCreateCourse: CreateCourseCreator,
+        handleCreateCourseFormChange: CreateCourseFormChangeCreator,
+        handleCreateCourseFormClear: CreateCourseFormClearCreator,
+        handleDelectGradeCategory: SelectGradeCategoryCreator,
+        handleDeleteCourse: DeleteCourseCreator,
+        handleSetActiveCourse: SetActiveCourseCreator,
         push,
-        selectGradeCategory: SelectGradeCategoryCreator,
-        setActiveCourse: SetActiveCourseCreator,
     }, dispatch);
 };
 

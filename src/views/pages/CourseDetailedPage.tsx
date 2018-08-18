@@ -19,6 +19,7 @@ import {
 import {
     AddGradeToCategoryCreator,
     CreateCategoryCreator,
+    DeleteCategoryCreator,
     DeleteGradeFromCategoryCreator,
     getCourses,
 } from "../../state/ducks/data/courses";
@@ -40,6 +41,7 @@ interface PropsFromDispatch {
     setActiveCourse: typeof SetActiveCourseCreator;
     selectGradeCategory: typeof SelectGradeCategoryCreator;
     handleAddNewGrade: typeof AddGradeToCategoryCreator;
+    handleDeleteCategory: typeof DeleteCategoryCreator;
     handleDeleteGrade: typeof DeleteGradeFromCategoryCreator;
     handleFormChange: typeof CreateCategoryFormChangeCreator;
     handleFormClear: typeof CreateCategoryFormClearCreator;
@@ -77,6 +79,7 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
     return bindActionCreators({
         handleAddNewGrade: AddGradeToCategoryCreator,
+        handleDeleteCategory: DeleteCategoryCreator,
         handleDeleteGrade: DeleteGradeFromCategoryCreator,
         handleFormChange: CreateCategoryFormChangeCreator,
         handleFormClear: CreateCategoryFormClearCreator,

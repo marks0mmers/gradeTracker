@@ -73,13 +73,25 @@ class CategoryDetailedPane extends React.Component<Props, State> {
                     "Remaining Grades:", category ? category.remainingGrades : "", "gradesRemaining",
                 )}
                 {this.buildDisplayLabel(
-                    "Current Average:", category ? `${category.currentAverage} %` : "", "currentAverage",
+                    "Current Average:", category ? `${
+                        category.grades.reduce(
+                            (total: number, value: number) => total + value, 0,
+                        ) / category.grades.size
+                    } %` : "", "currentAverage",
                 )}
                 {this.buildDisplayLabel(
-                    "Guarenteed Average:", category ? `${category.guarenteedAverage} %` : "", "guarenteedAverage",
+                    "Guarenteed Average:", category ? `${
+                        category.grades.reduce(
+                            (total: number, value: number) => total + value, 0,
+                        ) / category.numberOfGrades
+                    } %` : "", "guarenteedAverage",
                 )}
                 {this.buildDisplayLabel(
-                    "Potential Average:", category ? `${category.potentialAverage} π%` : "", "potentialAverage",
+                    "Potential Average:", category ? `${
+                        (category.grades.reduce(
+                            (total: number, value: number) => total + value, 0,
+                        ) + ((category.numberOfGrades - category.grades.size) * 100)) / category.numberOfGrades
+                    } %` : "", "potentialAverage",
                 )}
                 <div className="grades">
                     {invalidGrade && <span className="error">Invalid Grade</span>}

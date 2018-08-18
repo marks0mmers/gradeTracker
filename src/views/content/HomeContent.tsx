@@ -10,7 +10,7 @@ import {
     CreateCourseFormClearCreator,
     SetActiveCourseCreator,
 } from "../../state/ducks/control/courses";
-import { CreateCourseCreator } from "../../state/ducks/data/courses";
+import { CreateCourseCreator, DeleteCourseCreator } from "../../state/ducks/data/courses";
 import CourseOverviewButton from "../components/course/CourseOverviewButton";
 import Divider from "../components/Divider";
 import Button from "../controls/button/package/Button";
@@ -23,10 +23,11 @@ interface Props {
     detailedCourse?: string;
     selectedGradeCategory: GradeCategory;
 
-    createCourse: typeof CreateCourseCreator;
-    createCourseFormChange: typeof CreateCourseFormChangeCreator;
-    createCourseFormClear: typeof CreateCourseFormClearCreator;
-    setActiveCourse: typeof SetActiveCourseCreator;
+    handleCreateCourse: typeof CreateCourseCreator;
+    handleDeleteCourse: typeof DeleteCourseCreator;
+    handleCreateCourseFormChange: typeof CreateCourseFormChangeCreator;
+    handleCreateCourseFormClear: typeof CreateCourseFormClearCreator;
+    handleSetActiveCourse: typeof SetActiveCourseCreator;
     push: typeof push;
 }
 
@@ -90,9 +91,9 @@ class HomePage extends React.Component<Props, State> {
                             mode={CourseOverviewMode.INPUT}
                             cancelCreate={this.handleNewCourseCancel}
                             formValues={this.props.courseFormValues}
-                            onFormChange={this.props.createCourseFormChange}
-                            onFormClear={this.props.createCourseFormClear}
-                            onFormSubmit={this.props.createCourse}
+                            onFormChange={this.props.handleCreateCourseFormChange}
+                            onFormClear={this.props.handleCreateCourseFormClear}
+                            onFormSubmit={this.props.handleCreateCourse}
                         />
                     }
                     {
@@ -106,6 +107,7 @@ class HomePage extends React.Component<Props, State> {
                                 courseTitle={course.title}
                                 onClick={this.handleViewCourseDetailed}
                                 onHover={this.handleCourseHover}
+                                onDeleteClick={this.props.handleDeleteCourse}
                             />
                         )).toList()
                     }
@@ -115,7 +117,7 @@ class HomePage extends React.Component<Props, State> {
     }
 
     private handleCourseHover(title: string) {
-        const handler = this.props.setActiveCourse;
+        const handler = this.props.handleSetActiveCourse;
         if (handler) {
             handler(title);
         }
@@ -138,7 +140,7 @@ class HomePage extends React.Component<Props, State> {
     }
 
     private handleRootClick() {
-        const handler = this.props.setActiveCourse;
+        const handler = this.props.handleSetActiveCourse;
         if (handler) {
             handler(undefined);
         }

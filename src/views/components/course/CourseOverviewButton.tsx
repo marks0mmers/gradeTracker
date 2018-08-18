@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { CourseOverviewMode } from "../../../constants/CourseOverviewMode";
 import { Course } from "../../../models/Course";
 import { CreateCourseFormChangeCreator, CreateCourseFormClearCreator } from "../../../state/ducks/control/courses";
-import { CreateCourseCreator } from "../../../state/ducks/data/courses";
+import { CreateCourseCreator, DeleteCourseCreator } from "../../../state/ducks/data/courses";
 import Divider from "../../components/Divider";
 import Button from "../../controls/button/package/Button";
 import Input from "../styled-inputs/Input";
@@ -21,6 +21,7 @@ interface Props {
     onFormChange?: typeof CreateCourseFormChangeCreator;
     onFormClear?: typeof CreateCourseFormClearCreator;
     onFormSubmit?: typeof CreateCourseCreator;
+    onDeleteClick?: typeof DeleteCourseCreator;
     onClick?: () => void;
     onHover?: (title: string) => void;
     cancelCreate?: () => void;
@@ -36,6 +37,7 @@ class CourseOverviewButton extends React.Component<Props> {
         this.handleExecute = this.handleExecute.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleHover = this.handleHover.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
     }
 
     public componentWillUnmount() {
@@ -104,9 +106,11 @@ class CourseOverviewButton extends React.Component<Props> {
                                 width={60}
                             />
                             <Button
+                                id="delete_course"
                                 icon="delete_sweep"
                                 height={40}
                                 width={60}
+                                onClick={this.handleDelete}
                             />
                             </>
                             : <>
@@ -134,6 +138,15 @@ class CourseOverviewButton extends React.Component<Props> {
         const handler = this.props.onClick;
         if (handler) {
             handler();
+        }
+    }
+
+    private handleDelete(event: React.MouseEvent<HTMLButtonElement>) {
+        event.stopPropagation();
+        const { courseTitle } = this.props;
+        const handler = this.props.onDeleteClick;
+        if (handler && courseTitle) {
+            handler(courseTitle);
         }
     }
 

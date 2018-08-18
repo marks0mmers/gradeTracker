@@ -2,6 +2,8 @@ import { AddGradeToCategory, AddGradeToCategoryCreator } from "./AddGradeToCateg
 import { ClearCourses, ClearCoursesCreator} from "./ClearCourses";
 import { CreateCategory, CreateCategoryCreator } from "./CreateCategoryOnCourse";
 import { CreateCourse, CreateCourseCreator } from "./CreateCourse";
+import { DeleteCategory, DeleteCategoryCreator } from "./DeleteCategory";
+import { DeleteCourse, DeleteCourseCreator } from "./DeleteCourse";
 import { DeleteGradeFromCategory, DeleteGradeFromCategoryCreator } from "./DeleteGradeFromCategory";
 import { SetCourses, SetCoursesCreator } from "./SetCourses";
 
@@ -12,6 +14,8 @@ export {
     ClearCourses,
     CreateCourse,
     CreateCategory,
+    DeleteCategory,
+    DeleteCourse,
     DeleteGradeFromCategory,
     SetCourses,
 };
@@ -21,6 +25,8 @@ export {
     ClearCoursesCreator,
     CreateCourseCreator,
     CreateCategoryCreator,
+    DeleteCategoryCreator,
+    DeleteCourseCreator,
     DeleteGradeFromCategoryCreator,
     SetCoursesCreator,
 };
@@ -30,5 +36,7 @@ export type CourseDataActions =
     ClearCourses |
     CreateCategory |
     CreateCourse |
+    DeleteCategory |
+    DeleteCourse |
     DeleteGradeFromCategory |
     SetCourses;

@@ -59,6 +59,25 @@ export const CourseDataReducer = (
                 title: courseToUpdate2.title,
             });
             return state.set("courses", state.courses.set(courseIndex2, newCourse2));
+        case (types.DELETE_CATEGORY):
+            const courseToUpdate4 = state.courses.find((value: Course) => value.title === action.courseTitle);
+            const courseIndex4 = state.courses.indexOf(courseToUpdate4);
+            const categoryToUpdate4 = courseToUpdate4.categories && courseToUpdate4.categories
+                .find((category: GradeCategory) => category.title === action.categoryTitle);
+            const categoryIndex4 = courseToUpdate4.categories &&
+                courseToUpdate4.categories.indexOf(categoryToUpdate4 || new GradeCategory());
+            const newCourse4 = new Course({
+                    categories: courseToUpdate4.categories && courseToUpdate4.categories.delete(categoryIndex4 || 0),
+                    creditHours: courseToUpdate4.creditHours,
+                    description: courseToUpdate4.description,
+                    section: courseToUpdate4.section,
+                    title: courseToUpdate4.title,
+                });
+            return state.set("courses", state.courses.set(courseIndex4, newCourse4));
+        case (types.DELETE_COURSE):
+            const courseToDelete = state.courses.find((value: Course) => value.title === action.courseTitle);
+            const indexOfCourse = state.courses.indexOf(courseToDelete);
+            return state.set("courses", state.courses.delete(indexOfCourse));
         case (types.CREATE_COURSE):
             return state.set("courses", state.courses.push(action.course));
         case (types.CREATE_CATEGORY):
