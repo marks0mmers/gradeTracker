@@ -7,4 +7,6 @@ export enum CourseDataActionTypes {
     DELETE_COURSE = "course/DELETE_COURSE",
     DELETE_GRADE_FROM_CATEGORY = "course/DELETE_GRADE_FROM_CATEGORY",
     SET_COURSES = "course/SET_COURSES",
+    UPDATE_CATEGORY = "course/UPDATE_CATEGORY",
+    UPDATE_COURSE = "course/UPDATE_COURSE",
 }

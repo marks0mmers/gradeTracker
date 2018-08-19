@@ -110,7 +110,7 @@ class Header extends React.Component<Props, State> {
                         {
                             themes && themes.map((theme: Theme, key: string) => (
                                 <option key={key} value={key}>{key}</option>
-                            ))
+                            )).toArray()
                         }
                     </select>
                 </ThemeSelector>
@@ -189,7 +189,7 @@ class Header extends React.Component<Props, State> {
 
 export default styled(Header)`
     background-color: ${(props) => props.theme.primary};
-    color: ${(props) => props.theme.black};
+    color: ${(props) => props.theme.tertiaryText};
     grid-area: header;
     display: grid;
     grid-template-columns: 60px 1fr auto auto;

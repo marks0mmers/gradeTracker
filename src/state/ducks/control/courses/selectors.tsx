@@ -9,8 +9,6 @@ import { getCourses } from "../../data/courses";
 export const getActiveCourse = (state: RootState) => state.control.course.activeCourse;
 export const getDetailedColumns = (state: RootState) => state.control.course.detailedColumns;
 export const getSelectedGradeCategory = (state: RootState) => state.control.course.selectedGradeCategory;
-export const getCourseFormValues = (state: RootState) => state.control.course.createFormValues;
-export const getCategoryFormValues = (state: RootState) => state.control.course.createCategoryFormValues;
 
 export const getDetailedCourseElements = createSelector(
     [getCourses, getActiveCourse, getSelectedGradeCategory],

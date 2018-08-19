@@ -94,6 +94,24 @@ export const CourseDataReducer = (
             return state.set("courses", action.courses);
         case (types.CLEAR_COURSES):
             return state.set("courses", List());
+        case (types.UPDATE_CATEGORY):
+            const courseToUpdate5 = state.courses.find((value: Course) => value.title === action.courseTitle);
+            const courseIndex5 = state.courses.indexOf(courseToUpdate5);
+            const categoryIndex5 = courseToUpdate5.categories &&
+                courseToUpdate5.categories.indexOf(action.originalCategory);
+            const newCourse5 = new Course({
+                categories: courseToUpdate5.categories &&
+                    courseToUpdate5.categories.set(categoryIndex5 || 0, action.updatedCategory),
+                creditHours: courseToUpdate5.creditHours,
+                description: courseToUpdate5.description,
+                section: courseToUpdate5.section,
+                title: courseToUpdate5.title,
+            });
+            return state.set("courses", state.courses.set(courseIndex5, newCourse5));
+        case (types.UPDATE_COURSE):
+            const courseToUpdate6 = state.courses.find((value: Course) => value.title === action.originalCourseTitle);
+            const courseIndex6 = state.courses.indexOf(courseToUpdate6);
+            return state.set("courses", state.courses.set(courseIndex6, action.updatedCourse));
         default:
             return state;
     }

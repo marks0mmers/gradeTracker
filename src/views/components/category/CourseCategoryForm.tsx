@@ -3,23 +3,22 @@ import * as React from "react";
 import styled from "styled-components";
 import { Course } from "../../../models/Course";
 import { GradeCategory } from "../../../models/GradeCategory";
-import { CreateCategoryFormChangeCreator } from "../../../state/ducks/control/courses";
-import { CreateCategoryCreator } from "../../../state/ducks/data/courses";
 import Button from "../../controls/button/package/Button";
 import Input from "../styled-inputs/Input";
 
 interface Props {
     className?: string;
-    formValues?: Map<string, string>;
     course?: Course;
+    originalCategory?: GradeCategory;
 
-    handleFormChange?: typeof CreateCategoryFormChangeCreator;
-    handleFormSave?: typeof CreateCategoryCreator;
+    handleFormChange?: (name: string, value: string) => void;
+    handleFormSave?: (course: Course, category: GradeCategory) => void;
     handleCancelCreate?: () => void;
 }
 
 interface State {
     isInvalidInput?: boolean;
+    formValues: Map<string, string>;
 }
 
 class CourseCategoryForm extends React.Component<Props, State> {
@@ -31,6 +30,12 @@ class CourseCategoryForm extends React.Component<Props, State> {
         this.handleInputChange = this.handleInputChange.bind(this);
 
         this.state = {
+            formValues: props.originalCategory
+                ? Map<string, string>()
+                    .set("name", props.originalCategory.title)
+                    .set("percentage", String(props.originalCategory.percentage))
+                    .set("numberOfGrades", String(props.originalCategory.numberOfGrades))
+                : Map(),
             isInvalidInput: false,
         };
     }
@@ -45,40 +50,42 @@ class CourseCategoryForm extends React.Component<Props, State> {
         } = this.state;
 
         return (
-            <>
-            <div className={className}>
-                <div className="form-input">
-                    <span className="label">Category Name:</span>
-                    {this.buildInput("name", 300, 20)}
+            <div>
+                <div className={className}>
+                    <div className="form-input">
+                        <span className="label">Category Name:</span>
+                        {this.buildInput("name", 300, 20)}
+                    </div>
+                    <div className="form-input">
+                        <span className="label">Percentage:</span>
+                        {this.buildInput("percentage", 100, 20)}
+                    </div>
+                    <div className="form-input">
+                        <span className="label">Number of Grades:</span>
+                        {this.buildInput("numberOfGrades", 100, 20)}
+                    </div>
+                    <Button
+                        tooltip="Cancel"
+                        width={50}
+                        height={30}
+                        icon="clear"
+                        onClick={this.props.handleCancelCreate}
+                    />
+                    <Button
+                        tooltip="Save"
+                        width={50}
+                        height={30}
+                        icon="save"
+                        onClick={this.handleSave}
+                    />
                 </div>
-                <div className="form-input">
-                    <span className="label">Percentage:</span>
-                    {this.buildInput("percentage", 100, 20)}
-                </div>
-                <div className="form-input">
-                    <span className="label">Number of Grades:</span>
-                    {this.buildInput("numberOfGrades", 100, 20)}
-                </div>
-                <Button
-                    width={50}
-                    height={30}
-                    icon="clear"
-                    onClick={this.props.handleCancelCreate}
-                />
-                <Button
-                    width={50}
-                    height={30}
-                    icon="save"
-                    onClick={this.handleSave}
-                />
+                {isInvalidInput && <span className="error">Invalid Numerical Value</span>}
             </div>
-            {isInvalidInput && <span className="error">Invalid Numerical Value</span>}
-            </>
         );
     }
 
     private buildInput(name: string, width?: number, height?: number) {
-        const { formValues } = this.props;
+        const { formValues } = this.state;
         return (
             <Input
                 name={name}
@@ -92,20 +99,22 @@ class CourseCategoryForm extends React.Component<Props, State> {
 
     private handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
         const { name, value } = event.target;
-        const handler = this.props.handleFormChange;
-        if (handler) {
-            handler(name, value);
-        }
+        const { formValues } = this.state;
+        this.setState({
+            formValues: formValues.set(name, value),
+        });
     }
 
     private handleSave() {
         const handler = this.props.handleFormSave;
-        const { course, formValues } = this.props;
+        const { course, originalCategory } = this.props;
+        const { formValues } = this.state;
         if (formValues) {
             const numberOfGrades = !isNaN(+formValues.get("numberOfGrades")) && +formValues.get("numberOfGrades");
             const percentage = !isNaN(+formValues.get("percentage")) && +formValues.get("percentage");
             const title: string | undefined = formValues.get("name", undefined);
-            if (numberOfGrades && percentage && title) {
+            const isNumGradesValid = originalCategory ? numberOfGrades >= originalCategory.grades.size : true;
+            if (numberOfGrades && percentage && title && isNumGradesValid) {
                 this.setState({
                     isInvalidInput: false,
                 });

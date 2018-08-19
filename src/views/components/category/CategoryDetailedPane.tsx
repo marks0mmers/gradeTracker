@@ -21,6 +21,7 @@ interface State {
     selectedGrade?: string;
     isAddingGrade: boolean;
     invalidGrade: boolean;
+    isEditing: boolean;
 }
 
 class CategoryDetailedPane extends React.Component<Props, State> {
@@ -29,13 +30,16 @@ class CategoryDetailedPane extends React.Component<Props, State> {
         super(props);
 
         this.handleNewGrade = this.handleNewGrade.bind(this);
-        this.handleSaveNewGrade = this.handleSaveNewGrade.bind(this);
+        this.handleSaveGrade = this.handleSaveGrade.bind(this);
         this.handleDeleteGrade = this.handleDeleteGrade.bind(this);
         this.handleSelectGrade = this.handleSelectGrade.bind(this);
+        this.handleEditGrade = this.handleEditGrade.bind(this);
+        this.handleCancelModify = this.handleCancelModify.bind(this);
 
         this.state = {
             invalidGrade: false,
             isAddingGrade: false,
+            isEditing: false,
             selectedGrade: undefined,
         };
     }
@@ -50,6 +54,7 @@ class CategoryDetailedPane extends React.Component<Props, State> {
         const {
             invalidGrade,
             selectedGrade,
+            isEditing,
         } = this.state;
 
         const category = course && course.categories &&
@@ -57,6 +62,7 @@ class CategoryDetailedPane extends React.Component<Props, State> {
 
         const elements = category && category.grades.map((value: number, key: string) => {
             const element: ListControlElement = {
+                isEditing: key === selectedGrade && isEditing,
                 isSelected: key === selectedGrade,
                 primaryProperty: key,
                 secondaryProperty: `${value.toString()} %`,
@@ -70,27 +76,31 @@ class CategoryDetailedPane extends React.Component<Props, State> {
                 {this.buildDisplayLabel("Percentage:", category ? `${category.percentage} %` : "", "percentage")}
                 {this.buildDisplayLabel("Number of Grades:", category ? category.numberOfGrades : "", "numberGrades")}
                 {this.buildDisplayLabel(
-                    "Remaining Grades:", category ? category.remainingGrades : "", "gradesRemaining",
+                    "Remaining Grades:", category
+                        ? category.numberOfGrades - category.grades.size
+                        : "",
+                    "gradesRemaining",
                 )}
                 {this.buildDisplayLabel(
                     "Current Average:", category ? `${
-                        category.grades.reduce(
+                        (category.grades.reduce(
                             (total: number, value: number) => total + value, 0,
-                        ) / category.grades.size
+                        ) / category.grades.size).toPrecision(4)
                     } %` : "", "currentAverage",
                 )}
                 {this.buildDisplayLabel(
                     "Guarenteed Average:", category ? `${
-                        category.grades.reduce(
+                        (category.grades.reduce(
                             (total: number, value: number) => total + value, 0,
-                        ) / category.numberOfGrades
+                        ) / category.numberOfGrades).toPrecision(4)
                     } %` : "", "guarenteedAverage",
                 )}
                 {this.buildDisplayLabel(
                     "Potential Average:", category ? `${
-                        (category.grades.reduce(
+                        ((category.grades.reduce(
                             (total: number, value: number) => total + value, 0,
-                        ) + ((category.numberOfGrades - category.grades.size) * 100)) / category.numberOfGrades
+                        ) + ((category.numberOfGrades - category.grades.size) * 100))
+                        / category.numberOfGrades).toPrecision(4)
                     } %` : "", "potentialAverage",
                 )}
                 <div className="grades">
@@ -102,34 +112,70 @@ class CategoryDetailedPane extends React.Component<Props, State> {
                         footerContent={
                             <>
                             <Button
-                                icon="delete"
-                                height={40}
-                                width={60}
-                                onClick={this.handleDeleteGrade}
-                            />
-                            <Button
+                                tooltip="Create New Grade"
                                 icon="add"
                                 height={40}
                                 width={60}
                                 onClick={this.handleNewGrade}
                             />
+                            <Button
+                                tooltip="Edit Selected Grade"
+                                icon="create"
+                                height={40}
+                                width={60}
+                                onClick={this.handleEditGrade}
+                            />
+                            <Button
+                                tooltip="Delete Selected Grade"
+                                icon="delete"
+                                height={40}
+                                width={60}
+                                onClick={this.handleDeleteGrade}
+                            />
                             </>
                         }
                         showInputRow={this.state.isAddingGrade}
-                        onRowSave={this.handleSaveNewGrade}
+                        onRowSave={this.handleSaveGrade}
                         elements={elements}
-                        margin={10}
+                        padding={10}
+                        primaryPlaceHolder="Grade Name"
+                        secondaryPlaceHolder="Grade (NO % SIGN)"
                         onRowClick={this.handleSelectGrade}
+                        onRowClear={this.handleCancelModify}
                     />
                 </div>
             </div>
         );
     }
 
-    private handleNewGrade() {
+    private handleCancelModify() {
         this.setState({
-            isAddingGrade: true,
+            invalidGrade: false,
+            isAddingGrade: false,
+            isEditing: false,
         });
+    }
+
+    private handleNewGrade() {
+        const { course, selectedCategory } = this.props;
+        const category = course && course.categories &&
+            course.categories.find((value: GradeCategory) => value.title === selectedCategory);
+        if (category && category.numberOfGrades >= category.grades.size + 1) {
+            this.setState({
+                invalidGrade: false,
+                isAddingGrade: true,
+            });
+        }
+    }
+
+    private handleEditGrade() {
+        const { selectedGrade } = this.state;
+        if (selectedGrade) {
+            this.setState({
+                invalidGrade: false,
+                isEditing: true,
+            });
+        }
     }
 
     private handleDeleteGrade() {
@@ -149,12 +195,13 @@ class CategoryDetailedPane extends React.Component<Props, State> {
         });
     }
 
-    private handleSaveNewGrade(description: string, grade?: string) {
+    private handleSaveGrade(description: string, grade?: string, initialKey?: string) {
         const parsedGrade = (!grade || isNaN(+grade)) ? -1 : +grade;
         if (parsedGrade >= 0) {
             this.setState({
                 invalidGrade: false,
                 isAddingGrade: false,
+                isEditing: false,
             });
             const { selectedCategory, course } = this.props;
             const handler = this.props.handleAddNewGrade;
@@ -172,6 +219,18 @@ class CategoryDetailedPane extends React.Component<Props, State> {
             });
             if (handler && course && course.title) {
                 handler(course.title, updatedCategory);
+            }
+            const deleteOld = this.props.handleDeleteGrade;
+            if (
+                deleteOld &&
+                course &&
+                course.title &&
+                category &&
+                category.title &&
+                initialKey &&
+                description !== initialKey
+            ) {
+                deleteOld(course.title, category.title, initialKey);
             }
         } else {
             this.setState({
@@ -192,8 +251,9 @@ class CategoryDetailedPane extends React.Component<Props, State> {
 
 export default styled(CategoryDetailedPane)`
     display: grid;
+    grid-template-rows: repeat(7, 1fr);
+    grid-column-gap: 10px;
     grid-template-columns: 1fr 2fr;
-    grid-auto-rows: 40px;
     grid-template-areas: "title list"
                          "percentage list"
                          "numberGrades list"
@@ -201,8 +261,11 @@ export default styled(CategoryDetailedPane)`
                          "currentAverage list"
                          "guarenteedAverage list"
                          "potentialAverage list";
-    grid-column-gap: 10px;
+    @media screen and (max-width: 800px) {
+        grid-template-columns: 1fr 1fr;
+    }
     background: ${(props) => props.theme.hover};
+    margin-bottom: 10px;
 
     .label-container {
         padding: 10px;
@@ -225,6 +288,7 @@ export default styled(CategoryDetailedPane)`
 
     .grades {
         grid-area: list;
+        min-height: 0;
     }
 
     .error {

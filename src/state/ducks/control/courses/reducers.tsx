@@ -22,7 +22,7 @@ const detailedColumns: List<DataGridColumnDefinition<GradeCategory>> = List([
         label: "Percentage",
         width: 100,
     }),
-    new DataGridColumnDefinition({
+new DataGridColumnDefinition({
         formatter: defaultFormatter((category: GradeCategory) => category.numberOfGrades),
         label: "Number of Grades",
         width: 200,
@@ -33,17 +33,20 @@ const detailedColumns: List<DataGridColumnDefinition<GradeCategory>> = List([
         width: 180,
     }),
     new DataGridColumnDefinition({
-        formatter: gradeFormatter((category: GradeCategory) => category.currentAverage),
+        formatter: gradeFormatter((category: GradeCategory) =>
+            category.currentAverage && category.currentAverage.toPrecision(4)),
         label: "Current Average",
         width: 200,
     }),
     new DataGridColumnDefinition({
-        formatter: gradeFormatter((category: GradeCategory) => category.guarenteedAverage),
+        formatter: gradeFormatter((category: GradeCategory) =>
+            category.guarenteedAverage && category.guarenteedAverage.toPrecision(4)),
         label: "Guarenteed Average",
         width: 200,
     }),
     new DataGridColumnDefinition({
-        formatter: gradeFormatter((category: GradeCategory) => category.potentialAverage),
+        formatter: gradeFormatter((category: GradeCategory) =>
+            category.potentialAverage && category.potentialAverage.toPrecision(4)),
         label: "Potential Average",
         width: 200,
     }),
@@ -51,7 +54,6 @@ const detailedColumns: List<DataGridColumnDefinition<GradeCategory>> = List([
 
 export const CourseControlStateRecord = Record({
     activeCourse: undefined,
-    createCategoryFormValues: Map(),
     createFormValues: Map(),
     detailedColumns,
     selectedGradeCategory: undefined,
@@ -59,8 +61,6 @@ export const CourseControlStateRecord = Record({
 
 export class CourseControlState extends CourseControlStateRecord {
     public activeCourse: string;
-    public createFormValues: Map<string, string>;
-    public createCategoryFormValues: Map<string, string>;
     public detailedColumns: List<DataGridColumnDefinition<GradeCategory>>;
     public selectedGradeCategory: string;
 }
@@ -70,18 +70,10 @@ export const CourseControlReducer = (
     action: CourseControlActions,
 ) => {
     switch (action.type) {
-        case (types.CREATE_COURSE_FORM_CHANGE):
-            return state.set("createFormValues", state.createFormValues.set(action.name, action.value));
-        case (types.CREATE_COURSE_FORM_CLEAR):
-            return state.set("createFormValues", Map());
         case (types.SELECT_GRADE_CATEGORY):
             return state.set("selectedGradeCategory", action.gradeCategory);
         case (types.SET_ACTIVE_COURSE):
             return state.set("activeCourse", action.title);
-        case (types.CREATE_CATEGORY_FORM_CHANGE):
-            return state.set("createCategoryFormValues", state.createCategoryFormValues.set(action.name, action.value));
-        case (types.CREATE_CATEGORY_FORM_CLEAR):
-            return state.set("createCategoryFormValues", Map());
         default:
             return state;
     }

@@ -3,8 +3,7 @@ import * as React from "react";
 import styled from "styled-components";
 import { CourseOverviewMode } from "../../../constants/CourseOverviewMode";
 import { Course } from "../../../models/Course";
-import { CreateCourseFormChangeCreator, CreateCourseFormClearCreator } from "../../../state/ducks/control/courses";
-import { CreateCourseCreator, DeleteCourseCreator } from "../../../state/ducks/data/courses";
+import { DeleteCourseCreator } from "../../../state/ducks/data/courses";
 import Divider from "../../components/Divider";
 import Button from "../../controls/button/package/Button";
 import Input from "../styled-inputs/Input";
@@ -15,19 +14,22 @@ interface Props {
     courseTitle?: string;
     courseSection?: string;
     courseCreditHours?: number;
+    originalCourse?: Course;
     mode?: CourseOverviewMode;
-    formValues?: Map<string, string>;
 
-    onFormChange?: typeof CreateCourseFormChangeCreator;
-    onFormClear?: typeof CreateCourseFormClearCreator;
-    onFormSubmit?: typeof CreateCourseCreator;
     onDeleteClick?: typeof DeleteCourseCreator;
+    onEditClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    onFormSubmit?: (course: Course) => void;
     onClick?: () => void;
     onHover?: (title: string) => void;
     cancelCreate?: () => void;
 }
 
-class CourseOverviewButton extends React.Component<Props> {
+interface State {
+    formValues: Map<string, string>;
+}
+
+class CourseOverviewButton extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
@@ -38,13 +40,16 @@ class CourseOverviewButton extends React.Component<Props> {
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleHover = this.handleHover.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
-    }
 
-    public componentWillUnmount() {
-        const handler = this.props.onFormClear;
-        if (handler) {
-            handler();
-        }
+        this.state = {
+            formValues: props.originalCourse
+            ? Map<string, string>()
+                .set("description", props.originalCourse.description)
+                .set("title", props.originalCourse.title)
+                .set("section", props.originalCourse.section)
+                .set("hours", String(props.originalCourse.creditHours))
+            : Map(),
+        };
     }
 
     public render() {
@@ -101,11 +106,14 @@ class CourseOverviewButton extends React.Component<Props> {
                             mode === CourseOverviewMode.DISPLAY
                             ? <>
                             <Button
+                                tooltip="Edit Course"
                                 icon="create"
                                 height={40}
                                 width={60}
+                                onClick={this.props.onEditClick}
                             />
                             <Button
+                                tooltip="Delete Course"
                                 id="delete_course"
                                 icon="delete_sweep"
                                 height={40}
@@ -115,12 +123,14 @@ class CourseOverviewButton extends React.Component<Props> {
                             </>
                             : <>
                             <Button
+                                tooltip="Cancel"
                                 icon="clear"
                                 height={40}
                                 width={60}
                                 onClick={this.handleCancel}
                             />
                             <Button
+                                tooltip="Save"
                                 icon="save"
                                 height={40}
                                 width={60}
@@ -159,10 +169,9 @@ class CourseOverviewButton extends React.Component<Props> {
     }
 
     private handleCancel() {
-        const clear = this.props.onFormClear;
-        if (clear) {
-            clear();
-        }
+        this.setState({
+            formValues: Map(),
+        });
         const handler = this.props.cancelCreate;
         if (handler) {
             handler();
@@ -170,9 +179,11 @@ class CourseOverviewButton extends React.Component<Props> {
     }
 
     private handleExecute() {
-        const { formValues } = this.props;
+        const { originalCourse } = this.props;
+        const { formValues } = this.state;
         const handler = this.props.onFormSubmit;
         const course = new Course({
+            categories: originalCourse && originalCourse.categories,
             creditHours: formValues && formValues.get("hours"),
             description: formValues && formValues.get("description"),
             section: formValues && formValues.get("section"),
@@ -188,7 +199,7 @@ class CourseOverviewButton extends React.Component<Props> {
     }
 
     private buildInput(name: string, placeholder: string, gridArea: string, width?: number, height?: number) {
-        const { formValues } = this.props;
+        const { formValues } = this.state;
         return (
             <Input
                 name={name}
@@ -203,11 +214,11 @@ class CourseOverviewButton extends React.Component<Props> {
     }
 
     private handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-        const handler = this.props.onFormChange;
-        const { target } = event;
-        if (handler) {
-            handler(target.name, target.value);
-        }
+        const { name, value } = event.target;
+        const { formValues } = this.state;
+        this.setState({
+            formValues: formValues.set(name, value),
+        });
     }
 }
 

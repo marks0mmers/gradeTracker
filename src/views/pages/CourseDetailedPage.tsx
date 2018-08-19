@@ -6,10 +6,7 @@ import { bindActionCreators, Dispatch } from "redux";
 import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
 import {
-    CreateCategoryFormChangeCreator,
-    CreateCategoryFormClearCreator,
     getActiveCourse,
-    getCategoryFormValues,
     getDetailedColumns,
     getDetailedCourseElements,
     getSelectedGradeCategory,
@@ -22,6 +19,7 @@ import {
     DeleteCategoryCreator,
     DeleteGradeFromCategoryCreator,
     getCourses,
+    UpdateCategoryCreator,
 } from "../../state/ducks/data/courses";
 import { RootState } from "../../state/rootReducer";
 import CourseDetailedContent from "../content/CourseDetailedContent";
@@ -43,9 +41,8 @@ interface PropsFromDispatch {
     handleAddNewGrade: typeof AddGradeToCategoryCreator;
     handleDeleteCategory: typeof DeleteCategoryCreator;
     handleDeleteGrade: typeof DeleteGradeFromCategoryCreator;
-    handleFormChange: typeof CreateCategoryFormChangeCreator;
-    handleFormClear: typeof CreateCategoryFormClearCreator;
-    handleFormSave: typeof CreateCategoryCreator;
+    handleNewCategory: typeof CreateCategoryCreator;
+    handleEditCategory: typeof UpdateCategoryCreator;
     push: typeof push;
 }
 
@@ -71,7 +68,6 @@ const mapStateToProps = (state: RootState) => {
         categoryElements: getDetailedCourseElements(state),
         courses: getCourses(state),
         detailedCourse: getActiveCourse(state),
-        formValues: getCategoryFormValues(state),
         selectedCategory: getSelectedGradeCategory(state),
     });
 };
@@ -81,9 +77,8 @@ const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
         handleAddNewGrade: AddGradeToCategoryCreator,
         handleDeleteCategory: DeleteCategoryCreator,
         handleDeleteGrade: DeleteGradeFromCategoryCreator,
-        handleFormChange: CreateCategoryFormChangeCreator,
-        handleFormClear: CreateCategoryFormClearCreator,
-        handleFormSave: CreateCategoryCreator,
+        handleEditCategory: UpdateCategoryCreator,
+        handleNewCategory: CreateCategoryCreator,
         push,
         selectGradeCategory: SelectGradeCategoryCreator,
         setActiveCourse: SetActiveCourseCreator,

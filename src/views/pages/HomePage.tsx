@@ -1,15 +1,12 @@
 import { push } from "connected-react-router";
-import { List, Map} from "immutable";
+import { List } from "immutable";
 import * as React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
 import {
-    CreateCourseFormChangeCreator,
-    CreateCourseFormClearCreator,
     getActiveCourse,
-    getCourseFormValues,
     getDetailedColumns,
     getDetailedCourseElements,
     getSelectedGradeCategory,
@@ -20,22 +17,21 @@ import {
     CreateCourseCreator,
     DeleteCourseCreator,
     getCourses,
+    UpdateCourseCreator,
 } from "../../state/ducks/data/courses";
 import { RootState } from "../../state/rootReducer";
 import HomeContent from "../content/HomeContent";
 
 interface PropsFromState {
     courses: List<Course>;
-    courseFormValues: Map<string, string>;
     detailedCourse?: string;
     selectedGradeCategory: GradeCategory;
 }
 
 interface PropsFromDispatch {
     handleCreateCourse: typeof CreateCourseCreator;
+    handleUpdateCourse: typeof UpdateCourseCreator;
     handleDeleteCourse: typeof DeleteCourseCreator;
-    handleCreateCourseFormChange: typeof CreateCourseFormChangeCreator;
-    handleCreateCourseFormClear: typeof CreateCourseFormClearCreator;
     handleSetActiveCourse: typeof SetActiveCourseCreator;
     push: typeof push;
 }
@@ -60,7 +56,6 @@ const mapStateToProps = (state: RootState) => {
     return ({
         categoryColumns: getDetailedColumns(state),
         categoryElements: getDetailedCourseElements(state),
-        courseFormValues: getCourseFormValues(state),
         courses: getCourses(state),
         detailedCourse: getActiveCourse(state),
         selectedGradeCategory: getSelectedGradeCategory(state),
@@ -70,11 +65,10 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
     return bindActionCreators({
         handleCreateCourse: CreateCourseCreator,
-        handleCreateCourseFormChange: CreateCourseFormChangeCreator,
-        handleCreateCourseFormClear: CreateCourseFormClearCreator,
         handleDelectGradeCategory: SelectGradeCategoryCreator,
         handleDeleteCourse: DeleteCourseCreator,
         handleSetActiveCourse: SetActiveCourseCreator,
+        handleUpdateCourse: UpdateCourseCreator,
         push,
     }, dispatch);
 };

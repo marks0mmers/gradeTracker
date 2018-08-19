@@ -13,12 +13,15 @@ interface Props {
     headerText?: string;
     footer?: boolean;
     gridArea?: string;
-    margin?: number;
+    padding?: number;
     footerContent?: JSX.Element;
     showInputRow?: boolean;
+    primaryPlaceHolder?: string;
+    secondaryPlaceHolder?: string;
 
     onRowClick?: (primary: string, secondary?: string) => void;
-    onRowSave?: (primary: string, secondary?: string) => void;
+    onRowClear?: () => void;
+    onRowSave?: (primary: string, secondary?: string, initialKey?: string) => void;
 }
 
 class ListControl extends React.Component<Props> {
@@ -52,6 +55,9 @@ class ListControl extends React.Component<Props> {
                         <Row
                             isCreating={showInputRow}
                             onSave={this.props.onRowSave}
+                            onClear={this.props.onRowClear}
+                            primaryPlaceHolder={this.props.primaryPlaceHolder}
+                            secondaryPlaceHolder={this.props.secondaryPlaceHolder}
                         />
                     }
                     {
@@ -62,7 +68,12 @@ class ListControl extends React.Component<Props> {
                                     primaryProperty={value.primaryProperty}
                                     secondaryProperty={value.secondaryProperty}
                                     isSelected={value.isSelected}
+                                    isEditing={value.isEditing}
+                                    primaryPlaceHolder={this.props.primaryPlaceHolder}
+                                    secondaryPlaceHolder={this.props.secondaryPlaceHolder}
                                     onClick={this.props.onRowClick}
+                                    onClear={this.props.onRowClear}
+                                    onSave={this.props.onRowSave}
                                 />
                             );
                         }).toArray()
@@ -82,9 +93,10 @@ class ListControl extends React.Component<Props> {
 export default styled(ListControl)`
     grid-area: ${(props) => props.gridArea};
     overflow-y: auto;
-    margin: ${(props) => props.margin}px;
+    padding: ${(props) => props.padding}px;
     display: flex;
     flex-direction: column;
+    max-height: 93%;
     .body {
         overflow-y: scroll;
     }

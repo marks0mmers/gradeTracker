@@ -1,16 +1,14 @@
 import { push } from "connected-react-router";
-import { List, Map } from "immutable";
+import { List } from "immutable";
 import * as React from "react";
 import styled from "styled-components";
 import { CourseOverviewMode } from "../../constants/CourseOverviewMode";
 import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
 import {
-    CreateCourseFormChangeCreator,
-    CreateCourseFormClearCreator,
     SetActiveCourseCreator,
 } from "../../state/ducks/control/courses";
-import { CreateCourseCreator, DeleteCourseCreator } from "../../state/ducks/data/courses";
+import { CreateCourseCreator, DeleteCourseCreator, UpdateCourseCreator } from "../../state/ducks/data/courses";
 import CourseOverviewButton from "../components/course/CourseOverviewButton";
 import Divider from "../components/Divider";
 import Button from "../controls/button/package/Button";
@@ -19,20 +17,19 @@ import { ButtonWrapper } from "../wrappers/ButtonWrapper";
 interface Props {
     className?: string;
     courses?: List<Course>;
-    courseFormValues: Map<string, string>;
     detailedCourse?: string;
     selectedGradeCategory: GradeCategory;
 
     handleCreateCourse: typeof CreateCourseCreator;
+    handleUpdateCourse: typeof UpdateCourseCreator;
     handleDeleteCourse: typeof DeleteCourseCreator;
-    handleCreateCourseFormChange: typeof CreateCourseFormChangeCreator;
-    handleCreateCourseFormClear: typeof CreateCourseFormClearCreator;
     handleSetActiveCourse: typeof SetActiveCourseCreator;
     push: typeof push;
 }
 
 interface State {
     isCreating?: boolean;
+    isEditing?: boolean;
 }
 
 class HomePage extends React.Component<Props, State> {
@@ -41,13 +38,15 @@ class HomePage extends React.Component<Props, State> {
         super(props);
 
         this.handleViewCourseDetailed = this.handleViewCourseDetailed.bind(this);
-        this.handleRootClick = this.handleRootClick.bind(this);
         this.handleNewCourseClick = this.handleNewCourseClick.bind(this);
         this.handleNewCourseCancel = this.handleNewCourseCancel.bind(this);
         this.handleCourseHover = this.handleCourseHover.bind(this);
+        this.handleCourseSave = this.handleCourseSave.bind(this);
+        this.handleEditClick = this.handleEditClick.bind(this);
 
         this.state = {
             isCreating: false,
+            isEditing: false,
         };
     }
 
@@ -55,17 +54,18 @@ class HomePage extends React.Component<Props, State> {
         const {
             className,
             courses,
+            detailedCourse,
         } = this.props;
 
         const {
             isCreating,
+            isEditing,
         } = this.state;
 
         return (
             <div id="home-content" className={className}>
                 <h2
                     className="route"
-                    onClick={this.handleRootClick}
                 >
                     Courses
                 </h2>
@@ -75,6 +75,7 @@ class HomePage extends React.Component<Props, State> {
                         <>
                         <span className="button-label">Create New Course:</span>
                         <Button
+                            tooltip="Create New Course"
                             icon="add"
                             height={30}
                             width={50}
@@ -90,26 +91,37 @@ class HomePage extends React.Component<Props, State> {
                         <CourseOverviewButton
                             mode={CourseOverviewMode.INPUT}
                             cancelCreate={this.handleNewCourseCancel}
-                            formValues={this.props.courseFormValues}
-                            onFormChange={this.props.handleCreateCourseFormChange}
-                            onFormClear={this.props.handleCreateCourseFormClear}
-                            onFormSubmit={this.props.handleCreateCourse}
+                            onFormSubmit={this.handleCourseSave}
                         />
                     }
                     {
-                        courses && courses.reverse().map((course: Course, key: number) => (
-                            <CourseOverviewButton
-                                key={key}
-                                mode={CourseOverviewMode.DISPLAY}
-                                courseCreditHours={course.creditHours}
-                                courseDescription={course.description}
-                                courseSection={course.section}
-                                courseTitle={course.title}
-                                onClick={this.handleViewCourseDetailed}
-                                onHover={this.handleCourseHover}
-                                onDeleteClick={this.props.handleDeleteCourse}
-                            />
-                        )).toList()
+                        isEditing &&
+                        <CourseOverviewButton
+                            mode={CourseOverviewMode.INPUT}
+                            originalCourse={courses && courses.find((value: Course) => value.title === detailedCourse)}
+                            cancelCreate={this.handleNewCourseCancel}
+                            onFormSubmit={this.handleCourseSave}
+                        />
+                    }
+                    {
+                        courses && courses.reverse().map((course: Course, key: number) => {
+                            return isEditing && detailedCourse === course.title
+                            ? null
+                            : (
+                                <CourseOverviewButton
+                                    key={key}
+                                    mode={CourseOverviewMode.DISPLAY}
+                                    courseCreditHours={course.creditHours}
+                                    courseDescription={course.description}
+                                    courseSection={course.section}
+                                    courseTitle={course.title}
+                                    onClick={this.handleViewCourseDetailed}
+                                    onHover={this.handleCourseHover}
+                                    onEditClick={this.handleEditClick}
+                                    onDeleteClick={this.props.handleDeleteCourse}
+                                />
+                            );
+                        }).toList()
                     }
                 </div>
             </div>
@@ -123,6 +135,34 @@ class HomePage extends React.Component<Props, State> {
         }
     }
 
+    private handleEditClick(event: React.MouseEvent<HTMLButtonElement>) {
+        event.stopPropagation();
+        const { detailedCourse } = this.props;
+        if (detailedCourse) {
+            this.setState({
+                isCreating: false,
+                isEditing: true,
+            });
+        }
+    }
+
+    private handleCourseSave(course: Course) {
+        const { isCreating, isEditing } = this.state;
+        if (isCreating) {
+            const handler = this.props.handleCreateCourse;
+            if (handler) {
+                handler(course);
+            }
+        }
+        if (isEditing) {
+            const { detailedCourse } = this.props;
+            const handler = this.props.handleUpdateCourse;
+            if (handler && detailedCourse) {
+                handler(detailedCourse, course);
+            }
+        }
+    }
+
     private handleViewCourseDetailed() {
         this.props.push(`/${this.props.detailedCourse}`);
     }
@@ -130,21 +170,15 @@ class HomePage extends React.Component<Props, State> {
     private handleNewCourseClick() {
         this.setState({
             isCreating: true,
+            isEditing: false,
         });
     }
 
     private handleNewCourseCancel() {
         this.setState({
             isCreating: false,
+            isEditing: false,
         });
-    }
-
-    private handleRootClick() {
-        const handler = this.props.handleSetActiveCourse;
-        if (handler) {
-            handler(undefined);
-        }
-        this.props.push("/");
     }
 
 }
@@ -163,10 +197,6 @@ export default styled(HomePage)`
         padding: 10px
         margin-left: 10px;
         color: ${(props) => props.theme.primaryText};
-        cursor: pointer;
-        &:hover {
-            color: ${(props) => props.theme.secondary}
-        }
     }
 
     .content {

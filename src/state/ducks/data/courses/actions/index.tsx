@@ -6,6 +6,8 @@ import { DeleteCategory, DeleteCategoryCreator } from "./DeleteCategory";
 import { DeleteCourse, DeleteCourseCreator } from "./DeleteCourse";
 import { DeleteGradeFromCategory, DeleteGradeFromCategoryCreator } from "./DeleteGradeFromCategory";
 import { SetCourses, SetCoursesCreator } from "./SetCourses";
+import { UpdateCategory, UpdateCategoryCreator } from "./UpdateCategory";
+import { UpdateCourse, UpdateCourseCreator } from "./UpdateCourse";
 
 export { CourseDataActionTypes } from "./types";
 
@@ -18,6 +20,8 @@ export {
     DeleteCourse,
     DeleteGradeFromCategory,
     SetCourses,
+    UpdateCategory,
+    UpdateCourse,
 };
 
 export {
@@ -29,6 +33,8 @@ export {
     DeleteCourseCreator,
     DeleteGradeFromCategoryCreator,
     SetCoursesCreator,
+    UpdateCategoryCreator,
+    UpdateCourseCreator,
 };
 
 export type CourseDataActions =
@@ -39,4 +45,6 @@ export type CourseDataActions =
     DeleteCategory |
     DeleteCourse |
     DeleteGradeFromCategory |
-    SetCourses;
+    SetCourses |
+    UpdateCategory |
+    UpdateCourse;

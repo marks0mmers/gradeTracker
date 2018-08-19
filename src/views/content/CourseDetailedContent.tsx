@@ -1,12 +1,10 @@
 import { push } from "connected-react-router";
-import { List, Map } from "immutable";
+import { List } from "immutable";
 import * as React from "react";
 import styled from "styled-components";
 import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
 import {
-    CreateCategoryFormChangeCreator,
-    CreateCategoryFormClearCreator,
     SelectGradeCategoryCreator,
     SetActiveCourseCreator,
 } from "../../state/ducks/control/courses";
@@ -15,6 +13,7 @@ import {
     CreateCategoryCreator,
     DeleteCategoryCreator,
     DeleteGradeFromCategoryCreator,
+    UpdateCategoryCreator,
 } from "../../state/ducks/data/courses";
 import CategoryDetailedPane from "../components/category/CategoryDetailedPane";
 import CourseCategoryForm from "../components/category/CourseCategoryForm";
@@ -31,22 +30,21 @@ interface Props {
     detailedCourse: string;
     categoryColumns: List<DataGridColumnDefinition<GradeCategory>>;
     categoryElements: List<DataGridElement<GradeCategory>>;
-    formValues: Map<string, string>;
     selectedCategory?: string;
 
+    setActiveCourse: typeof SetActiveCourseCreator;
+    selectGradeCategory: typeof SelectGradeCategoryCreator;
     handleAddNewGrade: typeof AddGradeToCategoryCreator;
     handleDeleteCategory: typeof DeleteCategoryCreator;
     handleDeleteGrade: typeof DeleteGradeFromCategoryCreator;
-    handleFormChange: typeof CreateCategoryFormChangeCreator;
-    handleFormClear: typeof CreateCategoryFormClearCreator;
-    setActiveCourse: typeof SetActiveCourseCreator;
-    selectGradeCategory: typeof SelectGradeCategoryCreator;
-    handleFormSave: typeof CreateCategoryCreator;
+    handleNewCategory: typeof CreateCategoryCreator;
+    handleEditCategory: typeof UpdateCategoryCreator;
     push: typeof push;
 }
 
 interface State {
     isCreating: boolean;
+    isEditing: boolean;
 }
 
 class CourseDetailedContent extends React.Component<Props, State> {
@@ -57,11 +55,14 @@ class CourseDetailedContent extends React.Component<Props, State> {
         this.handleBodyCellClick = this.handleBodyCellClick.bind(this);
         this.handleRootClick = this.handleRootClick.bind(this);
         this.handleCreate = this.handleCreate.bind(this);
+        this.handleEdit = this.handleEdit.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.handleCancelCreate = this.handleCancelCreate.bind(this);
+        this.handleFormSave = this.handleFormSave.bind(this);
 
         this.state = {
             isCreating: false,
+            isEditing: false,
         };
     }
 
@@ -79,17 +80,29 @@ class CourseDetailedContent extends React.Component<Props, State> {
             detailedCourse,
             categoryElements,
             categoryColumns,
-            handleFormChange,
-            formValues,
-            handleFormSave,
             selectedCategory,
         } = this.props;
 
         const {
             isCreating,
+            isEditing,
         } = this.state;
 
         const course: Course | undefined = courses && courses.find((value: Course) => value.title === detailedCourse);
+
+        const Content = isCreating || isEditing
+            ? styled.div`
+                grid-area: content;
+                display: grid;
+                grid-template-columns: minmax(0, 1fr);
+                grid-template-rows: auto auto 21px minmax(0, 1fr);
+            `
+            : styled.div`
+                grid-area: content;
+                display: grid;
+                grid-template-columns: minmax(0, 1fr);
+                grid-template-rows: auto 21px minmax(0, 1fr);
+            `;
 
         return (
             <div id={`${course ? course.title : ""}-detailed`} className={className}>
@@ -97,23 +110,26 @@ class CourseDetailedContent extends React.Component<Props, State> {
                     className="click-route"
                     onClick={this.handleRootClick}
                 >
-                    Courses >
+                    {"< Back to Courses"}
                 </span>
-                <span className="route">{`> ${detailedCourse}`}</span>
                 <div className="buttons">
                     <span className="button-label">Grade Category Actions:</span>
                     <Button
+                        tooltip="Create New Category"
                         icon="add"
                         height={30}
                         width={50}
                         onClick={this.handleCreate}
                     />
                     <Button
+                        tooltip="Edit Selected Category"
                         icon="create"
                         height={30}
                         width={50}
+                        onClick={this.handleEdit}
                     />
                     <Button
+                        tooltip="Delete Selected Category"
                         icon="delete_sweep"
                         height={30}
                         width={50}
@@ -123,15 +139,23 @@ class CourseDetailedContent extends React.Component<Props, State> {
                 <Divider
                     gridArea="divider"
                 />
-                <div className="content">
+                <Content>
                     {
                         isCreating &&
                         <CourseCategoryForm
-                            formValues={formValues}
                             course={course}
-                            handleFormChange={handleFormChange}
                             handleCancelCreate={this.handleCancelCreate}
-                            handleFormSave={handleFormSave}
+                            handleFormSave={this.handleFormSave}
+                        />
+                    }
+                    {
+                        isEditing &&
+                        <CourseCategoryForm
+                            course={course}
+                            handleCancelCreate={this.handleCancelCreate}
+                            originalCategory={course && course.categories &&
+                                course.categories.find((value: GradeCategory) => value.title === selectedCategory)}
+                            handleFormSave={this.handleFormSave}
                         />
                     }
                     <DataGrid
@@ -156,9 +180,36 @@ class CourseDetailedContent extends React.Component<Props, State> {
                         />
                         </>
                     }
-                </div>
+                </Content>
             </div>
         );
+    }
+
+    private handleFormSave(courseToChange: Course, category: GradeCategory) {
+        const { isCreating, isEditing } = this.state;
+        if (isCreating) {
+            const handler = this.props.handleNewCategory;
+            if (handler) {
+                handler(courseToChange, category);
+            }
+        }
+        if (isEditing) {
+            const handler = this.props.handleEditCategory;
+            const { courses, detailedCourse, selectedCategory } = this.props;
+            const course: Course | undefined = courses &&
+                courses.find((value: Course) => value.title === detailedCourse);
+            const originalCategory = course && course.categories &&
+                course.categories.find((value: GradeCategory) => value.title === selectedCategory);
+            const updatedCategory = originalCategory && new GradeCategory({
+                grades: originalCategory.grades,
+                numberOfGrades: category.numberOfGrades,
+                percentage: category.percentage,
+                title: category.title,
+            });
+            if (handler) {
+                handler(course.title, originalCategory || new GradeCategory(), updatedCategory || category);
+            }
+        }
     }
 
     private handleBodyCellClick(
@@ -182,7 +233,18 @@ class CourseDetailedContent extends React.Component<Props, State> {
     private handleCreate() {
         this.setState({
             isCreating: true,
+            isEditing: false,
         });
+    }
+
+    private handleEdit() {
+        const { selectedCategory } = this.props;
+        if (selectedCategory) {
+            this.setState({
+                isCreating: false,
+                isEditing: true,
+            });
+        }
     }
 
     private handleDelete() {
@@ -197,8 +259,8 @@ class CourseDetailedContent extends React.Component<Props, State> {
     private handleCancelCreate() {
         this.setState({
             isCreating: false,
+            isEditing: false,
         });
-        this.props.handleFormClear();
     }
 
     private handleRootClick() {
@@ -213,12 +275,11 @@ class CourseDetailedContent extends React.Component<Props, State> {
 
 export default styled(CourseDetailedContent)`
     display: grid;
-    grid-template-rows: auto 1px 1fr;
+    grid-template-rows: auto 1px minmax(0, 1fr);
     grid-template-columns: auto auto 1fr;
-    grid-template-areas: "course title buttons"
+    grid-template-areas: "course buttons buttons"
                          "divider divider divider"
                          "content content content";
-    grid-row-gap: 5px;
     background: ${(props) => props.theme.white};
     padding: 0 10px;
 
@@ -233,22 +294,11 @@ export default styled(CourseDetailedContent)`
         }
     }
 
-    .route {
-        padding: 10px 0;
-        color: ${(props) => props.theme.primaryText};
-        grid-area: title;
-        font-size: 24px;
-    }
-
     .buttons {
-        margin: auto 0;
+        margin: 10px 0;
         display: flex;
         justify-content: flex-end;
         grid-area: buttons;
-    }
-
-    .content {
-        grid-area: content;
     }
 
     .button-label {

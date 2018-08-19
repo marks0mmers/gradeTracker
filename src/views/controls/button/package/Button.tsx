@@ -6,6 +6,7 @@ interface Props {
     className?: string;
     id?: string;
     text?: string;
+    tooltip?: string;
     icon?: string;
     width?: number;
     height?: number;
@@ -26,6 +27,7 @@ class Button extends React.Component<Props> {
             icon,
             onClick,
             id,
+            tooltip,
         } = this.props;
 
         return (
@@ -33,6 +35,7 @@ class Button extends React.Component<Props> {
                 id={id}
                 className={className}
                 onClick={onClick}
+                title={tooltip}
             >
                 {icon && <Icon iconName={icon} margin={5}/>}
                 {text}

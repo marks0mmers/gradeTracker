@@ -107,13 +107,13 @@ export default styled(connected)`
     height: 100vh;
     overflow: hidden;
     display: grid;
-    grid-template-columns: 60px 1fr;
-    grid-template-rows: 60px 1fr;
+    grid-template-columns: 60px calc(100vw - 60px);
+    grid-template-rows: 60px calc(100vh - 60px);
     grid-template-areas: "header header"
                          "navbar content";
     @media screen and (max-width: 600px) {
-        grid-template-columns: 1fr;
-        grid-template-rows: 60px 60px 1fr;
+        grid-template-columns: 100vh;
+        grid-template-rows: 60px 60px calc(100vh - 120px);
         grid-template-areas: "header"
                              "navbar"
                              "content";
