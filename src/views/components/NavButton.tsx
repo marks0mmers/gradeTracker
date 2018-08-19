@@ -5,7 +5,7 @@ import Icon from "./Icon";
 interface Props {
     id?: string;
     className?: string;
-    iconName?: string;
+    iconName: string;
     activeButton?: string;
 
     onClick?: (id: string) => void;

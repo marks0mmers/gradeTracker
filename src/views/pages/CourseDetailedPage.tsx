@@ -27,23 +27,23 @@ import { DataGridColumnDefinition } from "../controls/data-grid";
 import { DataGridElement } from "../controls/data-grid";
 
 interface PropsFromState {
-    categoryColumns: List<DataGridColumnDefinition<GradeCategory>>;
-    categoryElements: List<DataGridElement<GradeCategory>>;
-    courses: List<Course>;
-    detailedCourse: string;
-    formValues: Map<string, string>;
+    categoryColumns?: List<DataGridColumnDefinition<GradeCategory>>;
+    categoryElements?: List<DataGridElement<GradeCategory>>;
+    courses?: List<Course>;
+    detailedCourse?: string;
+    formValues?: Map<string, string>;
     selectedCategory?: string;
 }
 
 interface PropsFromDispatch {
-    setActiveCourse: typeof SetActiveCourseCreator;
-    selectGradeCategory: typeof SelectGradeCategoryCreator;
-    handleAddNewGrade: typeof AddGradeToCategoryCreator;
-    handleDeleteCategory: typeof DeleteCategoryCreator;
-    handleDeleteGrade: typeof DeleteGradeFromCategoryCreator;
-    handleNewCategory: typeof CreateCategoryCreator;
-    handleEditCategory: typeof UpdateCategoryCreator;
-    push: typeof push;
+    setActiveCourse?: typeof SetActiveCourseCreator;
+    selectGradeCategory?: typeof SelectGradeCategoryCreator;
+    handleAddNewGrade?: typeof AddGradeToCategoryCreator;
+    handleDeleteCategory?: typeof DeleteCategoryCreator;
+    handleDeleteGrade?: typeof DeleteGradeFromCategoryCreator;
+    handleNewCategory?: typeof CreateCategoryCreator;
+    handleEditCategory?: typeof UpdateCategoryCreator;
+    push?: typeof push;
 }
 
 type Props = PropsFromDispatch & PropsFromState;

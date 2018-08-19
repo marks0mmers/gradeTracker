@@ -23,17 +23,17 @@ import { RootState } from "../../state/rootReducer";
 import HomeContent from "../content/HomeContent";
 
 interface PropsFromState {
-    courses: List<Course>;
+    courses?: List<Course>;
     detailedCourse?: string;
-    selectedGradeCategory: GradeCategory;
+    selectedGradeCategory?: GradeCategory;
 }
 
 interface PropsFromDispatch {
-    handleCreateCourse: typeof CreateCourseCreator;
-    handleUpdateCourse: typeof UpdateCourseCreator;
-    handleDeleteCourse: typeof DeleteCourseCreator;
-    handleSetActiveCourse: typeof SetActiveCourseCreator;
-    push: typeof push;
+    handleCreateCourse?: typeof CreateCourseCreator;
+    handleUpdateCourse?: typeof UpdateCourseCreator;
+    handleDeleteCourse?: typeof DeleteCourseCreator;
+    handleSetActiveCourse?: typeof SetActiveCourseCreator;
+    push?: typeof push;
 }
 
 type Props = PropsFromDispatch & PropsFromState;

@@ -48,7 +48,7 @@ class QuickActions extends React.Component<Props, State> {
             >
                 <Icon
                     size={40}
-                    iconName={icon}
+                    iconName={icon || ""}
                     margin={10}
                 />
                 {

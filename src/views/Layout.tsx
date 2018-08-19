@@ -28,9 +28,9 @@ interface PropsFromState {
 }
 
 interface PropsFromDispatch {
-    setActiveTheme: typeof SetActiveThemeCreator;
-    setCourses: typeof SetCoursesCreator;
-    clearCourses: typeof ClearCoursesCreator;
+    setActiveTheme?: typeof SetActiveThemeCreator;
+    setCourses?: typeof SetCoursesCreator;
+    clearCourses?: typeof ClearCoursesCreator;
 }
 
 type Props = PropsFromDispatch & PropsFromState & PassedProps;

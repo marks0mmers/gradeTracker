@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 interface Props {
     className?: string;
-    iconName?: string;
+    iconName: string;
     size?: number;
     margin?: number;
 }

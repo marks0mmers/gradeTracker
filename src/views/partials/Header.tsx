@@ -42,9 +42,9 @@ interface Props {
     themes?: Map<string, Theme>;
     courses?: Map<string, Course>;
 
-    setActiveTheme: typeof SetActiveThemeCreator;
-    setCourses: typeof SetCoursesCreator;
-    clearCourses: typeof ClearCoursesCreator;
+    setActiveTheme?: typeof SetActiveThemeCreator;
+    setCourses?: typeof SetCoursesCreator;
+    clearCourses?: typeof ClearCoursesCreator;
 }
 
 interface State {

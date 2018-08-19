@@ -26,20 +26,20 @@ import DataGrid from "../controls/data-grid";
 
 interface Props {
     className?: string;
-    courses: List<Course>;
-    detailedCourse: string;
-    categoryColumns: List<DataGridColumnDefinition<GradeCategory>>;
-    categoryElements: List<DataGridElement<GradeCategory>>;
+    courses?: List<Course>;
+    detailedCourse?: string;
+    categoryColumns?: List<DataGridColumnDefinition<GradeCategory>>;
+    categoryElements?: List<DataGridElement<GradeCategory>>;
     selectedCategory?: string;
 
-    setActiveCourse: typeof SetActiveCourseCreator;
-    selectGradeCategory: typeof SelectGradeCategoryCreator;
-    handleAddNewGrade: typeof AddGradeToCategoryCreator;
-    handleDeleteCategory: typeof DeleteCategoryCreator;
-    handleDeleteGrade: typeof DeleteGradeFromCategoryCreator;
-    handleNewCategory: typeof CreateCategoryCreator;
-    handleEditCategory: typeof UpdateCategoryCreator;
-    push: typeof push;
+    setActiveCourse?: typeof SetActiveCourseCreator;
+    selectGradeCategory?: typeof SelectGradeCategoryCreator;
+    handleAddNewGrade?: typeof AddGradeToCategoryCreator;
+    handleDeleteCategory?: typeof DeleteCategoryCreator;
+    handleDeleteGrade?: typeof DeleteGradeFromCategoryCreator;
+    handleNewCategory?: typeof CreateCategoryCreator;
+    handleEditCategory?: typeof UpdateCategoryCreator;
+    push?: typeof push;
 }
 
 interface State {
@@ -206,7 +206,7 @@ class CourseDetailedContent extends React.Component<Props, State> {
                 percentage: category.percentage,
                 title: category.title,
             });
-            if (handler) {
+            if (handler && course) {
                 handler(course.title, originalCategory || new GradeCategory(), updatedCategory || category);
             }
         }
@@ -268,7 +268,9 @@ class CourseDetailedContent extends React.Component<Props, State> {
         if (handler) {
             handler(undefined);
         }
-        this.props.push("/");
+        if (this.props.push) {
+            this.props.push("/");
+        }
     }
 
 }

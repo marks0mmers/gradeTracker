@@ -18,13 +18,13 @@ interface Props {
     className?: string;
     courses?: List<Course>;
     detailedCourse?: string;
-    selectedGradeCategory: GradeCategory;
+    selectedGradeCategory?: GradeCategory;
 
-    handleCreateCourse: typeof CreateCourseCreator;
-    handleUpdateCourse: typeof UpdateCourseCreator;
-    handleDeleteCourse: typeof DeleteCourseCreator;
-    handleSetActiveCourse: typeof SetActiveCourseCreator;
-    push: typeof push;
+    handleCreateCourse?: typeof CreateCourseCreator;
+    handleUpdateCourse?: typeof UpdateCourseCreator;
+    handleDeleteCourse?: typeof DeleteCourseCreator;
+    handleSetActiveCourse?: typeof SetActiveCourseCreator;
+    push?: typeof push;
 }
 
 interface State {
@@ -164,7 +164,10 @@ class HomePage extends React.Component<Props, State> {
     }
 
     private handleViewCourseDetailed() {
-        this.props.push(`/${this.props.detailedCourse}`);
+        const handler = this.props.push;
+        if (handler) {
+            handler(`/${this.props.detailedCourse}`);
+        }
     }
 
     private handleNewCourseClick() {
