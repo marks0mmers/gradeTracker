@@ -47,5 +47,4 @@ export default styled(BodyCell)`
     flex: 1;
     width: ${(props) => props.width}px;
     height: ${(props) => props.height}px;
-    color: ${(props) => props.theme.primaryText};
 `;

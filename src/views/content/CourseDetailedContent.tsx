@@ -136,9 +136,9 @@ class CourseDetailedContent extends React.Component<Props, State> {
                         onClick={this.handleDelete}
                     />
                 </div>
-                <Divider
+                {/* <Divider
                     gridArea="divider"
-                />
+                /> */}
                 <Content>
                     {
                         isCreating &&
@@ -277,10 +277,9 @@ class CourseDetailedContent extends React.Component<Props, State> {
 
 export default styled(CourseDetailedContent)`
     display: grid;
-    grid-template-rows: auto 1px minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
     grid-template-columns: auto auto 1fr;
     grid-template-areas: "course buttons buttons"
-                         "divider divider divider"
                          "content content content";
     background: ${(props) => props.theme.white};
     padding: 0 10px;
@@ -292,7 +291,7 @@ export default styled(CourseDetailedContent)`
         font-size: 24px;
         cursor: pointer;
         &:hover {
-            color: ${(props) => props.theme.secondary}
+            color: ${(props) => props.theme.primaryTextHover}
         }
     }
 

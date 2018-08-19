@@ -3,12 +3,14 @@ export interface Theme {
     black: string;
     white: string;
     hover: string;
+    error: string;
 
     // header
     primary: string;
     primaryText: string;
     primaryHover: string;
     primaryActive: string;
+    primaryTextHover: string;
 
     // nav bar
     secondary: string;

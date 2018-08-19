@@ -156,6 +156,6 @@ export default styled(CourseCategoryForm)`
     }
 
     .error {
-        color: red;
+        color: ${(props) => props.theme.error};
     }
 `;

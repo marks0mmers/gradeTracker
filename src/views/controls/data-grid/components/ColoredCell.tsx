@@ -27,8 +27,11 @@ class ColoredCell extends React.Component<Props> {
 
 export default styled(ColoredCell)`
     width: 100%;
-    height: 100%;
+    line-height: 30px;
     text-align: center;
+    color: ${(props) => props.grade && props.grade >= 80 && props.grade < 90
+        ? props.theme.quinaryText
+        : props.theme.primaryText}
     background: ${(props) => {
         const grade = props.grade || 0;
         switch (true) {

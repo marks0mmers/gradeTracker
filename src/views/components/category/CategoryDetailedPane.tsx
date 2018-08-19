@@ -292,6 +292,6 @@ export default styled(CategoryDetailedPane)`
     }
 
     .error {
-        color: red;
+        color: ${(props) => props.theme.error};
     }
 `;

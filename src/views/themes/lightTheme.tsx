@@ -2,6 +2,7 @@ import { Theme } from "../../models/Theme";
 
 export const lightTheme: Theme = {
     black: "#000000",
+    error: "b00020",
     hover: "#eeeeee",
     white: "#ffffff",
 
@@ -9,6 +10,7 @@ export const lightTheme: Theme = {
     primaryActive: "",
     primaryHover: "",
     primaryText: "#000000",
+    primaryTextHover: "#222",
 
     secondary: "#5f6366",
     secondaryActive: "#4c4f52",

@@ -4,7 +4,6 @@ import { CourseControlReducer, CourseControlState } from "./ducks/control/course
 import {  CourseDataReducer, CourseDataState } from "./ducks/data/courses";
 import { SessionReducer, SessionState } from "./ducks/session/reducers";
 
-// tslint:disable-next-line:interface-name
 export interface RootState {
     router: RouterState;
     control: {

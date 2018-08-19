@@ -198,9 +198,10 @@ export default styled(HomePage)`
     overflow-y: scroll;
 
     .route {
-        padding: 10px
+        padding: 10px;
         margin-left: 10px;
         color: ${(props) => props.theme.primaryText};
+        cursor: default;
     }
 
     .content {

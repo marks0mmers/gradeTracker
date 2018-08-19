@@ -6,8 +6,8 @@ type Lambda<T> = (value: T) => number | string | boolean | undefined;
 
 const StyledSpan = styled.span`
     width: 100%;
-    height: 100%;
     text-align: center;
+    line-height: 30px;
 `;
 
 export const defaultFormatter = <T extends {}>(lambda: Lambda<T>) => (payload: T) => {

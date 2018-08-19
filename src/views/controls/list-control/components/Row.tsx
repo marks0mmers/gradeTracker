@@ -177,6 +177,7 @@ export default styled(Row)`
             ? props.theme.white
             : props.theme.quinary
         : props.theme.white};
+    color: ${(props) => props.isSelected ? props.theme.primaryText : props.theme.primaryText};
     padding: 5px 0;
     border-bottom: solid #898989 1px;
 
@@ -192,12 +193,10 @@ export default styled(Row)`
     .primary {
         grid-area: primary;
         font-size: 20px;
-        color: ${(props) => props.theme.primaryText};
     }
 
     .secondary {
         grid-area: secondary;
-        color: ${(props) => props.theme.primaryText};
         opacity: 60%;
     }
 

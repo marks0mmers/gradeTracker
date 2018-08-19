@@ -223,7 +223,9 @@ class CourseOverviewButton extends React.Component<Props, State> {
 }
 
 export default styled(CourseOverviewButton)`
-    background: ${(props) => props.mode === CourseOverviewMode.DISPLAY ? props.theme.tertiary : props.theme.quinary}
+    background: ${(props) => props.mode === CourseOverviewMode.DISPLAY
+        ? props.theme.tertiary
+        : props.theme.tertiaryActive};
     min-height: 135px;
     border: none;
     display: grid;
@@ -234,10 +236,12 @@ export default styled(CourseOverviewButton)`
     border: solid ${
         (props) => props.mode === CourseOverviewMode.DISPLAY
             ? props.theme.tertiary
-            : props.theme.quinary
+            : props.theme.tertiaryActive
     } 2px;
     :hover {
-        border: solid ${(props) => props.theme.tertiaryHover} 2px;
+        border: solid ${(props) => props.mode === CourseOverviewMode.DISPLAY
+            ? props.theme.tertiaryHover
+            : props.theme.tertiaryActive} 2px;
         cursor: pointer;
     }
 

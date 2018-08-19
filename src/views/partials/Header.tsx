@@ -31,7 +31,7 @@ const FileSelector = styled.span`
     line-height: 60px;
     padding: 0 10px;
     :hover {
-        background: ${(props) => props.theme.hover}
+        background: ${(props) => props.theme.primaryHover}
     }
 `;
 
