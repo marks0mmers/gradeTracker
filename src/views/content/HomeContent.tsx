@@ -69,12 +69,13 @@ class HomePage extends React.Component<Props, State> {
                 >
                     Courses
                 </h2>
-                <ButtonWrapper>
+                <ButtonWrapper id="button-wrapper">
                     {
                         !isCreating &&
                         <>
                         <span className="button-label">Create New Course:</span>
                         <Button
+                            id="create-new-course"
                             tooltip="Create New Course"
                             icon="add"
                             height={30}

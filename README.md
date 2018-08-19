@@ -45,5 +45,3 @@ This will build the project, and then drop it into an installable electron conta
 ## Authors
 
 * **Mark Sommers** - *Main Author*
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
