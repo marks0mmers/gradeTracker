@@ -14,7 +14,7 @@ export const GradeCategoryRecord = Record({
 export class GradeCategory extends GradeCategoryRecord {
     public title: string;
     public percentage: number;
-    public numberOfGrades: number;
+    public numberOfGrades: number | string;
     public remainingGrades: number;
     public currentAverage: number;
     public guarenteedAverage: number;

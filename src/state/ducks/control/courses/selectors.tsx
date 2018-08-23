@@ -20,6 +20,9 @@ export const getDetailedCourseElements = createSelector(
         let elements: List<DataGridElement<GradeCategory>> = List();
         const course = courses.find((value: Course) => value.title === activeCourse);
         (course && course.categories) ? course.categories.forEach((category: GradeCategory) => {
+            const numberOfGradesOrSize = typeof category.numberOfGrades === "number"
+                ? category.numberOfGrades
+                : category.grades.size;
             const calculatedCategory = new GradeCategory({
                 currentAverage: !isNaN(category.grades.reduce(
                     (total: number, value: number) => total + value, 0,
@@ -31,10 +34,10 @@ export const getDetailedCourseElements = createSelector(
 
                 guarenteedAverage: !isNaN(category.grades.reduce(
                     (total: number, value: number) => total + value, 0,
-                ) / category.numberOfGrades)
+                ) / numberOfGradesOrSize)
                 ? category.grades.reduce(
                     (total: number, value: number) => total + value, 0,
-                ) / category.numberOfGrades
+                ) / numberOfGradesOrSize
                 : 0,
 
                 numberOfGrades: category.numberOfGrades,
@@ -43,13 +46,13 @@ export const getDetailedCourseElements = createSelector(
 
                 potentialAverage: !isNaN((category.grades.reduce(
                     (total: number, value: number) => total + value, 0,
-                ) + ((category.numberOfGrades - category.grades.size) * 100)) / category.numberOfGrades)
+                ) + ((numberOfGradesOrSize - category.grades.size) * 100)) / numberOfGradesOrSize)
                 ? (category.grades.reduce(
                     (total: number, value: number) => total + value, 0,
-                ) + ((category.numberOfGrades - category.grades.size) * 100)) / category.numberOfGrades
+                ) + ((numberOfGradesOrSize - category.grades.size) * 100)) / numberOfGradesOrSize
                 : 0,
 
-                remainingGrades: category.numberOfGrades - category.grades.size,
+                remainingGrades: numberOfGradesOrSize - category.grades.size,
 
                 title: category.title,
             });
@@ -72,7 +75,9 @@ export const getDetailedCourseElements = createSelector(
             percentage += value.payload.percentage;
             currentAverage += value.payload.currentAverage;
             guarenteedAverage += value.payload.guarenteedAverage;
-            numberOfGrades += value.payload.numberOfGrades;
+            numberOfGrades += typeof value.payload.numberOfGrades === "number"
+                ? value.payload.numberOfGrades
+                : value.payload.grades.size;
             potentialAverage += value.payload.potentialAverage;
             remainingGrades += value.payload.remainingGrades;
         });

@@ -69,15 +69,17 @@ class CategoryDetailedPane extends React.Component<Props, State> {
             };
             return element;
         }).toList();
-
+        const numberOfGradesOrSize = category && typeof category.numberOfGrades === "number"
+            ? category.numberOfGrades
+            : category ? category.grades.size : 0;
         return (
             <div className={className}>
                 {this.buildDisplayLabel("Category Name:", category ? category.title : "", "title")}
                 {this.buildDisplayLabel("Percentage:", category ? `${category.percentage} %` : "", "percentage")}
-                {this.buildDisplayLabel("Number of Grades:", category ? category.numberOfGrades : "", "numberGrades")}
+                {this.buildDisplayLabel("Number of Grades:", category ? category.grades.size : "", "numberGrades")}
                 {this.buildDisplayLabel(
                     "Remaining Grades:", category
-                        ? category.numberOfGrades - category.grades.size
+                        ? numberOfGradesOrSize - category.grades.size
                         : "",
                     "gradesRemaining",
                 )}
@@ -92,15 +94,15 @@ class CategoryDetailedPane extends React.Component<Props, State> {
                     "Guarenteed Average:", category ? `${
                         (category.grades.reduce(
                             (total: number, value: number) => total + value, 0,
-                        ) / category.numberOfGrades).toPrecision(4)
+                        ) / numberOfGradesOrSize).toPrecision(4)
                     } %` : "", "guarenteedAverage",
                 )}
                 {this.buildDisplayLabel(
                     "Potential Average:", category ? `${
                         ((category.grades.reduce(
                             (total: number, value: number) => total + value, 0,
-                        ) + ((category.numberOfGrades - category.grades.size) * 100))
-                        / category.numberOfGrades).toPrecision(4)
+                        ) + ((numberOfGradesOrSize - category.grades.size) * 100))
+                        / numberOfGradesOrSize).toPrecision(4)
                     } %` : "", "potentialAverage",
                 )}
                 <div className="grades">
@@ -160,7 +162,12 @@ class CategoryDetailedPane extends React.Component<Props, State> {
         const { course, selectedCategory } = this.props;
         const category = course && course.categories &&
             course.categories.find((value: GradeCategory) => value.title === selectedCategory);
-        if (category && category.numberOfGrades >= category.grades.size + 1) {
+        if (category && category.numberOfGrades !== "?" && category.numberOfGrades >= category.grades.size + 1) {
+            this.setState({
+                invalidGrade: false,
+                isAddingGrade: true,
+            });
+        } else {
             this.setState({
                 invalidGrade: false,
                 isAddingGrade: true,

@@ -110,10 +110,16 @@ class CourseCategoryForm extends React.Component<Props, State> {
         const { course, originalCategory } = this.props;
         const { formValues } = this.state;
         if (formValues) {
-            const numberOfGrades = !isNaN(+formValues.get("numberOfGrades")) && +formValues.get("numberOfGrades");
+            const numberOfGrades: number | string | undefined = !isNaN(+formValues.get("numberOfGrades"))
+                ? +formValues.get("numberOfGrades")
+                : formValues.get("numberOfGrades") === "?"
+                    ? "?"
+                    : undefined;
             const percentage = !isNaN(+formValues.get("percentage")) && +formValues.get("percentage");
             const title: string | undefined = formValues.get("name", undefined);
-            const isNumGradesValid = originalCategory ? numberOfGrades >= originalCategory.grades.size : true;
+            const isNumGradesValid = originalCategory && typeof numberOfGrades === "number"
+                ? (numberOfGrades || 0) >= originalCategory.grades.size
+                : true;
             if (numberOfGrades && percentage && title && isNumGradesValid) {
                 this.setState({
                     isInvalidInput: false,
