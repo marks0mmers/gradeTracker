@@ -1,5 +1,5 @@
 import { push } from "connected-react-router";
-import { List } from "immutable";
+import { List, Map } from "immutable";
 import * as React from "react";
 import styled from "styled-components";
 import { Course } from "../../models/Course";
@@ -200,8 +200,8 @@ class CourseDetailedContent extends React.Component<Props, State> {
                 courses.find((value: Course) => value.title === detailedCourse);
             const originalCategory = course && course.categories &&
                 course.categories.find((value: GradeCategory) => value.title === selectedCategory);
-            const updatedCategory = originalCategory && new GradeCategory({
-                grades: originalCategory.grades,
+            const updatedCategory = new GradeCategory({
+                grades: originalCategory ? originalCategory.grades : Map(),
                 numberOfGrades: category.numberOfGrades,
                 percentage: category.percentage,
                 title: category.title,

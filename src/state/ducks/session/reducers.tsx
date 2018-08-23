@@ -7,6 +7,8 @@ import { SessionActionTypes as types } from "./actions";
 
 const SessionStateRecord = Record({
     activeTheme: darkTheme,
+    fileName: "",
+    filePath: "",
     themes: Map({
         Dark: darkTheme,
         Light: lightTheme,
@@ -16,6 +18,8 @@ const SessionStateRecord = Record({
 export class SessionState extends SessionStateRecord {
     public activeTheme: Theme;
     public themes: Map<string, Theme>;
+    public filePath: string;
+    public fileName: string;
 }
 
 export const SessionReducer = (
@@ -25,6 +29,10 @@ export const SessionReducer = (
     switch (action.type) {
         case (types.SET_ACTIVE_THEME):
             return state.set("activeTheme", action.theme);
+        case (types.SET_ACTIVE_FILE):
+            return state
+                .set("filePath", action.path)
+                .set("fileName", action.fileName);
         default:
             return state;
     }

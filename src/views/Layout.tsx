@@ -8,8 +8,13 @@ import { Course } from "../models/Course";
 import { Theme } from "../models/Theme";
 import { getActiveCourse } from "../state/ducks/control/courses";
 import { ClearCoursesCreator, getCourses, SetCoursesCreator } from "../state/ducks/data/courses";
-import { SetActiveThemeCreator } from "../state/ducks/session/actions";
-import { getThemes } from "../state/ducks/session/selectors";
+import {
+    getFileName,
+    getFilePath,
+    getThemes,
+    SetActiveFileCreator,
+    SetActiveThemeCreator,
+} from "../state/ducks/session";
 import { RootState } from "../state/rootReducer";
 import CourseDetailedPage from "./pages/CourseDetailedPage";
 import HomePage from "./pages/HomePage";
@@ -25,9 +30,12 @@ interface PropsFromState {
     detailedCourse?: string;
     location?: string;
     courses?: Map<string, Course>;
+    fileName?: string;
+    filePath?: string;
 }
 
 interface PropsFromDispatch {
+    setActiveFile?: typeof SetActiveFileCreator;
     setActiveTheme?: typeof SetActiveThemeCreator;
     setCourses?: typeof SetCoursesCreator;
     clearCourses?: typeof ClearCoursesCreator;
@@ -44,11 +52,14 @@ class Layout extends React.Component<Props> {
         const {
             className,
             themes,
+            setActiveFile,
             setActiveTheme,
             detailedCourse,
             courses,
             setCourses,
             clearCourses,
+            fileName,
+            filePath,
         } = this.props;
 
         return (
@@ -58,9 +69,12 @@ class Layout extends React.Component<Props> {
                     title="Gradebook"
                     themes={themes}
                     setActiveTheme={setActiveTheme}
+                    setActiveFile={setActiveFile}
                     courses={courses}
                     setCourses={setCourses}
                     clearCourses={clearCourses}
+                    fileName={fileName}
+                    filePath={filePath}
                 />
                 <NavBar />
                 <Switch>
@@ -87,6 +101,8 @@ const mapStateToProps = (state: RootState) => {
     return ({
         courses: getCourses(state),
         detailedCourse: getActiveCourse(state),
+        fileName: getFileName(state),
+        filePath: getFilePath(state),
         location: state.router.location.pathname,
         themes: getThemes(state),
     });
@@ -95,6 +111,7 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
     return bindActionCreators({
         clearCourses: ClearCoursesCreator,
+        setActiveFile: SetActiveFileCreator,
         setActiveTheme: SetActiveThemeCreator,
         setCourses: SetCoursesCreator,
     }, dispatch);

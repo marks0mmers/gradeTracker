@@ -3,7 +3,7 @@
   "productName": "Grade Tracker",
   "author": "Mark Sommers",
   "description": "App used to track grade progress for the college semester",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "private": true,
   "dependencies": {
     "@storybook/addon-info": "3.4.8",

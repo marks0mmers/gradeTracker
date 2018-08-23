@@ -10,7 +10,7 @@ export const encryptByDES = (message: string) => {
 };
 
 export const decryptByDES = (encoded: string) => {
-    const encodedArray: number[] = JSON.parse(encoded.substring(1));
+    const encodedArray: number[] = JSON.parse(encoded);
     const charCodeArray: number[] = [];
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < encodedArray.length; i++) {

@@ -1,4 +1,4 @@
-import { Map } from "immutable";
+import { List, Map } from "immutable";
 import * as React from "react";
 import styled from "styled-components";
 import { CourseOverviewMode } from "../../../constants/CourseOverviewMode";
@@ -183,7 +183,7 @@ class CourseOverviewButton extends React.Component<Props, State> {
         const { formValues } = this.state;
         const handler = this.props.onFormSubmit;
         const course = new Course({
-            categories: originalCourse && originalCourse.categories,
+            categories: originalCourse ? originalCourse.categories : List(),
             creditHours: formValues && formValues.get("hours"),
             description: formValues && formValues.get("description"),
             section: formValues && formValues.get("section"),

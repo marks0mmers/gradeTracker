@@ -61,7 +61,7 @@ class NavBar extends React.Component<Props, State> {
 }
 
 export default styled(NavBar)`
-    background: ${(props) => props.theme.secondary}
+    background: ${(props) => props.theme.secondary};
     grid-area: navbar;
     display: grid;
     grid-template-rows: 60px 60px;

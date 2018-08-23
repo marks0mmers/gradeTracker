@@ -8,7 +8,7 @@ import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
 import { Theme } from "../../models/Theme";
 import { ClearCoursesCreator, SetCoursesCreator } from "../../state/ducks/data/courses";
-import { SetActiveThemeCreator } from "../../state/ducks/session/actions";
+import { SetActiveFileCreator, SetActiveThemeCreator } from "../../state/ducks/session";
 import { decryptByDES } from "../../util/Encryption";
 import Icon from "../components/Icon";
 import QuickActions from "./QuickActions";
@@ -41,7 +41,10 @@ interface Props {
     title?: string;
     themes?: Map<string, Theme>;
     courses?: Map<string, Course>;
+    fileName?: string;
+    filePath?: string;
 
+    setActiveFile?: typeof SetActiveFileCreator;
     setActiveTheme?: typeof SetActiveThemeCreator;
     setCourses?: typeof SetCoursesCreator;
     clearCourses?: typeof ClearCoursesCreator;
@@ -73,15 +76,13 @@ class Header extends React.Component<Props, State> {
             title,
             themes,
             courses,
+            fileName,
+            filePath,
+            setActiveFile,
         } = this.props;
 
         const {
-            file,
         } = this.state;
-
-        const endFileArray = file && file.split("/");
-        let selectedFile = endFileArray && endFileArray[endFileArray.length - 1];
-        selectedFile = selectedFile && selectedFile.split(".")[0];
         return (
             <div id="header" className={className}>
                 {
@@ -90,13 +91,16 @@ class Header extends React.Component<Props, State> {
                         icon={icon}
                         courses={courses}
                         clearCourses={this.handleClearCourses}
+                        fileName={fileName}
+                        filePath={filePath}
+                        setFile={setActiveFile}
                     />
                 }
                 {title && <span className="title">{title}</span>}
                 <FileSelector
                     onClick={this.handleShowDialog}
                 >
-                    <span>{selectedFile ? selectedFile : "Open File"}</span>
+                    <span>{fileName ? fileName.split(".")[0] : "Open File"}</span>
                     <Icon
                         iconName="folder"
                         margin={5}
@@ -119,9 +123,11 @@ class Header extends React.Component<Props, State> {
     }
 
     private handleShowDialog() {
+        const { filePath } = this.props;
         const { dialog } = electron.remote;
         dialog.showOpenDialog(
             {
+                defaultPath: filePath ? filePath : undefined,
                 properties: [
                     "openFile",
                     "createDirectory",
@@ -155,6 +161,12 @@ class Header extends React.Component<Props, State> {
 
     private handleFileOpened(files?: string[]) {
         const file = files && files[0];
+        const fileName = file && file.split("/")[file.split("/").length - 1];
+        const filePath = file && fileName && file.replace(fileName, "");
+        const { setActiveFile } = this.props;
+        if (setActiveFile) {
+            setActiveFile(fileName || "", filePath || "");
+        }
         this.setState({
             file,
         });
