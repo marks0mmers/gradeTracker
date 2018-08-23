@@ -4,9 +4,9 @@ import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import "react-select/dist/react-select.css";
 import "./index.css";
-import registerServiceWorker from "./registerServiceWorker";
 import history from "./state/history";
 import { store } from "./state/store";
+import registerServiceWorker from "./util/registerServiceWorker";
 import ConnectedThemeProvider from "./views/containers/ConnectedThemeProvider";
 import Layout from "./views/Layout";
 
