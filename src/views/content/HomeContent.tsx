@@ -1,5 +1,5 @@
 import { push } from "connected-react-router";
-import { List } from "immutable";
+import { Map } from "immutable";
 import * as React from "react";
 import styled from "styled-components";
 import { CourseOverviewMode } from "../../constants/CourseOverviewMode";
@@ -16,7 +16,7 @@ import { ButtonWrapper } from "../wrappers/ButtonWrapper";
 
 interface Props {
     className?: string;
-    courses?: List<Course>;
+    courses?: Map<string, Course>;
     detailedCourse?: string;
     selectedGradeCategory?: GradeCategory;
 
@@ -105,7 +105,7 @@ class HomePage extends React.Component<Props, State> {
                         />
                     }
                     {
-                        courses && courses.reverse().map((course: Course, key: number) => {
+                        courses && courses.reverse().map((course: Course, key: string) => {
                             return isEditing && detailedCourse === course.title
                             ? null
                             : (
@@ -131,7 +131,8 @@ class HomePage extends React.Component<Props, State> {
 
     private handleCourseHover(title: string) {
         const handler = this.props.handleSetActiveCourse;
-        if (handler) {
+        const { isCreating, isEditing } = this.state;
+        if (handler && !isCreating && !isEditing) {
             handler(title);
         }
     }
@@ -147,7 +148,7 @@ class HomePage extends React.Component<Props, State> {
         }
     }
 
-    private handleCourseSave(course: Course) {
+    private handleCourseSave(course: Course, originalCourse?: Course) {
         const { isCreating, isEditing } = this.state;
         if (isCreating) {
             const handler = this.props.handleCreateCourse;
@@ -159,7 +160,7 @@ class HomePage extends React.Component<Props, State> {
             const { detailedCourse } = this.props;
             const handler = this.props.handleUpdateCourse;
             if (handler && detailedCourse) {
-                handler(detailedCourse, course);
+                handler(originalCourse ? originalCourse.title : course.title, course);
             }
         }
     }

@@ -1,4 +1,4 @@
-import { List } from "immutable";
+import { List, Map } from "immutable";
 import { createSelector } from "reselect";
 import { Course } from "../../../../models/Course";
 import { GradeCategory } from "../../../../models/GradeCategory";
@@ -13,12 +13,12 @@ export const getSelectedGradeCategory = (state: RootState) => state.control.cour
 export const getDetailedCourseElements = createSelector(
     [getCourses, getActiveCourse, getSelectedGradeCategory],
     (
-        courses: List<Course>,
+        courses: Map<string, Course>,
         activeCourse: string,
         selectedGradeCategory: string,
     ) => {
         let elements: List<DataGridElement<GradeCategory>> = List();
-        const course = courses.find((value: Course) => value.title === activeCourse);
+        const course = courses.get(activeCourse);
         (course && course.categories) ? course.categories.forEach((category: GradeCategory) => {
             const numberOfGradesOrSize = typeof category.numberOfGrades === "number"
                 ? category.numberOfGrades
@@ -71,9 +71,13 @@ export const getDetailedCourseElements = createSelector(
         let numberOfGrades = 0;
         let potentialAverage = 0;
         let remainingGrades = 0;
+        let numberOfNonZeroAverages = 0;
         elements.forEach((value: DataGridElement<GradeCategory>) => {
             percentage += value.payload.percentage;
             currentAverage += value.payload.currentAverage;
+            if (value.payload.currentAverage !== 0) {
+                numberOfNonZeroAverages++;
+            }
             guarenteedAverage += value.payload.guarenteedAverage;
             numberOfGrades += typeof value.payload.numberOfGrades === "number"
                 ? value.payload.numberOfGrades
@@ -81,7 +85,8 @@ export const getDetailedCourseElements = createSelector(
             potentialAverage += value.payload.potentialAverage;
             remainingGrades += value.payload.remainingGrades;
         });
-        currentAverage /= elements.size;
+
+        currentAverage /= (numberOfNonZeroAverages || 1);
         guarenteedAverage /= elements.size;
         potentialAverage /= elements.size;
         elements = elements.push(

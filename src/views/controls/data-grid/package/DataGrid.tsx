@@ -13,6 +13,7 @@ interface Props<T> {
     rowHeight?: number;
     columnDefinitions?: List<DataGridColumnDefinition<T>>;
     elements?: List<DataGridElement<T>>;
+    gridArea?: string;
     onBodyCellClick?: (event: React.MouseEvent<HTMLDivElement>, payload: T, props: BodyCellProps) => void;
 }
 
@@ -80,6 +81,7 @@ class DataGrid<T> extends React.Component<Props<T>> {
 }
 
 export default styled(DataGrid)`
+    grid-area: ${(props) => props.gridArea ? props.gridArea : ""};
     display: flex;
     flex-direction: column;
 

@@ -1,4 +1,4 @@
-import { List, Map } from "immutable";
+import { Map } from "immutable";
 import * as React from "react";
 import styled from "styled-components";
 import { CourseOverviewMode } from "../../../constants/CourseOverviewMode";
@@ -19,7 +19,7 @@ interface Props {
 
     onDeleteClick?: typeof DeleteCourseCreator;
     onEditClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-    onFormSubmit?: (course: Course) => void;
+    onFormSubmit?: (course: Course, originalCourse?: Course) => void;
     onClick?: () => void;
     onHover?: (title: string) => void;
     cancelCreate?: () => void;
@@ -183,14 +183,14 @@ class CourseOverviewButton extends React.Component<Props, State> {
         const { formValues } = this.state;
         const handler = this.props.onFormSubmit;
         const course = new Course({
-            categories: originalCourse ? originalCourse.categories : List(),
+            categories: originalCourse ? originalCourse.categories : Map(),
             creditHours: formValues && formValues.get("hours"),
             description: formValues && formValues.get("description"),
             section: formValues && formValues.get("section"),
             title: formValues && formValues.get("title"),
         });
         if (handler) {
-            handler(course);
+            handler(course, originalCourse);
         }
         const clear = this.props.cancelCreate;
         if (clear) {

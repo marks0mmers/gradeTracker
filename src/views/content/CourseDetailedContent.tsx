@@ -26,7 +26,7 @@ import DataGrid from "../controls/data-grid";
 
 interface Props {
     className?: string;
-    courses?: List<Course>;
+    courses?: Map<string, Course>;
     detailedCourse?: string;
     categoryColumns?: List<DataGridColumnDefinition<GradeCategory>>;
     categoryElements?: List<DataGridElement<GradeCategory>>;
@@ -88,7 +88,7 @@ class CourseDetailedContent extends React.Component<Props, State> {
             isEditing,
         } = this.state;
 
-        const course: Course | undefined = courses && courses.find((value: Course) => value.title === detailedCourse);
+        const course = courses && courses.get(detailedCourse || "");
 
         const Content = isCreating || isEditing
             ? styled.div`
@@ -208,6 +208,10 @@ class CourseDetailedContent extends React.Component<Props, State> {
             });
             if (handler && course) {
                 handler(course.title, originalCategory || new GradeCategory(), updatedCategory || category);
+            }
+            const clearSelected = this.props.selectGradeCategory;
+            if (clearSelected) {
+                clearSelected();
             }
         }
     }

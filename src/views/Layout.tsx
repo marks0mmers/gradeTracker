@@ -1,3 +1,4 @@
+import { push } from "connected-react-router";
 import { Map } from "immutable";
 import * as React from "react";
 import { connect } from "react-redux";
@@ -16,6 +17,7 @@ import {
     SetActiveThemeCreator,
 } from "../state/ducks/session";
 import { RootState } from "../state/rootReducer";
+import AnalysisPage from "./pages/AnalysisPage";
 import CourseDetailedPage from "./pages/CourseDetailedPage";
 import HomePage from "./pages/HomePage";
 import Header from "./partials/Header";
@@ -39,6 +41,7 @@ interface PropsFromDispatch {
     setActiveTheme?: typeof SetActiveThemeCreator;
     setCourses?: typeof SetCoursesCreator;
     clearCourses?: typeof ClearCoursesCreator;
+    pushRoute?: typeof push;
 }
 
 type Props = PropsFromDispatch & PropsFromState & PassedProps;
@@ -60,6 +63,7 @@ class Layout extends React.Component<Props> {
             clearCourses,
             fileName,
             filePath,
+            pushRoute,
         } = this.props;
 
         return (
@@ -76,7 +80,9 @@ class Layout extends React.Component<Props> {
                     fileName={fileName}
                     filePath={filePath}
                 />
-                <NavBar />
+                <NavBar
+                    pushRoute={pushRoute}
+                />
                 <Switch>
                     <Route
                         component={HomePage}
@@ -86,6 +92,10 @@ class Layout extends React.Component<Props> {
                     <Route
                         component={CourseDetailedPage}
                         path={`/${detailedCourse}`}
+                    />
+                    <Route
+                        component={AnalysisPage}
+                        path="/analysis"
                     />
                     <Route
                         component={HomePage}
@@ -111,6 +121,7 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
     return bindActionCreators({
         clearCourses: ClearCoursesCreator,
+        pushRoute: push,
         setActiveFile: SetActiveFileCreator,
         setActiveTheme: SetActiveThemeCreator,
         setCourses: SetCoursesCreator,

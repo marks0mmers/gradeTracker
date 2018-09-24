@@ -1,5 +1,5 @@
 import { push } from "connected-react-router";
-import { List } from "immutable";
+import { Map } from "immutable";
 import * as React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
@@ -23,7 +23,7 @@ import { RootState } from "../../state/rootReducer";
 import HomeContent from "../content/HomeContent";
 
 interface PropsFromState {
-    courses?: List<Course>;
+    courses?: Map<string, Course>;
     detailedCourse?: string;
     selectedGradeCategory?: GradeCategory;
 }

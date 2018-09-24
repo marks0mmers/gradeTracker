@@ -29,7 +29,7 @@ import { DataGridElement } from "../controls/data-grid";
 interface PropsFromState {
     categoryColumns?: List<DataGridColumnDefinition<GradeCategory>>;
     categoryElements?: List<DataGridElement<GradeCategory>>;
-    courses?: List<Course>;
+    courses?: Map<string, Course>;
     detailedCourse?: string;
     formValues?: Map<string, string>;
     selectedCategory?: string;

@@ -173,25 +173,52 @@ class Header extends React.Component<Props, State> {
         if (file) {
             fs.readFile(file, (error: NodeJS.ErrnoException, data: Buffer) => {
                 const decrypted = decryptByDES(data.toString());
-                let newCourses = JSON.parse(decrypted) as Course[];
-                newCourses = newCourses.map((value: Course) => {
-                    return new Course({
-                        ...value,
-                        categories: value.categories ? List(
-                            value.categories.map((category) => {
+                let newCourses = !Array.isArray(JSON.parse(decrypted))
+                    ? Map<string, Course>(JSON.parse(decrypted))
+                    : List<Course>(JSON.parse(decrypted) as Course[]);
+                if (Map.isMap(newCourses)) {
+                    newCourses = Map<string, Course>(newCourses).map((value: Course) => {
+                        const categories = Map<string, GradeCategory>(value.categories || {});
+                        return new Course({
+                            ...value,
+                            categories: categories.map((category: GradeCategory) => {
                                 return new GradeCategory({
                                     ...category,
-                                    grades: category ? Map({
-                                        ...category.grades,
-                                    }) : undefined,
+                                    grades: Map<string, number>(category.grades),
                                 });
-                            }),
-                        ) : List(),
-                    });
-                });
+                            }).toMap(),
+                        });
+                    }).toMap();
+                } else {
+                    newCourses = List<Course>(newCourses).map((value: Course) => {
+                        return new Course({
+                            ...value,
+                            categories: value.categories ? List(
+                                value.categories.map((category) => {
+                                    return new GradeCategory({
+                                        ...category,
+                                        grades: category ? Map({
+                                            ...category.grades,
+                                        }) : undefined,
+                                    });
+                                }),
+                            ).reduce(
+                                (categoryMap: Map<string, GradeCategory>, category: GradeCategory) =>
+                                    categoryMap.set(category.title, category),
+                                Map(),
+                            )
+                            : Map(),
+                        });
+                    }).toList();
+                }
                 const handler = this.props.setCourses;
                 if (handler) {
-                    handler(List(newCourses));
+                    handler(Map.isMap(newCourses)
+                        ? Map<string, Course>(newCourses)
+                        : List<Course>(newCourses).reduce(
+                            (courseMap: Map<string, Course>, course: Course) => courseMap.set(course.title, course),
+                            Map(),
+                        ));
                 }
             });
         }

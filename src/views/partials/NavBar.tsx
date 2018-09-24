@@ -1,14 +1,17 @@
+import { push } from "connected-react-router";
 import * as React from "react";
 import styled from "styled-components";
 import NavButton from "../components/NavButton";
 
 enum Routes {
-    COURSE_OVERVIEW = "course-overview",
-    ANALYSIS = "analysis",
+    COURSE_OVERVIEW = "/",
+    ANALYSIS = "/analysis",
 }
 
 interface Props {
     className?: string;
+
+    pushRoute?: typeof push;
 }
 
 interface State {
@@ -54,9 +57,13 @@ class NavBar extends React.Component<Props, State> {
     }
 
     private handleNavClick(id: string) {
+        const handler = this.props.pushRoute;
         this.setState({
             activeButton: id as Routes,
         });
+        if (handler) {
+            handler(id);
+        }
     }
 }
 

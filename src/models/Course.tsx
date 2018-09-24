@@ -1,8 +1,8 @@
-import { List, Record } from "immutable";
+import { Map, Record } from "immutable";
 import { GradeCategory } from "./GradeCategory";
 
 export const CourseRecord = Record({
-    categories: List(),
+    categories: Map(),
     creditHours: 0,
     description: "",
     section: "",
@@ -14,5 +14,5 @@ export class Course extends CourseRecord {
     public description: string;
     public section: string;
     public creditHours: number;
-    public categories?: List<GradeCategory>;
+    public categories?: Map<string, GradeCategory>;
 }
