@@ -6,7 +6,7 @@ import { getActiveTheme } from "../../state/ducks/session/selectors";
 import { RootState } from "../../state/rootReducer";
 
 interface ConnectedThemeProviderProps {
-    children?: React.ReactNode;
+    children?: React.ReactNode | React.ReactNode[];
 }
 
 interface PropsFromState {

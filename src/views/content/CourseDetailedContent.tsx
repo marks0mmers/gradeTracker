@@ -8,13 +8,6 @@ import {
     SelectGradeCategoryCreator,
     SetActiveCourseCreator,
 } from "../../state/ducks/control/courses";
-import {
-    AddGradeToCategoryCreator,
-    CreateCategoryCreator,
-    DeleteCategoryCreator,
-    DeleteGradeFromCategoryCreator,
-    UpdateCategoryCreator,
-} from "../../state/ducks/data/courses";
 import CategoryDetailedPane from "../components/category/CategoryDetailedPane";
 import CourseCategoryForm from "../components/category/CourseCategoryForm";
 import Divider from "../components/Divider";
@@ -26,19 +19,14 @@ import DataGrid from "../controls/data-grid";
 
 interface Props {
     className?: string;
-    courses?: Map<string, Course>;
-    detailedCourse?: string;
+    course?: Course;
+    categories?: Map<string, GradeCategory>;
     categoryColumns?: List<DataGridColumnDefinition<GradeCategory>>;
     categoryElements?: List<DataGridElement<GradeCategory>>;
     selectedCategory?: string;
 
     setActiveCourse?: typeof SetActiveCourseCreator;
     selectGradeCategory?: typeof SelectGradeCategoryCreator;
-    handleAddNewGrade?: typeof AddGradeToCategoryCreator;
-    handleDeleteCategory?: typeof DeleteCategoryCreator;
-    handleDeleteGrade?: typeof DeleteGradeFromCategoryCreator;
-    handleNewCategory?: typeof CreateCategoryCreator;
-    handleEditCategory?: typeof UpdateCategoryCreator;
     push?: typeof push;
 }
 
@@ -76,8 +64,8 @@ class CourseDetailedContent extends React.Component<Props, State> {
     public render() {
         const {
             className,
-            courses,
-            detailedCourse,
+            course,
+            categories,
             categoryElements,
             categoryColumns,
             selectedCategory,
@@ -87,8 +75,6 @@ class CourseDetailedContent extends React.Component<Props, State> {
             isCreating,
             isEditing,
         } = this.state;
-
-        const course = courses && courses.get(detailedCourse || "");
 
         const Content = isCreating || isEditing
             ? styled.div`
@@ -119,6 +105,7 @@ class CourseDetailedContent extends React.Component<Props, State> {
                         icon="add"
                         height={30}
                         width={50}
+                        marginLeftRight={5}
                         onClick={this.handleCreate}
                     />
                     <Button
@@ -126,6 +113,7 @@ class CourseDetailedContent extends React.Component<Props, State> {
                         icon="create"
                         height={30}
                         width={50}
+                        marginLeftRight={5}
                         onClick={this.handleEdit}
                     />
                     <Button
@@ -133,6 +121,7 @@ class CourseDetailedContent extends React.Component<Props, State> {
                         icon="delete_sweep"
                         height={30}
                         width={50}
+                        marginLeftRight={5}
                         onClick={this.handleDelete}
                     />
                 </div>
@@ -153,8 +142,8 @@ class CourseDetailedContent extends React.Component<Props, State> {
                         <CourseCategoryForm
                             course={course}
                             handleCancelCreate={this.handleCancelCreate}
-                            originalCategory={course && course.categories &&
-                                course.categories.find((value: GradeCategory) => value.title === selectedCategory)}
+                            originalCategory={categories && categories &&
+                                categories.find((value: GradeCategory) => value.title === selectedCategory)}
                             handleFormSave={this.handleFormSave}
                         />
                     }
@@ -173,10 +162,7 @@ class CourseDetailedContent extends React.Component<Props, State> {
                             bottom={10}
                         />
                         <CategoryDetailedPane
-                            handleAddNewGrade={this.props.handleAddNewGrade}
-                            handleDeleteGrade={this.props.handleDeleteGrade}
-                            selectedCategory={selectedCategory}
-                            course={course}
+                            selectedCategory={categories && categories.get(selectedCategory)}
                         />
                         </>
                     }
@@ -188,31 +174,10 @@ class CourseDetailedContent extends React.Component<Props, State> {
     private handleFormSave(courseToChange: Course, category: GradeCategory) {
         const { isCreating, isEditing } = this.state;
         if (isCreating) {
-            const handler = this.props.handleNewCategory;
-            if (handler) {
-                handler(courseToChange, category);
-            }
+            // reimplement this
         }
         if (isEditing) {
-            const handler = this.props.handleEditCategory;
-            const { courses, detailedCourse, selectedCategory } = this.props;
-            const course: Course | undefined = courses &&
-                courses.find((value: Course) => value.title === detailedCourse);
-            const originalCategory = course && course.categories &&
-                course.categories.find((value: GradeCategory) => value.title === selectedCategory);
-            const updatedCategory = new GradeCategory({
-                grades: originalCategory ? originalCategory.grades : Map(),
-                numberOfGrades: category.numberOfGrades,
-                percentage: category.percentage,
-                title: category.title,
-            });
-            if (handler && course) {
-                handler(course.title, originalCategory || new GradeCategory(), updatedCategory || category);
-            }
-            const clearSelected = this.props.selectGradeCategory;
-            if (clearSelected) {
-                clearSelected();
-            }
+            // reimplement this
         }
     }
 
@@ -222,14 +187,13 @@ class CourseDetailedContent extends React.Component<Props, State> {
         props: BodyCellProps,
     ) {
         const handler = this.props.selectGradeCategory;
-        const { courses, detailedCourse } = this.props;
+        const { categories } = this.props;
         if (handler && payload.title !== "Total") {
-            const course = courses && courses.find((value: Course) => value.title === detailedCourse);
-            const category = course && course.categories && course.categories.find((value: GradeCategory) => {
-                return value.title === payload.title;
+            const category = categories && categories.find((value: GradeCategory) => {
+                return value.id === payload.id;
             });
             if (category) {
-                handler(category.title);
+                handler(category.id);
             }
         }
     }
@@ -252,12 +216,7 @@ class CourseDetailedContent extends React.Component<Props, State> {
     }
 
     private handleDelete() {
-        const { courses, detailedCourse, selectedCategory } = this.props;
-        const course: Course | undefined = courses && courses.find((value: Course) => value.title === detailedCourse);
-        const handler = this.props.handleDeleteCategory;
-        if (handler && course && selectedCategory) {
-            handler(course.title, selectedCategory);
-        }
+        // reimplement this
     }
 
     private handleCancelCreate() {

@@ -10,6 +10,8 @@ interface Props {
     icon?: string;
     width?: number;
     height?: number;
+    marginTopBottom?: number;
+    marginLeftRight?: number;
     gridArea?: string;
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
@@ -47,7 +49,7 @@ class Button extends React.Component<Props> {
 export default styled(Button)`
     height: ${(props) => props.height}px;
     width: ${(props) => props.width}px;
-    margin: 0 5px;
+    margin: ${(props) => props.marginTopBottom || 0}px ${(props) => props.marginLeftRight || 0}px;
     background: ${(props) => props.theme.white};
     border: none;
     color: ${(props) => props.theme.primaryText};

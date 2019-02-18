@@ -7,8 +7,10 @@ interface Props {
     width?: number;
     height?: number;
     placeholder?: string;
+    type?: string;
     gridArea?: string;
     value?: string;
+    isInvalid?: boolean;
     marginRight?: number;
     marginTop?: number;
     marginLeft?: number;
@@ -23,6 +25,7 @@ interface Props {
 const Input: React.SFC<Props> = (props: Props) => (
     <input
         name={props.name}
+        type={props.type || "text"}
         placeholder={props.placeholder}
         className={props.className}
         onChange={props.onChange}
@@ -36,7 +39,7 @@ export default styled(Input)`
     width: ${(props) => props.width ? `${props.width}px` : `100%`};
     background: ${(props) => props.theme.white};
     border-radius: 3px;
-    border: solid ${(props) => props.theme.hover} 1px;
+    border: solid ${(props) => props.isInvalid ? "red" : props.theme.hover} 1px;
     grid-area: ${(props) => props.gridArea};
 
     margin-right: ${(props) => props.marginRight ? `${props.marginRight}px` : "0px"};
@@ -48,4 +51,9 @@ export default styled(Input)`
     padding-top: ${(props) => props.paddingTop ? `${props.paddingTop}px` : "0px"};
     padding-left: ${(props) => props.paddingLeft ? `${props.paddingLeft}px` : "0px"};
     padding-bottom: ${(props) => props.paddingBottom ? `${props.paddingBottom}px` : "0px"};
+
+    ::placeholder {
+        font-size: 12px;
+        margin: auto;
+    }
 `;

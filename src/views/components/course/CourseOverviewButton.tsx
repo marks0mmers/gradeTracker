@@ -3,7 +3,6 @@ import * as React from "react";
 import styled from "styled-components";
 import { CourseOverviewMode } from "../../../constants/CourseOverviewMode";
 import { Course } from "../../../models/Course";
-import { DeleteCourseCreator } from "../../../state/ducks/data/courses";
 import Divider from "../../components/Divider";
 import Button from "../../controls/button/package/Button";
 import Input from "../styled-inputs/Input";
@@ -12,12 +11,11 @@ interface Props {
     className?: string;
     courseDescription?: string;
     courseTitle?: string;
-    courseSection?: string;
+    courseSection?: number;
     courseCreditHours?: number;
     originalCourse?: Course;
     mode?: CourseOverviewMode;
 
-    onDeleteClick?: typeof DeleteCourseCreator;
     onEditClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
     onFormSubmit?: (course: Course, originalCourse?: Course) => void;
     onClick?: () => void;
@@ -46,7 +44,7 @@ class CourseOverviewButton extends React.Component<Props, State> {
             ? Map<string, string>()
                 .set("description", props.originalCourse.description)
                 .set("title", props.originalCourse.title)
-                .set("section", props.originalCourse.section)
+                .set("section", `00${props.originalCourse.section}`)
                 .set("hours", String(props.originalCourse.creditHours))
             : Map(),
         };
@@ -110,6 +108,7 @@ class CourseOverviewButton extends React.Component<Props, State> {
                                 icon="create"
                                 height={40}
                                 width={60}
+                                marginLeftRight={5}
                                 onClick={this.props.onEditClick}
                             />
                             <Button
@@ -118,6 +117,7 @@ class CourseOverviewButton extends React.Component<Props, State> {
                                 icon="delete_sweep"
                                 height={40}
                                 width={60}
+                                marginLeftRight={5}
                                 onClick={this.handleDelete}
                             />
                             </>
@@ -127,6 +127,7 @@ class CourseOverviewButton extends React.Component<Props, State> {
                                 icon="clear"
                                 height={40}
                                 width={60}
+                                marginLeftRight={5}
                                 onClick={this.handleCancel}
                             />
                             <Button
@@ -134,6 +135,7 @@ class CourseOverviewButton extends React.Component<Props, State> {
                                 icon="save"
                                 height={40}
                                 width={60}
+                                marginLeftRight={5}
                                 onClick={this.handleExecute}
                             />
                             </>
@@ -153,11 +155,7 @@ class CourseOverviewButton extends React.Component<Props, State> {
 
     private handleDelete(event: React.MouseEvent<HTMLButtonElement>) {
         event.stopPropagation();
-        const { courseTitle } = this.props;
-        const handler = this.props.onDeleteClick;
-        if (handler && courseTitle) {
-            handler(courseTitle);
-        }
+        // rewrite this
     }
 
     private handleHover() {
@@ -183,10 +181,9 @@ class CourseOverviewButton extends React.Component<Props, State> {
         const { formValues } = this.state;
         const handler = this.props.onFormSubmit;
         const course = new Course({
-            categories: originalCourse ? originalCourse.categories : Map(),
-            creditHours: formValues && formValues.get("hours"),
+            creditHours: formValues && +formValues.get("hours"),
             description: formValues && formValues.get("description"),
-            section: formValues && formValues.get("section"),
+            section: formValues && +formValues.get("section"),
             title: formValues && formValues.get("title"),
         });
         if (handler) {

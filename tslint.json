@@ -18,6 +18,7 @@
       "never-prefix"
     ],
     "jsx-no-multiline-js": false,
-    "no-any": true
+    "no-any": true,
+    "object-literal-sort-keys": false
   }
 }
