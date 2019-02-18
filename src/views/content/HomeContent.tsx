@@ -5,11 +5,10 @@ import styled from "styled-components";
 import { CourseOverviewMode } from "../../constants/CourseOverviewMode";
 import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
-import { User } from "../../models/User";
 import {
     SetActiveCourseCreator,
 } from "../../state/ducks/control/courses";
-import { CreateNewCourseCreator, GetCoursesCurrentUserCreator } from "../../state/ducks/data/courses";
+import { CreateNewCourseCreator } from "../../state/ducks/data/courses";
 import CourseOverviewButton from "../components/course/CourseOverviewButton";
 import Divider from "../components/Divider";
 import Button from "../controls/button/package/Button";
@@ -17,14 +16,12 @@ import { ButtonWrapper } from "../wrappers/ButtonWrapper";
 
 interface Props {
     className?: string;
-    currentUser?: User;
     courses?: Map<string, Course>;
     detailedCourse?: string;
     selectedGradeCategory?: GradeCategory;
 
     handleSetActiveCourse?: typeof SetActiveCourseCreator;
     handleCreateNewCourse?: typeof CreateNewCourseCreator;
-    handleGetCoursesCurrentUser?: typeof GetCoursesCurrentUserCreator;
     push?: typeof push;
 }
 
@@ -49,13 +46,6 @@ class HomePage extends React.Component<Props, State> {
             isCreating: false,
             isEditing: false,
         };
-    }
-
-    public componentDidUpdate(prevProps: Props) {
-        const handler = this.props.handleGetCoursesCurrentUser;
-        if (handler && this.props.currentUser !== prevProps.currentUser) {
-            handler();
-        }
     }
 
     public render() {

@@ -19,7 +19,11 @@ export const CourseDataReducer = (
 ) => {
     switch (action.type) {
         case (types.CREATE_NEW_COURSE_SUCCESS):
-            return action.course.id ? state.set("courses", state.courses.set(action.course.id, action.course)) : state;
+            return action.course.id
+                ? state.set("courses", state.courses.set(action.course.id, action.course))
+                : state;
+        case (types.GET_COURSES_CURRENT_USER_SUCCESS):
+            return state.set("courses", action.courses);
         default:
             return state;
     }

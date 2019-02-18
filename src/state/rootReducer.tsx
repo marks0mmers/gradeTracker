@@ -7,7 +7,6 @@ import { UserDataReducer, UserDataState } from "./ducks/data/users/reducers";
 import { SessionReducer, SessionState } from "./ducks/session/reducers";
 
 export interface RootState {
-    router: RouterState;
     control: {
         analysis: AnalysisControlState;
         course: CourseControlState;
@@ -17,6 +16,7 @@ export interface RootState {
         user: UserDataState;
     };
     session: SessionState;
+    router: RouterState;
 }
 
 export const rootReducer = combineReducers({

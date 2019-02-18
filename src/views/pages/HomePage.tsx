@@ -5,7 +5,6 @@ import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
-import { User } from "../../models/User";
 import {
     getActiveCourse,
     getDetailedColumns,
@@ -14,8 +13,7 @@ import {
     SelectGradeCategoryCreator,
     SetActiveCourseCreator,
 } from "../../state/ducks/control/courses";
-import { CreateNewCourseCreator, getCourses, GetCoursesCurrentUserCreator } from "../../state/ducks/data/courses";
-import { getCurrentUser } from "../../state/ducks/data/users";
+import { CreateNewCourseCreator, getCourses } from "../../state/ducks/data/courses";
 import { RootState } from "../../state/rootReducer";
 import HomeContent from "../content/HomeContent";
 
@@ -23,12 +21,10 @@ interface PropsFromState {
     courses?: Map<string, Course>;
     detailedCourse?: string;
     selectedGradeCategory?: GradeCategory;
-    currentUser?: User;
 }
 
 interface PropsFromDispatch {
     handleCreateNewCourse?: typeof CreateNewCourseCreator;
-    handleGetCoursesCurrentUser?: typeof GetCoursesCurrentUserCreator;
     handleSetActiveCourse?: typeof SetActiveCourseCreator;
     push?: typeof push;
 }
@@ -52,7 +48,6 @@ class ConnectedHomePage extends React.Component<Props> {
 const mapStateToProps = (state: RootState) => {
     return ({
         courses: getCourses(state),
-        currentUser: getCurrentUser(state),
         categoryColumns: getDetailedColumns(state),
         categoryElements: getDetailedCourseElements(state),
         detailedCourse: getActiveCourse(state),
@@ -65,7 +60,6 @@ const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
         handleDelectGradeCategory: SelectGradeCategoryCreator,
         handleSetActiveCourse: SetActiveCourseCreator,
         handleCreateNewCourse: CreateNewCourseCreator,
-        handleGetCoursesCurrentUser: GetCoursesCurrentUserCreator,
         push,
     }, dispatch);
 };

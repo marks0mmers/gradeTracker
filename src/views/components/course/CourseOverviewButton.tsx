@@ -1,5 +1,6 @@
 import { Map } from "immutable";
 import * as React from "react";
+import { leadingZeros } from "src/util/General";
 import styled from "styled-components";
 import { CourseOverviewMode } from "../../../constants/CourseOverviewMode";
 import { Course } from "../../../models/Course";
@@ -80,7 +81,9 @@ class CourseOverviewButton extends React.Component<Props, State> {
                     <div className="label">
                         {
                             mode === CourseOverviewMode.DISPLAY
-                            ? <span className="value">{`Course: ${courseTitle} ${courseSection}`}</span>
+                            ? <span className="value">
+                                {`Course: ${courseTitle} ${leadingZeros(3, courseSection)}`}
+                            </span>
                             : <>
                                 {this.buildInput("title", "Course (ABC-123)", "", 130, 20)}
                                 {this.buildInput("section", "Section (123)", "", 95, 20)}

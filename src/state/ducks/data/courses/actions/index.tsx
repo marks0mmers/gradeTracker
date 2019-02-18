@@ -1,5 +1,5 @@
 import { CreateNewCourse, CreateNewCourseSuccess } from "./CreateNewCourse";
-import { GetCoursesCurrentUser } from "./GetCoursesCurrentUser";
+import { GetCoursesCurrentUser, GetCoursesCurrentUserSuccess } from "./GetCoursesCurrentUser";
 
 export * from "./types";
 export * from "./CreateNewCourse";
@@ -8,4 +8,5 @@ export * from "./GetCoursesCurrentUser";
 export type CourseDataActions =
     CreateNewCourse |
     CreateNewCourseSuccess |
-    GetCoursesCurrentUser;
+    GetCoursesCurrentUser |
+    GetCoursesCurrentUserSuccess;

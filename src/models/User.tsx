@@ -11,7 +11,7 @@ export const UserRecord = Record({
     email: "",
     isAdmin: false,
     password: undefined,
-    id: "",
+    _id: "",
 });
 
 export class User extends UserRecord {
@@ -20,5 +20,5 @@ export class User extends UserRecord {
     public email: string;
     public isAdmin: boolean;
     public password?: string;
-    public id: string;
+    public _id: string;
 }

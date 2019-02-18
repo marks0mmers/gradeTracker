@@ -20,17 +20,17 @@ export const CreateNewCourseEpic = (
         mergeMap((action: CreateNewCourse) => {
             const { currentUser } = state$.value.data.user;
             if (currentUser) {
-                action.course.set("userId", currentUser.id);
+                const course = action.course.set("userId", currentUser._id);
                 return ajax.post(
                     "/api/courses",
-                    action.course.toJS(),
+                    course.toJS(),
                     generateAuthHeaders(),
                 ).pipe(
                     map((res: AjaxResponse) => {
                         return res.response;
                     }),
-                    mergeMap((course: Course) => {
-                        return Observable.of(CreateNewCourseSuccessCreator(course));
+                    mergeMap((c: Course) => {
+                        return Observable.of(CreateNewCourseSuccessCreator(c));
                     }),
                     catchError((err: Error) => {
                         Toast.error(err.message);

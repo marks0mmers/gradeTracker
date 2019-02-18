@@ -21,17 +21,18 @@ export const GetCoursesCurrentUserEpic = (
         mergeMap((action: GetCoursesCurrentUser) => {
             const { currentUser } = state$.value.data.user;
             return ajax.get(
-                `/api/courses/user/${currentUser && currentUser.id}`,
+                `/api/courses/user/${currentUser && currentUser._id}`,
                 generateAuthHeaders(),
             ).pipe(
                 map((res: AjaxResponse) => {
                     return res.response;
                 }),
                 mergeMap((courses: Course[]) => {
-                    const courseMap: Map<string, Course> = List(courses)
+                    const immutableCourses = courses.map((course) => new Course({...course}));
+                    const courseMap: Map<string, Course> = List(immutableCourses)
                     .reduce((cs: Map<string, Course>, c: Course) => {
                         return c.id ? cs.set(c.id, c) : cs;
-                    }, Map());
+                    }, Map<string, Course>());
                     return Observable.of(GetCoursesCurrentUserSuccessCreator(courseMap));
                 }),
                 catchError((err: Error) => {
