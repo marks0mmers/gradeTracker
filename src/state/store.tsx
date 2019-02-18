@@ -23,7 +23,7 @@ const composeEnhancers = composeWithDevTools({
 
 export const connectedReducer = connectRouter(history)(rootReducer);
 
-export const store = createStore (
+export const store = createStore(
     connectedReducer,
     composeEnhancers(
         applyMiddleware(

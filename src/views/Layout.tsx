@@ -3,23 +3,23 @@ import { Map } from "immutable";
 import * as React from "react";
 import { connect } from "react-redux";
 import { Route, Switch } from "react-router";
+import { ToastContainer } from "react-toastify";
 import { bindActionCreators, Dispatch } from "redux";
 import styled from "styled-components";
-import { Course } from "../models/Course";
 import { Theme } from "../models/Theme";
+import { User } from "../models/User";
 import { getActiveCourse } from "../state/ducks/control/courses";
-import { ClearCoursesCreator, getCourses, SetCoursesCreator } from "../state/ducks/data/courses";
+import { GetCurrentUserCreator, LogoutCreator } from "../state/ducks/data/users";
+import { getCurrentUser } from "../state/ducks/data/users/selectors";
 import {
-    getFileName,
-    getFilePath,
     getThemes,
-    SetActiveFileCreator,
     SetActiveThemeCreator,
 } from "../state/ducks/session";
 import { RootState } from "../state/rootReducer";
 import AnalysisPage from "./pages/AnalysisPage";
 import CourseDetailedPage from "./pages/CourseDetailedPage";
 import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
 import Header from "./partials/Header";
 import NavBar from "./partials/NavBar";
 
@@ -31,63 +31,87 @@ interface PropsFromState {
     themes?: Map<string, Theme>;
     detailedCourse?: string;
     location?: string;
-    courses?: Map<string, Course>;
-    fileName?: string;
-    filePath?: string;
+    currentUser?: User;
 }
 
 interface PropsFromDispatch {
-    setActiveFile?: typeof SetActiveFileCreator;
     setActiveTheme?: typeof SetActiveThemeCreator;
-    setCourses?: typeof SetCoursesCreator;
-    clearCourses?: typeof ClearCoursesCreator;
+    getCurrentUser?: typeof GetCurrentUserCreator;
+    logout?: typeof LogoutCreator;
     pushRoute?: typeof push;
 }
 
 type Props = PropsFromDispatch & PropsFromState & PassedProps;
 
 class Layout extends React.Component<Props> {
+
     constructor(props: Props) {
         super(props);
+    }
+
+    public componentDidMount() {
+        if (!this.props.currentUser) {
+            const fetchCurrentUser = this.props.getCurrentUser;
+            if (fetchCurrentUser && sessionStorage.getItem("jwtToken")) {
+                fetchCurrentUser();
+            }
+            const handler = this.props.pushRoute;
+            if (handler) {
+                handler("/login");
+            }
+        }
+    }
+
+    public componentDidUpdate(prevProps: Props) {
+        const handler = this.props.pushRoute;
+        if (!this.props.currentUser) {
+            if (handler) {
+                handler("/login");
+            }
+        } else {
+            if (handler && this.props.currentUser !== prevProps.currentUser) {
+                handler("/");
+            }
+        }
     }
 
     public render() {
         const {
             className,
             themes,
-            setActiveFile,
+            currentUser,
             setActiveTheme,
             detailedCourse,
-            courses,
-            setCourses,
-            clearCourses,
-            fileName,
-            filePath,
             pushRoute,
         } = this.props;
 
         return (
             <div id="layout" className={className}>
-                <Header
-                    icon="dashboard"
-                    title="Gradebook"
-                    themes={themes}
-                    setActiveTheme={setActiveTheme}
-                    setActiveFile={setActiveFile}
-                    courses={courses}
-                    setCourses={setCourses}
-                    clearCourses={clearCourses}
-                    fileName={fileName}
-                    filePath={filePath}
-                />
-                <NavBar
-                    pushRoute={pushRoute}
-                />
+                {
+                    currentUser &&
+                    <>
+                    <Header
+                        icon="dashboard"
+                        title="Gradebook"
+                        themes={themes}
+                        setActiveTheme={setActiveTheme}
+                        currentUser={currentUser}
+                        logout={this.props.logout}
+                    />
+                    <NavBar
+                        pushRoute={pushRoute}
+                    />
+                    </>
+                }
                 <Switch>
                     <Route
                         component={HomePage}
                         exact={true}
                         path="/"
+                    />
+                    <Route
+                        component={LoginPage}
+                        path="/login"
                     />
                     <Route
                         component={CourseDetailedPage}
@@ -102,6 +126,9 @@ class Layout extends React.Component<Props> {
                         path="/*"
                     />
                 </Switch>
+                <ToastContainer
+                    autoClose={3000}
+                />
             </div>
         );
     }
@@ -109,22 +136,19 @@ class Layout extends React.Component<Props> {
 
 const mapStateToProps = (state: RootState) => {
     return ({
-        courses: getCourses(state),
         detailedCourse: getActiveCourse(state),
-        fileName: getFileName(state),
-        filePath: getFilePath(state),
         location: state.router.location.pathname,
         themes: getThemes(state),
+        currentUser: getCurrentUser(state),
     });
 };
 
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
     return bindActionCreators({
-        clearCourses: ClearCoursesCreator,
         pushRoute: push,
-        setActiveFile: SetActiveFileCreator,
         setActiveTheme: SetActiveThemeCreator,
-        setCourses: SetCoursesCreator,
+        getCurrentUser: GetCurrentUserCreator,
+        logout: LogoutCreator,
     }, dispatch);
 };
 
@@ -134,6 +158,7 @@ export default styled(connected)`
     width: 100vw;
     height: 100vh;
     overflow: hidden;
+    background: ${(props) => props.theme.white};
     display: grid;
     grid-template-columns: 60px calc(100vw - 60px);
     grid-template-rows: 60px calc(100vh - 60px);

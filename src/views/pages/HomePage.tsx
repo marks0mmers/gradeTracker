@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
+import { User } from "../../models/User";
 import {
     getActiveCourse,
     getDetailedColumns,
@@ -13,12 +14,8 @@ import {
     SelectGradeCategoryCreator,
     SetActiveCourseCreator,
 } from "../../state/ducks/control/courses";
-import {
-    CreateCourseCreator,
-    DeleteCourseCreator,
-    getCourses,
-    UpdateCourseCreator,
-} from "../../state/ducks/data/courses";
+import { CreateNewCourseCreator, getCourses, GetCoursesCurrentUserCreator } from "../../state/ducks/data/courses";
+import { getCurrentUser } from "../../state/ducks/data/users";
 import { RootState } from "../../state/rootReducer";
 import HomeContent from "../content/HomeContent";
 
@@ -26,12 +23,12 @@ interface PropsFromState {
     courses?: Map<string, Course>;
     detailedCourse?: string;
     selectedGradeCategory?: GradeCategory;
+    currentUser?: User;
 }
 
 interface PropsFromDispatch {
-    handleCreateCourse?: typeof CreateCourseCreator;
-    handleUpdateCourse?: typeof UpdateCourseCreator;
-    handleDeleteCourse?: typeof DeleteCourseCreator;
+    handleCreateNewCourse?: typeof CreateNewCourseCreator;
+    handleGetCoursesCurrentUser?: typeof GetCoursesCurrentUserCreator;
     handleSetActiveCourse?: typeof SetActiveCourseCreator;
     push?: typeof push;
 }
@@ -54,9 +51,10 @@ class ConnectedHomePage extends React.Component<Props> {
 
 const mapStateToProps = (state: RootState) => {
     return ({
+        courses: getCourses(state),
+        currentUser: getCurrentUser(state),
         categoryColumns: getDetailedColumns(state),
         categoryElements: getDetailedCourseElements(state),
-        courses: getCourses(state),
         detailedCourse: getActiveCourse(state),
         selectedGradeCategory: getSelectedGradeCategory(state),
     });
@@ -64,11 +62,10 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
     return bindActionCreators({
-        handleCreateCourse: CreateCourseCreator,
         handleDelectGradeCategory: SelectGradeCategoryCreator,
-        handleDeleteCourse: DeleteCourseCreator,
         handleSetActiveCourse: SetActiveCourseCreator,
-        handleUpdateCourse: UpdateCourseCreator,
+        handleCreateNewCourse: CreateNewCourseCreator,
+        handleGetCoursesCurrentUser: GetCoursesCurrentUserCreator,
         push,
     }, dispatch);
 };

@@ -1,20 +1,17 @@
+import { Map } from "immutable";
 import * as React from "react";
 import styled from "styled-components";
-import { Course } from "../../../models/Course";
+import { Grade } from "../../../models/Grade";
 import { GradeCategory } from "../../../models/GradeCategory";
-import { AddGradeToCategoryCreator, DeleteGradeFromCategoryCreator } from "../../../state/ducks/data/courses";
 import Button from "../../controls/button/package/Button";
 import { ListControlElement } from "../../controls/list-control/models/ListControlElement";
 import ListControl from "../../controls/list-control/package/ListControl";
 
 interface Props {
     className?: string;
-    selectedCategory?: string;
-    course?: Course;
+    selectedCategory?: GradeCategory;
+    grades?: Map<string, Grade>;
     categoryDidUpdate?: boolean;
-
-    handleAddNewGrade?: typeof AddGradeToCategoryCreator;
-    handleDeleteGrade?: typeof DeleteGradeFromCategoryCreator;
 }
 
 interface State {
@@ -47,7 +44,7 @@ class CategoryDetailedPane extends React.Component<Props, State> {
     public render() {
         const {
             className,
-            course,
+            grades,
             selectedCategory,
         } = this.props;
 
@@ -57,53 +54,48 @@ class CategoryDetailedPane extends React.Component<Props, State> {
             isEditing,
         } = this.state;
 
-        const category = course && course.categories &&
-            course.categories.find((value: GradeCategory) => value.title === selectedCategory);
-
-        const elements = category && category.grades.map((value: number, key: string) => {
+        const elements = grades && grades.map((value: Grade, key: string) => {
             const element: ListControlElement = {
                 isEditing: key === selectedGrade && isEditing,
                 isSelected: key === selectedGrade,
-                primaryProperty: key,
-                secondaryProperty: `${value.toString()} %`,
+                primaryProperty: value.name,
+                secondaryProperty: `${value.grade.toString()} %`,
             };
             return element;
         }).toList();
-        const numberOfGradesOrSize = category && typeof category.numberOfGrades === "number"
-            ? category.numberOfGrades
-            : category ? category.grades.size : 0;
+        const numberOfGradesOrSize = selectedCategory && selectedCategory.numberOfGrades;
         return (
             <div className={className}>
-                {this.buildDisplayLabel("Category Name:", category ? category.title : "", "title")}
-                {this.buildDisplayLabel("Percentage:", category ? `${category.percentage} %` : "", "percentage")}
-                {this.buildDisplayLabel("Number of Grades:", category ? category.grades.size : "", "numberGrades")}
+                {this.buildDisplayLabel("Category Name:", selectedCategory ? selectedCategory.title : "", "title")}
                 {this.buildDisplayLabel(
-                    "Remaining Grades:", category
-                        ? numberOfGradesOrSize - category.grades.size
-                        : "",
+                    "Percentage:",
+                    selectedCategory ? `${selectedCategory.percentage} %` : "",
+                    "percentage",
+                )}
+                {this.buildDisplayLabel(
+                    "Number of Grades:",
+                    grades ? grades.size : "",
+                    "numberGrades",
+                    )}
+                {this.buildDisplayLabel(
+                    "Remaining Grades:",
+                    grades && numberOfGradesOrSize ? numberOfGradesOrSize - grades.size : "",
                     "gradesRemaining",
                 )}
                 {this.buildDisplayLabel(
-                    "Current Average:", category ? `${
-                        (category.grades.reduce(
-                            (total: number, value: number) => total + value, 0,
-                        ) / category.grades.size).toPrecision(4)
-                    } %` : "", "currentAverage",
+                    "Current Average:",
+                    selectedCategory ? `${selectedCategory.currentAverage.toPrecision(4)}` : "",
+                    "currentAverage",
                 )}
                 {this.buildDisplayLabel(
-                    "Guarenteed Average:", category ? `${
-                        (category.grades.reduce(
-                            (total: number, value: number) => total + value, 0,
-                        ) / numberOfGradesOrSize).toPrecision(4)
-                    } %` : "", "guarenteedAverage",
+                    "Guarenteed Average:",
+                    selectedCategory ? `${selectedCategory.guarenteedAverage.toPrecision(4)}` : "",
+                    "guarenteedAverage",
                 )}
                 {this.buildDisplayLabel(
-                    "Potential Average:", category ? `${
-                        ((category.grades.reduce(
-                            (total: number, value: number) => total + value, 0,
-                        ) + ((numberOfGradesOrSize - category.grades.size) * 100))
-                        / numberOfGradesOrSize).toPrecision(4)
-                    } %` : "", "potentialAverage",
+                    "Potential Average:",
+                    selectedCategory ? `${selectedCategory.potentialAverage.toPrecision(4)}` : "",
+                    "potentialAverage",
                 )}
                 <div className="grades">
                     {invalidGrade && <span className="error">Invalid Grade</span>}
@@ -118,6 +110,7 @@ class CategoryDetailedPane extends React.Component<Props, State> {
                                 icon="add"
                                 height={40}
                                 width={60}
+                                marginLeftRight={5}
                                 onClick={this.handleNewGrade}
                             />
                             <Button
@@ -125,6 +118,7 @@ class CategoryDetailedPane extends React.Component<Props, State> {
                                 icon="create"
                                 height={40}
                                 width={60}
+                                marginLeftRight={5}
                                 onClick={this.handleEditGrade}
                             />
                             <Button
@@ -132,6 +126,7 @@ class CategoryDetailedPane extends React.Component<Props, State> {
                                 icon="delete"
                                 height={40}
                                 width={60}
+                                marginLeftRight={5}
                                 onClick={this.handleDeleteGrade}
                             />
                             </>
@@ -159,10 +154,8 @@ class CategoryDetailedPane extends React.Component<Props, State> {
     }
 
     private handleNewGrade() {
-        const { course, selectedCategory } = this.props;
-        const category = course && course.categories &&
-            course.categories.find((value: GradeCategory) => value.title === selectedCategory);
-        if (category && category.numberOfGrades !== "?" && category.numberOfGrades >= category.grades.size + 1) {
+        const { grades, selectedCategory } = this.props;
+        if (selectedCategory && grades && selectedCategory.numberOfGrades >= grades.size + 1) {
             this.setState({
                 invalidGrade: false,
                 isAddingGrade: true,
@@ -170,7 +163,7 @@ class CategoryDetailedPane extends React.Component<Props, State> {
         } else {
             this.setState({
                 invalidGrade: false,
-                isAddingGrade: true,
+                isAddingGrade: false,
             });
         }
     }
@@ -186,13 +179,9 @@ class CategoryDetailedPane extends React.Component<Props, State> {
     }
 
     private handleDeleteGrade() {
-        const { selectedCategory, course } = this.props;
         const { selectedGrade } = this.state;
         if (selectedGrade) {
-            const handler = this.props.handleDeleteGrade;
-            if (handler && selectedCategory && course && course.title) {
-                handler(course.title, selectedCategory, selectedGrade);
-            }
+            // rewrite this
         }
     }
 
@@ -210,35 +199,9 @@ class CategoryDetailedPane extends React.Component<Props, State> {
                 isAddingGrade: false,
                 isEditing: false,
             });
-            const { selectedCategory, course } = this.props;
-            const handler = this.props.handleAddNewGrade;
-            const category = course && course.categories &&
-                course.categories.find((value: GradeCategory) => value.title === selectedCategory);
-            const updatedCategory = new GradeCategory({
-                currentAverage: category && category.currentAverage,
-                grades: category && category.grades.set(description, parsedGrade),
-                guarenteedAverage: category && category.guarenteedAverage,
-                numberOfGrades: category && category.numberOfGrades,
-                percentage: category && category.percentage,
-                potentialAverage: category && category.potentialAverage,
-                remainingGrades: category && category.remainingGrades,
-                title: category && category.title,
-            });
-            if (handler && course && course.title) {
-                handler(course.title, updatedCategory);
-            }
-            const deleteOld = this.props.handleDeleteGrade;
-            if (
-                deleteOld &&
-                course &&
-                course.title &&
-                category &&
-                category.title &&
-                initialKey &&
-                description !== initialKey
-            ) {
-                deleteOld(course.title, category.title, initialKey);
-            }
+
+            // TODO rewrite this
+
         } else {
             this.setState({
                 invalidGrade: true,

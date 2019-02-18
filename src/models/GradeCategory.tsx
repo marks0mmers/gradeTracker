@@ -1,23 +1,27 @@
-import { Map, Record } from "immutable";
+import { Record } from "immutable";
 
 export const GradeCategoryRecord = Record({
-    currentAverage: 0,
-    grades: Map(),
-    guarenteedAverage: 0,
-    numberOfGrades: 0,
-    percentage: 0,
-    potentialAverage: 100,
-    remainingGrades: 0,
     title: "",
+    percentage: 0,
+    numberOfGrades: 0,
+    userId: "",
+    courseId: "",
+    id: "",
+    remainingGrades: 0,
+    currentAverage: 0,
+    guarenteedAverage: 0,
+    potentialAverage: 0,
 });
 
 export class GradeCategory extends GradeCategoryRecord {
     public title: string;
     public percentage: number;
-    public numberOfGrades: number | string;
+    public numberOfGrades: number;
+    public userId: string;
+    public courseId: string;
+    public id: string;
     public remainingGrades: number;
     public currentAverage: number;
     public guarenteedAverage: number;
     public potentialAverage: number;
-    public grades: Map<string, number>;
 }

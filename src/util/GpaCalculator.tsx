@@ -1,51 +1,48 @@
 import { Course } from "src/models/Course";
 
 export const getLetterGrade = (grade: number, course: Course) => {
-
-    const { gradeScale } = course;
-
     // F
-    if (grade < gradeScale.f) {
+    if (grade < 60) {
         return "F";
     }
     // D
-    if (grade >= gradeScale.f && grade < gradeScale.dMinus) {
+    if (grade >= 60 && grade < 62.5) {
         return "D-";
     }
-    if (grade >= gradeScale.dMinus && grade < gradeScale.d) {
+    if (grade >= 62.5 && grade < 67.5) {
         return "D";
     }
-    if (grade >= gradeScale.d && grade < gradeScale.dPlus) {
+    if (grade >= 67.5 && grade < 70) {
         return "D+";
     }
     // C
-    if (grade >= gradeScale.dPlus && grade < gradeScale.cMinus) {
+    if (grade >= 70 && grade < 72.5) {
         return "C-";
     }
-    if (grade >= gradeScale.cMinus && grade < gradeScale.c) {
+    if (grade >= 72.5 && grade < 77.5) {
         return "C";
     }
-    if (grade >= gradeScale.c && grade < gradeScale.cPlus) {
+    if (grade >= 77.5 && grade < 80) {
         return "C+";
     }
     // B
-    if (grade >= gradeScale.cPlus && grade < gradeScale.bMinus) {
+    if (grade >= 80 && grade < 82.5) {
         return "B-";
     }
-    if (grade >= gradeScale.bMinus && grade < gradeScale.b) {
+    if (grade >= 82.5 && grade < 87.5) {
         return "B";
     }
-    if (grade >= gradeScale.b && grade < gradeScale.bPlus) {
+    if (grade >= 87.5 && grade < 90) {
         return "B+";
     }
     // A
-    if (grade >= gradeScale.bPlus && grade < gradeScale.aMinus) {
+    if (grade >= 90 && grade < 92.5) {
         return "A-";
     }
-    if (grade >= gradeScale.aMinus && grade < gradeScale.a) {
+    if (grade >= 92.5 && grade < 97.5) {
         return "A";
     }
-    if (grade >= gradeScale.a) {
+    if (grade >= 97.5) {
         return "A+";
     }
     return "?";

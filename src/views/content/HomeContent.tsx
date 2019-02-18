@@ -5,10 +5,11 @@ import styled from "styled-components";
 import { CourseOverviewMode } from "../../constants/CourseOverviewMode";
 import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
+import { User } from "../../models/User";
 import {
     SetActiveCourseCreator,
 } from "../../state/ducks/control/courses";
-import { CreateCourseCreator, DeleteCourseCreator, UpdateCourseCreator } from "../../state/ducks/data/courses";
+import { CreateNewCourseCreator, GetCoursesCurrentUserCreator } from "../../state/ducks/data/courses";
 import CourseOverviewButton from "../components/course/CourseOverviewButton";
 import Divider from "../components/Divider";
 import Button from "../controls/button/package/Button";
@@ -16,14 +17,14 @@ import { ButtonWrapper } from "../wrappers/ButtonWrapper";
 
 interface Props {
     className?: string;
+    currentUser?: User;
     courses?: Map<string, Course>;
     detailedCourse?: string;
     selectedGradeCategory?: GradeCategory;
 
-    handleCreateCourse?: typeof CreateCourseCreator;
-    handleUpdateCourse?: typeof UpdateCourseCreator;
-    handleDeleteCourse?: typeof DeleteCourseCreator;
     handleSetActiveCourse?: typeof SetActiveCourseCreator;
+    handleCreateNewCourse?: typeof CreateNewCourseCreator;
+    handleGetCoursesCurrentUser?: typeof GetCoursesCurrentUserCreator;
     push?: typeof push;
 }
 
@@ -48,6 +49,13 @@ class HomePage extends React.Component<Props, State> {
             isCreating: false,
             isEditing: false,
         };
+    }
+
+    public componentDidUpdate(prevProps: Props) {
+        const handler = this.props.handleGetCoursesCurrentUser;
+        if (handler && this.props.currentUser !== prevProps.currentUser) {
+            handler();
+        }
     }
 
     public render() {
@@ -80,6 +88,7 @@ class HomePage extends React.Component<Props, State> {
                             icon="add"
                             height={30}
                             width={50}
+                            marginLeftRight={5}
                             onClick={this.handleNewCourseClick}
                         />
                         </>
@@ -119,7 +128,6 @@ class HomePage extends React.Component<Props, State> {
                                     onClick={this.handleViewCourseDetailed}
                                     onHover={this.handleCourseHover}
                                     onEditClick={this.handleEditClick}
-                                    onDeleteClick={this.props.handleDeleteCourse}
                                 />
                             );
                         }).toList()
@@ -151,17 +159,13 @@ class HomePage extends React.Component<Props, State> {
     private handleCourseSave(course: Course, originalCourse?: Course) {
         const { isCreating, isEditing } = this.state;
         if (isCreating) {
-            const handler = this.props.handleCreateCourse;
+            const handler = this.props.handleCreateNewCourse;
             if (handler) {
                 handler(course);
             }
         }
         if (isEditing) {
-            const { detailedCourse } = this.props;
-            const handler = this.props.handleUpdateCourse;
-            if (handler && detailedCourse) {
-                handler(originalCourse ? originalCourse.title : course.title, course);
-            }
+            // reimplement
         }
     }
 

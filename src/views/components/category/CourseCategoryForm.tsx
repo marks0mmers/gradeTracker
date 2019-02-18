@@ -2,6 +2,7 @@ import { Map } from "immutable";
 import * as React from "react";
 import styled from "styled-components";
 import { Course } from "../../../models/Course";
+import { Grade } from "../../../models/Grade";
 import { GradeCategory } from "../../../models/GradeCategory";
 import Button from "../../controls/button/package/Button";
 import Input from "../styled-inputs/Input";
@@ -10,6 +11,7 @@ interface Props {
     className?: string;
     course?: Course;
     originalCategory?: GradeCategory;
+    categoryGrades?: Map<string, Grade>;
 
     handleFormChange?: (name: string, value: string) => void;
     handleFormSave?: (course: Course, category: GradeCategory) => void;
@@ -68,6 +70,7 @@ class CourseCategoryForm extends React.Component<Props, State> {
                         tooltip="Cancel"
                         width={50}
                         height={30}
+                        marginLeftRight={5}
                         icon="clear"
                         onClick={this.props.handleCancelCreate}
                     />
@@ -75,6 +78,7 @@ class CourseCategoryForm extends React.Component<Props, State> {
                         tooltip="Save"
                         width={50}
                         height={30}
+                        marginLeftRight={5}
                         icon="save"
                         onClick={this.handleSave}
                     />
@@ -117,8 +121,8 @@ class CourseCategoryForm extends React.Component<Props, State> {
                     : undefined;
             const percentage = !isNaN(+formValues.get("percentage")) && +formValues.get("percentage");
             const title: string | undefined = formValues.get("name", undefined);
-            const isNumGradesValid = originalCategory && typeof numberOfGrades === "number"
-                ? (numberOfGrades || 0) >= originalCategory.grades.size
+            const isNumGradesValid = originalCategory && this.props.categoryGrades && typeof numberOfGrades === "number"
+                ? (numberOfGrades || 0) >= this.props.categoryGrades.size
                 : true;
             if (numberOfGrades && percentage && title && isNumGradesValid) {
                 this.setState({

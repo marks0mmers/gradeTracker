@@ -103,6 +103,7 @@ class Row extends React.Component<Props, State> {
                             icon="clear"
                             height={50}
                             width={50}
+                            marginLeftRight={5}
                             onClick={this.handleClear}
                         />
                         <Button
@@ -111,6 +112,7 @@ class Row extends React.Component<Props, State> {
                             icon="save"
                             height={50}
                             width={50}
+                            marginLeftRight={5}
                             onClick={this.handleSave}
                         />
                     </>

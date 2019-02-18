@@ -1,18 +1,19 @@
-import { Map, Record } from "immutable";
-import { GradeCategory } from "./GradeCategory";
+import { Record } from "immutable";
 
 export const CourseRecord = Record({
-    categories: Map(),
     creditHours: 0,
     description: "",
-    section: "",
+    id: "",
+    section: 0,
     title: "",
+    userId: "",
 });
 
 export class Course extends CourseRecord {
     public title: string;
     public description: string;
-    public section: string;
+    public section: number;
     public creditHours: number;
-    public categories?: Map<string, GradeCategory>;
+    public userId: string;
+    public id?: string;
 }
