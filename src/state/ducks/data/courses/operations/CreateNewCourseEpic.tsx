@@ -18,22 +18,28 @@ export const CreateNewCourseEpic = (
     return action$.pipe(
         ofType(types.CREATE_NEW_COURSE),
         mergeMap((action: CreateNewCourse) => {
-            return ajax.post(
-                "/api/courses",
-                action.course.toJS(),
-                generateAuthHeaders(),
-            ).pipe(
-                map((res: AjaxResponse) => {
-                    return res.response;
-                }),
-                mergeMap((course: Course) => {
-                    return Observable.of(CreateNewCourseSuccessCreator(course));
-                }),
-                catchError((err: Error) => {
-                    Toast.error(err.message);
-                    return Observable.of(CourseFailureActionCreator(err));
-                }),
-            );
+            const { currentUser } = state$.value.data.user;
+            if (currentUser) {
+                action.course.set("userId", currentUser.id);
+                return ajax.post(
+                    "/api/courses",
+                    action.course.toJS(),
+                    generateAuthHeaders(),
+                ).pipe(
+                    map((res: AjaxResponse) => {
+                        return res.response;
+                    }),
+                    mergeMap((course: Course) => {
+                        return Observable.of(CreateNewCourseSuccessCreator(course));
+                    }),
+                    catchError((err: Error) => {
+                        Toast.error(err.message);
+                        return Observable.of(CourseFailureActionCreator(err));
+                    }),
+                );
+            } else {
+                return Observable.of(CourseFailureActionCreator(new Error("User is not defined")));
+            }
         }),
     );
 };
