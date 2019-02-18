@@ -4,6 +4,7 @@ import { Observable } from "rxjs";
 import "rxjs/add/observable/of";
 import { ajax, AjaxResponse } from "rxjs/internal-compatibility";
 import { catchError, map, mergeMap } from "rxjs/operators";
+import { buildURL } from "src/util/BuildURL";
 import { User } from "../../../../../models/User";
 import { generateHeaders } from "../../../../../util/GenerateHeaders";
 import { Toast } from "../../../../../util/Toast";
@@ -23,7 +24,7 @@ export const LoginEpic = (
         ofType(types.LOGIN),
         mergeMap((action: Login) => {
             return ajax.post(
-                "/api/users/login",
+                buildURL("/api/users/login"),
                 action.user,
                 generateHeaders(),
             ).pipe(

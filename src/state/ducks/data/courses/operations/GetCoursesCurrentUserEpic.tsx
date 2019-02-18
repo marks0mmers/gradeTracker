@@ -5,6 +5,7 @@ import "rxjs/add/observable/of";
 import { AjaxResponse } from "rxjs/internal-compatibility";
 import { ajax } from "rxjs/observable/dom/ajax";
 import { catchError, map, mergeMap } from "rxjs/operators";
+import { buildURL } from "src/util/BuildURL";
 import { Course } from "../../../../../models/Course";
 import { generateAuthHeaders } from "../../../../../util/GenerateHeaders";
 import { Toast } from "../../../../../util/Toast";
@@ -21,7 +22,7 @@ export const GetCoursesCurrentUserEpic = (
         mergeMap((action: GetCoursesCurrentUser) => {
             const { currentUser } = state$.value.data.user;
             return ajax.get(
-                `/api/courses/user/${currentUser && currentUser.id}`,
+                buildURL(`/api/courses/user/${currentUser && currentUser.id}`),
                 generateAuthHeaders(),
             ).pipe(
                 map((res: AjaxResponse) => {

@@ -4,6 +4,7 @@ import "rxjs/add/observable/of";
 import { AjaxResponse } from "rxjs/internal-compatibility";
 import { ajax } from "rxjs/observable/dom/ajax";
 import { catchError, map, mergeMap } from "rxjs/operators";
+import { buildURL } from "src/util/BuildURL";
 import { Course } from "../../../../../models/Course";
 import { generateAuthHeaders } from "../../../../../util/GenerateHeaders";
 import { Toast } from "../../../../../util/Toast";
@@ -19,7 +20,7 @@ export const CreateNewCourseEpic = (
         ofType(types.CREATE_NEW_COURSE),
         mergeMap((action: CreateNewCourse) => {
             return ajax.post(
-                "/api/courses",
+                buildURL("/api/courses"),
                 action.course.toJS(),
                 generateAuthHeaders(),
             ).pipe(

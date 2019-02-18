@@ -1,6 +1,7 @@
 import "rxjs/add/observable/of";
 import { ajax, AjaxResponse } from "rxjs/internal-compatibility";
 import { catchError, map, mergeMap } from "rxjs/operators";
+import { buildURL } from "src/util/BuildURL";
 import { AnyAction } from "../../../../../../node_modules/redux";
 import { ofType, StateObservable } from "../../../../../../node_modules/redux-observable";
 import { Observable } from "../../../../../../node_modules/rxjs";
@@ -23,7 +24,7 @@ export const GetCurrentUserEpic = (
         ofType(types.GET_CURRENT_USER),
         mergeMap((action: GetCurrentUser) => {
             return ajax.get(
-                "/api/users/current",
+                buildURL("/api/users/current"),
                 generateAuthHeaders(),
             ).pipe(
                 map((res: AjaxResponse) => {

@@ -4,6 +4,7 @@ import { Observable } from "rxjs";
 import "rxjs/add/observable/of";
 import { ajax, AjaxResponse } from "rxjs/internal-compatibility";
 import { catchError, map, mergeMap } from "rxjs/operators";
+import { buildURL } from "src/util/BuildURL";
 import { User } from "../../../../../models/User";
 import { generateHeaders } from "../../../../../util/GenerateHeaders";
 import { Toast } from "../../../../../util/Toast";
@@ -24,7 +25,7 @@ export const CreateNewUserEpic = (
         ofType(types.CREATE_NEW_USER),
         mergeMap((action: CreateNewUser) => {
             return ajax.post(
-                "/api/users",
+                buildURL("/api/users"),
                 action.user.toJS(),
                 generateHeaders(),
             ).pipe(
