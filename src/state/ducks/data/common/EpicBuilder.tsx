@@ -28,7 +28,7 @@ export const epicBuilder = <
     type: string,
     requestType: AjaxMethodType,
     routeBuilder: (action: IA, state: RootState) => string,
-    requestHeaders: {},
+    requestHeadersNoAuth: {},
     requestBody?: (action: IA, state: RootState) => {},
 ) => {
     return (
@@ -39,6 +39,13 @@ export const epicBuilder = <
             ofType(type),
             mergeMap((action: IA) => {
                 let ajaxCall: Observable<AjaxResponse> = empty();
+                const token = sessionStorage.getItem("jwtToken");
+                const requestHeaders = token
+                ? {
+                    ...requestHeadersNoAuth,
+                    Authorization: `Bearer ${token}`,
+                }
+                : requestHeadersNoAuth;
                 switch (requestType) {
                     case AjaxMethodType.GET:
                         ajaxCall = ajax.get(

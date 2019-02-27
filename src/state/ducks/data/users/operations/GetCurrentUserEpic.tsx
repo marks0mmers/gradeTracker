@@ -1,4 +1,4 @@
-import { generateAuthHeaders } from "../../../../../util/GenerateHeaders";
+import { generateHeaders } from "../../../../../util/GenerateHeaders";
 import { AjaxMethodType, epicBuilder } from "../../common/EpicBuilder";
 import {
     GetCurrentUser,
@@ -13,5 +13,5 @@ export const GetCurrentUserEpic = epicBuilder(
     types.GET_CURRENT_USER,
     AjaxMethodType.GET,
     (action: GetCurrentUser) => "/api/users/current",
-    generateAuthHeaders(),
+    generateHeaders(),
 );

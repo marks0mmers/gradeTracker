@@ -1,4 +1,4 @@
-import { generateAuthHeaders } from "../../../../../util/GenerateHeaders";
+import { generateHeaders } from "../../../../../util/GenerateHeaders";
 import { RootState } from "../../../../rootReducer";
 import { AjaxMethodType, epicBuilder } from "../../common/EpicBuilder";
 import { CourseDataActionTypes as types, GetCoursesCurrentUser, GetCoursesCurrentUserSuccessCreator } from "../actions";
@@ -11,5 +11,5 @@ export const GetCoursesCurrentUserEpic = epicBuilder(
     AjaxMethodType.GET,
     (action: GetCoursesCurrentUser, state: RootState) =>
         `/api/courses/user/${state.data.user.currentUser && state.data.user.currentUser._id}`,
-    generateAuthHeaders(),
+    generateHeaders(),
 );

@@ -1,4 +1,4 @@
-import { generateAuthHeaders } from "src/util/GenerateHeaders";
+import { generateHeaders } from "src/util/GenerateHeaders";
 import { AjaxMethodType, epicBuilder } from "../../common/EpicBuilder";
 import { EditCourse, EditCourseSuccessCreator } from "../actions";
 import { CourseDataActionTypes as types} from "../actions";
@@ -10,6 +10,6 @@ export const EditCourseEpic = epicBuilder(
     types.EDIT_COURSE,
     AjaxMethodType.PUT,
     (action: EditCourse) => `/api/courses/${action.course.id}`,
-    generateAuthHeaders(),
+    generateHeaders(),
     (action: EditCourse) => action.course.toJS(),
 );
