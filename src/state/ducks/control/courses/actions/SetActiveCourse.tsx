@@ -1,11 +1,12 @@
+import { Course } from "src/models/Course";
 import { CourseControlActionTypes as types } from ".";
 
 export interface SetActiveCourse {
-    title?: string;
+    course?: Course;
     type: types.SET_ACTIVE_COURSE;
 }
 
-export const SetActiveCourseCreator = (title: string | undefined) => ({
-    title,
+export const SetActiveCourseCreator = (course?: Course): SetActiveCourse => ({
+    course,
     type: types.SET_ACTIVE_COURSE,
 });

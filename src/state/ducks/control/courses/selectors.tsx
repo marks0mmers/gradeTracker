@@ -14,7 +14,7 @@ export const getDetailedCourseElements = createSelector(
     [getCourses, getActiveCourse, getSelectedGradeCategory],
     (
         courses: Map<string, Course>,
-        activeCourse: string,
+        activeCourse: Course,
         selectedGradeCategory: string,
     ) => {
         return List <DataGridElement<GradeCategory>>();

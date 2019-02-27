@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { Route, Switch } from "react-router";
 import { ToastContainer } from "react-toastify";
 import { bindActionCreators, Dispatch } from "redux";
+import { Course } from "src/models/Course";
 import styled from "styled-components";
 import { Theme } from "../models/Theme";
 import { User } from "../models/User";
@@ -29,7 +30,7 @@ interface PassedProps {
 
 interface PropsFromState {
     themes?: Map<string, Theme>;
-    detailedCourse?: string;
+    detailedCourse?: Course;
     location?: string;
     currentUser?: User;
 }
@@ -115,7 +116,7 @@ class Layout extends React.Component<Props> {
                     />
                     <Route
                         component={CourseDetailedPage}
-                        path={`/${detailedCourse}`}
+                        path={`/${detailedCourse && detailedCourse.title}`}
                     />
                     <Route
                         component={AnalysisPage}

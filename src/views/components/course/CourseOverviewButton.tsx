@@ -10,6 +10,7 @@ import Input from "../styled-inputs/Input";
 
 interface Props {
     className?: string;
+    courseId: string;
     courseDescription?: string;
     courseTitle?: string;
     courseSection?: number;
@@ -19,9 +20,9 @@ interface Props {
 
     onEditClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
     onFormSubmit?: (course: Course, originalCourse?: Course) => void;
-    onClick?: () => void;
-    onHover?: (title: string) => void;
+    onClick?: (course?: Course) => void;
     cancelCreate?: () => void;
+    onDeleteClick?: (id: string) => void;
 }
 
 interface State {
@@ -37,7 +38,6 @@ class CourseOverviewButton extends React.Component<Props, State> {
         this.handleCancel = this.handleCancel.bind(this);
         this.handleExecute = this.handleExecute.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
-        this.handleHover = this.handleHover.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
 
         this.state = {
@@ -66,7 +66,6 @@ class CourseOverviewButton extends React.Component<Props, State> {
                 id={`${courseTitle ? courseTitle.toLowerCase() : ""}-button`}
                 className={className}
                 onClick={this.handleClick}
-                onMouseEnter={this.handleHover}
             >
                 <div className="course-info">
                     {
@@ -152,20 +151,15 @@ class CourseOverviewButton extends React.Component<Props, State> {
     private handleClick() {
         const handler = this.props.onClick;
         if (handler) {
-            handler();
+            handler(this.props.originalCourse);
         }
     }
 
     private handleDelete(event: React.MouseEvent<HTMLButtonElement>) {
         event.stopPropagation();
-        // rewrite this
-    }
-
-    private handleHover() {
-        const handler = this.props.onHover;
-        const { courseTitle } = this.props;
-        if (handler && courseTitle) {
-            handler(courseTitle);
+        const handler = this.props.onDeleteClick;
+        if (handler) {
+            handler(this.props.courseId);
         }
     }
 
@@ -184,6 +178,8 @@ class CourseOverviewButton extends React.Component<Props, State> {
         const { formValues } = this.state;
         const handler = this.props.onFormSubmit;
         const course = new Course({
+            id: originalCourse && originalCourse.id,
+            userId: originalCourse && originalCourse.userId,
             creditHours: formValues && +formValues.get("hours"),
             description: formValues && formValues.get("description"),
             section: formValues && +formValues.get("section"),

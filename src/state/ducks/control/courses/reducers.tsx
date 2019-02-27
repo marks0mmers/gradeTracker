@@ -1,4 +1,5 @@
 import { List, Map, Record } from "immutable";
+import { Course } from "src/models/Course";
 import { GradeCategory } from "../../../../models/GradeCategory";
 import { DataGridColumnDefinition } from "../../../../views/controls/data-grid";
 import {
@@ -60,7 +61,7 @@ export const CourseControlStateRecord = Record({
 });
 
 export class CourseControlState extends CourseControlStateRecord {
-    public activeCourse: string;
+    public activeCourse: Course;
     public detailedColumns: List<DataGridColumnDefinition<GradeCategory>>;
     public selectedGradeCategory: string;
 }
@@ -73,7 +74,7 @@ export const CourseControlReducer = (
         case (types.SELECT_GRADE_CATEGORY):
             return state.set("selectedGradeCategory", action.gradeCategory);
         case (types.SET_ACTIVE_COURSE):
-            return state.set("activeCourse", action.title);
+            return state.set("activeCourse", action.course);
         default:
             return state;
     }

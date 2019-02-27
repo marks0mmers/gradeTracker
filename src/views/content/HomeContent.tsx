@@ -1,6 +1,7 @@
 import { push } from "connected-react-router";
 import { Map } from "immutable";
 import * as React from "react";
+import { User } from "src/models/User";
 import styled from "styled-components";
 import { CourseOverviewMode } from "../../constants/CourseOverviewMode";
 import { Course } from "../../models/Course";
@@ -8,7 +9,7 @@ import { GradeCategory } from "../../models/GradeCategory";
 import {
     SetActiveCourseCreator,
 } from "../../state/ducks/control/courses";
-import { CreateNewCourseCreator } from "../../state/ducks/data/courses";
+import { CreateNewCourseCreator, DeleteCourseCreator, EditCourseCreator } from "../../state/ducks/data/courses";
 import CourseOverviewButton from "../components/course/CourseOverviewButton";
 import Divider from "../components/Divider";
 import Button from "../controls/button/package/Button";
@@ -17,11 +18,14 @@ import { ButtonWrapper } from "../wrappers/ButtonWrapper";
 interface Props {
     className?: string;
     courses?: Map<string, Course>;
-    detailedCourse?: string;
+    detailedCourse?: Course;
     selectedGradeCategory?: GradeCategory;
+    currentUser?: User;
 
     handleSetActiveCourse?: typeof SetActiveCourseCreator;
     handleCreateNewCourse?: typeof CreateNewCourseCreator;
+    handleEditCourse?: typeof EditCourseCreator;
+    handleDeleteCourse?: typeof DeleteCourseCreator;
     push?: typeof push;
 }
 
@@ -30,17 +34,17 @@ interface State {
     isEditing?: boolean;
 }
 
-class HomePage extends React.Component<Props, State> {
+class HomeContent extends React.Component<Props, State> {
 
     constructor(props: Props) {
         super(props);
 
-        this.handleViewCourseDetailed = this.handleViewCourseDetailed.bind(this);
+        this.handleCourseClick = this.handleCourseClick.bind(this);
         this.handleNewCourseClick = this.handleNewCourseClick.bind(this);
         this.handleNewCourseCancel = this.handleNewCourseCancel.bind(this);
-        this.handleCourseHover = this.handleCourseHover.bind(this);
         this.handleCourseSave = this.handleCourseSave.bind(this);
         this.handleEditClick = this.handleEditClick.bind(this);
+        this.handleDeleteClick = this.handleDeleteClick.bind(this);
 
         this.state = {
             isCreating: false,
@@ -90,6 +94,7 @@ class HomePage extends React.Component<Props, State> {
                         isCreating &&
                         <CourseOverviewButton
                             mode={CourseOverviewMode.INPUT}
+                            courseId={""}
                             cancelCreate={this.handleNewCourseCancel}
                             onFormSubmit={this.handleCourseSave}
                         />
@@ -98,25 +103,28 @@ class HomePage extends React.Component<Props, State> {
                         isEditing &&
                         <CourseOverviewButton
                             mode={CourseOverviewMode.INPUT}
-                            originalCourse={courses && courses.find((value: Course) => value.title === detailedCourse)}
+                            courseId={detailedCourse && detailedCourse.id || ""}
+                            originalCourse={detailedCourse && detailedCourse}
                             cancelCreate={this.handleNewCourseCancel}
                             onFormSubmit={this.handleCourseSave}
                         />
                     }
                     {
                         courses && courses.reverse().map((course: Course, key: string) => {
-                            return isEditing && detailedCourse === course.title
+                            return isEditing && detailedCourse === course
                             ? null
                             : (
                                 <CourseOverviewButton
                                     key={key}
                                     mode={CourseOverviewMode.DISPLAY}
+                                    courseId={course.id || ""}
+                                    originalCourse={course}
                                     courseCreditHours={course.creditHours}
                                     courseDescription={course.description}
                                     courseSection={course.section}
                                     courseTitle={course.title}
-                                    onClick={this.handleViewCourseDetailed}
-                                    onHover={this.handleCourseHover}
+                                    onClick={this.handleCourseClick}
+                                    onDeleteClick={this.handleDeleteClick}
                                     onEditClick={this.handleEditClick}
                                 />
                             );
@@ -127,11 +135,10 @@ class HomePage extends React.Component<Props, State> {
         );
     }
 
-    private handleCourseHover(title: string) {
-        const handler = this.props.handleSetActiveCourse;
-        const { isCreating, isEditing } = this.state;
-        if (handler && !isCreating && !isEditing) {
-            handler(title);
+    private handleDeleteClick(id: string) {
+        const handler = this.props.handleDeleteCourse;
+        if (handler) {
+            handler(id);
         }
     }
 
@@ -147,22 +154,26 @@ class HomePage extends React.Component<Props, State> {
     }
 
     private handleCourseSave(course: Course, originalCourse?: Course) {
+        const { currentUser } = this.props;
         const { isCreating, isEditing } = this.state;
         if (isCreating) {
             const handler = this.props.handleCreateNewCourse;
             if (handler) {
-                handler(course);
+                handler(course.set("userId", currentUser ? currentUser._id : "") as Course);
             }
         }
         if (isEditing) {
-            // reimplement
+            const handler = this.props.handleEditCourse;
+            if (handler) {
+                handler(course);
+            }
         }
     }
 
-    private handleViewCourseDetailed() {
-        const handler = this.props.push;
-        if (handler) {
-            handler(`/${this.props.detailedCourse}`);
+    private handleCourseClick(course?: Course) {
+        const handler = this.props.handleSetActiveCourse;
+        if (handler && course) {
+            handler(course);
         }
     }
 
@@ -182,7 +193,7 @@ class HomePage extends React.Component<Props, State> {
 
 }
 
-export default styled(HomePage)`
+export default styled(HomeContent)`
     display: grid;
     background: ${(props) => props.theme.white};
     grid-template-columns: 1fr auto;
