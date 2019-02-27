@@ -18,7 +18,7 @@ interface Props {
     originalCourse?: Course;
     mode?: CourseOverviewMode;
 
-    onEditClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    onEditClick?: (event: React.MouseEvent<HTMLButtonElement>, course?: Course) => void;
     onFormSubmit?: (course: Course, originalCourse?: Course) => void;
     onClick?: (course?: Course) => void;
     cancelCreate?: () => void;
@@ -39,6 +39,7 @@ class CourseOverviewButton extends React.Component<Props, State> {
         this.handleExecute = this.handleExecute.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
+        this.handleEditClick = this.handleEditClick.bind(this);
 
         this.state = {
             formValues: props.originalCourse
@@ -111,7 +112,7 @@ class CourseOverviewButton extends React.Component<Props, State> {
                                 height={40}
                                 width={60}
                                 marginLeftRight={5}
-                                onClick={this.props.onEditClick}
+                                onClick={this.handleEditClick}
                             />
                             <Button
                                 tooltip="Delete Course"
@@ -155,11 +156,21 @@ class CourseOverviewButton extends React.Component<Props, State> {
         }
     }
 
+    private handleEditClick(event: React.MouseEvent<HTMLButtonElement>) {
+        event.stopPropagation();
+        const handler = this.props.onEditClick;
+        if (handler) {
+            handler(event, this.props.originalCourse);
+        }
+    }
+
     private handleDelete(event: React.MouseEvent<HTMLButtonElement>) {
         event.stopPropagation();
-        const handler = this.props.onDeleteClick;
-        if (handler) {
-            handler(this.props.courseId);
+        if (confirm("Are you sure you want to delete this course? (This cannot be undone)")) {
+            const handler = this.props.onDeleteClick;
+            if (handler) {
+                handler(this.props.courseId);
+            }
         }
     }
 

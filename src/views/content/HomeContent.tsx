@@ -18,7 +18,6 @@ import { ButtonWrapper } from "../wrappers/ButtonWrapper";
 interface Props {
     className?: string;
     courses?: Map<string, Course>;
-    detailedCourse?: Course;
     selectedGradeCategory?: GradeCategory;
     currentUser?: User;
 
@@ -32,6 +31,7 @@ interface Props {
 interface State {
     isCreating?: boolean;
     isEditing?: boolean;
+    editingCourse?: Course;
 }
 
 class HomeContent extends React.Component<Props, State> {
@@ -49,6 +49,7 @@ class HomeContent extends React.Component<Props, State> {
         this.state = {
             isCreating: false,
             isEditing: false,
+            editingCourse: undefined,
         };
     }
 
@@ -56,12 +57,12 @@ class HomeContent extends React.Component<Props, State> {
         const {
             className,
             courses,
-            detailedCourse,
         } = this.props;
 
         const {
             isCreating,
             isEditing,
+            editingCourse,
         } = this.state;
 
         return (
@@ -103,15 +104,15 @@ class HomeContent extends React.Component<Props, State> {
                         isEditing &&
                         <CourseOverviewButton
                             mode={CourseOverviewMode.INPUT}
-                            courseId={detailedCourse && detailedCourse.id || ""}
-                            originalCourse={detailedCourse && detailedCourse}
+                            courseId={editingCourse && editingCourse.id || ""}
+                            originalCourse={editingCourse && editingCourse}
                             cancelCreate={this.handleNewCourseCancel}
                             onFormSubmit={this.handleCourseSave}
                         />
                     }
                     {
                         courses && courses.reverse().map((course: Course, key: string) => {
-                            return isEditing && detailedCourse === course
+                            return isEditing && editingCourse === course
                             ? null
                             : (
                                 <CourseOverviewButton
@@ -142,15 +143,13 @@ class HomeContent extends React.Component<Props, State> {
         }
     }
 
-    private handleEditClick(event: React.MouseEvent<HTMLButtonElement>) {
+    private handleEditClick(event: React.MouseEvent<HTMLButtonElement>, course?: Course) {
         event.stopPropagation();
-        const { detailedCourse } = this.props;
-        if (detailedCourse) {
-            this.setState({
-                isCreating: false,
-                isEditing: true,
-            });
-        }
+        this.setState({
+            isCreating: false,
+            isEditing: true,
+            editingCourse: course,
+        });
     }
 
     private handleCourseSave(course: Course, originalCourse?: Course) {

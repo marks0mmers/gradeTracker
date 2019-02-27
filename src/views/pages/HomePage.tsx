@@ -8,7 +8,6 @@ import { getCurrentUser } from "src/state/ducks/data/users";
 import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
 import {
-    getActiveCourse,
     getDetailedColumns,
     getDetailedCourseElements,
     getSelectedGradeCategory,
@@ -26,7 +25,6 @@ import HomeContent from "../content/HomeContent";
 
 interface PropsFromState {
     courses?: Map<string, Course>;
-    detailedCourse?: Course;
     selectedGradeCategory?: GradeCategory;
     currentUser?: User;
 }
@@ -60,7 +58,6 @@ const mapStateToProps = (state: RootState) => {
         courses: getCourses(state),
         categoryColumns: getDetailedColumns(state),
         categoryElements: getDetailedCourseElements(state),
-        detailedCourse: getActiveCourse(state),
         currentUser: getCurrentUser(state),
         selectedGradeCategory: getSelectedGradeCategory(state),
     });
