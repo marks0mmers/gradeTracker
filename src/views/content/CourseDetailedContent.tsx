@@ -1,17 +1,19 @@
 import { push } from "connected-react-router";
 import { List, Map } from "immutable";
-import * as React from "react";
+import React, { Component, Fragment, MouseEvent } from "react";
 import styled from "styled-components";
 import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
+import { User } from "../../models/User";
 import {
     SelectGradeCategoryCreator,
     SetActiveCourseCreator,
 } from "../../state/ducks/control/courses";
+import { CreateGradeCategoryCreator } from "../../state/ducks/data/gradeCategories";
 import CategoryDetailedPane from "../components/category/CategoryDetailedPane";
 import CourseCategoryForm from "../components/category/CourseCategoryForm";
 import Divider from "../components/Divider";
-import Button from "../controls/button/package/Button";
+import Button from "../controls/button/Button";
 import { BodyCellProps } from "../controls/data-grid";
 import { DataGridColumnDefinition } from "../controls/data-grid";
 import { DataGridElement } from "../controls/data-grid";
@@ -19,6 +21,7 @@ import DataGrid from "../controls/data-grid";
 
 interface Props {
     className?: string;
+    currentUser?: User;
     course?: Course;
     categories?: Map<string, GradeCategory>;
     categoryColumns?: List<DataGridColumnDefinition<GradeCategory>>;
@@ -27,6 +30,7 @@ interface Props {
 
     setActiveCourse?: typeof SetActiveCourseCreator;
     selectGradeCategory?: typeof SelectGradeCategoryCreator;
+    createGradeCategory?: typeof CreateGradeCategoryCreator;
     push?: typeof push;
 }
 
@@ -35,24 +39,12 @@ interface State {
     isEditing: boolean;
 }
 
-class CourseDetailedContent extends React.Component<Props, State> {
+class CourseDetailedContent extends Component<Props, State> {
 
-    constructor(props: Props) {
-        super(props);
-
-        this.handleBodyCellClick = this.handleBodyCellClick.bind(this);
-        this.handleRootClick = this.handleRootClick.bind(this);
-        this.handleCreate = this.handleCreate.bind(this);
-        this.handleEdit = this.handleEdit.bind(this);
-        this.handleDelete = this.handleDelete.bind(this);
-        this.handleCancelCreate = this.handleCancelCreate.bind(this);
-        this.handleFormSave = this.handleFormSave.bind(this);
-
-        this.state = {
-            isCreating: false,
-            isEditing: false,
-        };
-    }
+    public state = {
+        isCreating: false,
+        isEditing: false,
+    };
 
     public componentWillUnmount() {
         const handler = this.props.selectGradeCategory;
@@ -155,26 +147,33 @@ class CourseDetailedContent extends React.Component<Props, State> {
                     />
                     {
                         selectedCategory &&
-                        <>
-                        <Divider
-                            isVertical={false}
-                            top={10}
-                            bottom={10}
-                        />
-                        <CategoryDetailedPane
-                            selectedCategory={categories && categories.get(selectedCategory)}
-                        />
-                        </>
+                        <Fragment>
+                            <Divider
+                                isVertical={false}
+                                top={10}
+                                bottom={10}
+                            />
+                            <CategoryDetailedPane
+                                selectedCategory={categories && categories.get(selectedCategory)}
+                            />
+                        </Fragment>
                     }
                 </Content>
             </div>
         );
     }
 
-    private handleFormSave(courseToChange: Course, category: GradeCategory) {
+    private handleFormSave = (course: Course, category: GradeCategory) => {
         const { isCreating, isEditing } = this.state;
+        const { currentUser } = this.props;
         if (isCreating) {
-            // reimplement this
+            const handler = this.props.createGradeCategory;
+            if (handler && currentUser) {
+                handler(
+                    category.set("courseId", course.id).set("userId", currentUser._id) as GradeCategory,
+                    course.id || "",
+                );
+            }
         }
         if (isEditing) {
             // reimplement this
@@ -182,7 +181,7 @@ class CourseDetailedContent extends React.Component<Props, State> {
     }
 
     private handleBodyCellClick(
-        event: React.MouseEvent<HTMLDivElement>,
+        event: MouseEvent<HTMLDivElement>,
         payload: GradeCategory,
         props: BodyCellProps,
     ) {
@@ -198,14 +197,14 @@ class CourseDetailedContent extends React.Component<Props, State> {
         }
     }
 
-    private handleCreate() {
+    private handleCreate = () => {
         this.setState({
             isCreating: true,
             isEditing: false,
         });
     }
 
-    private handleEdit() {
+    private handleEdit = () => {
         const { selectedCategory } = this.props;
         if (selectedCategory) {
             this.setState({
@@ -215,18 +214,18 @@ class CourseDetailedContent extends React.Component<Props, State> {
         }
     }
 
-    private handleDelete() {
+    private handleDelete = () => {
         // reimplement this
     }
 
-    private handleCancelCreate() {
+    private handleCancelCreate = () => {
         this.setState({
             isCreating: false,
             isEditing: false,
         });
     }
 
-    private handleRootClick() {
+    private handleRootClick = () => {
         const handler = this.props.setActiveCourse;
         if (handler) {
             handler(undefined);
