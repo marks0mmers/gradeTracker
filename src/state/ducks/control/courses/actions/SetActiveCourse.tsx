@@ -1,5 +1,5 @@
-import { Course } from "src/models/Course";
 import { CourseControlActionTypes as types } from ".";
+import { Course } from "../../../../../models/Course";
 
 export interface SetActiveCourse {
     course?: Course;

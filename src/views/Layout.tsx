@@ -1,12 +1,12 @@
 import { push } from "connected-react-router";
 import { Map } from "immutable";
-import * as React from "react";
+import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { Route, Switch } from "react-router";
 import { ToastContainer } from "react-toastify";
 import { bindActionCreators, Dispatch } from "redux";
-import { Course } from "src/models/Course";
 import styled from "styled-components";
+import { Course } from "../models/Course";
 import { Theme } from "../models/Theme";
 import { User } from "../models/User";
 import { getActiveCourse } from "../state/ducks/control/courses";
@@ -29,26 +29,22 @@ interface PassedProps {
 }
 
 interface PropsFromState {
-    themes?: Map<string, Theme>;
-    detailedCourse?: Course;
-    location?: string;
-    currentUser?: User;
+    themes: Map<string, Theme>;
+    detailedCourse: Course;
+    location: string;
+    currentUser: User;
 }
 
 interface PropsFromDispatch {
-    setActiveTheme?: typeof SetActiveThemeCreator;
-    getCurrentUser?: typeof GetCurrentUserCreator;
-    logout?: typeof LogoutCreator;
-    pushRoute?: typeof push;
+    setActiveTheme: typeof SetActiveThemeCreator;
+    getCurrentUser: typeof GetCurrentUserCreator;
+    logout: typeof LogoutCreator;
+    pushRoute: typeof push;
 }
 
 type Props = PropsFromDispatch & PropsFromState & PassedProps;
 
-class Layout extends React.Component<Props> {
-
-    constructor(props: Props) {
-        super(props);
-    }
+class Layout extends Component<Props> {
 
     public componentDidMount() {
         if (!this.props.currentUser) {
@@ -90,19 +86,19 @@ class Layout extends React.Component<Props> {
             <div id="layout" className={className}>
                 {
                     currentUser &&
-                    <>
-                    <Header
-                        icon="dashboard"
-                        title="Gradebook"
-                        themes={themes}
-                        setActiveTheme={setActiveTheme}
-                        currentUser={currentUser}
-                        logout={this.props.logout}
-                    />
-                    <NavBar
-                        pushRoute={pushRoute}
-                    />
-                    </>
+                    <Fragment>
+                        <Header
+                            icon="dashboard"
+                            title="Gradebook"
+                            themes={themes}
+                            setActiveTheme={setActiveTheme}
+                            currentUser={currentUser}
+                            logout={this.props.logout}
+                        />
+                        <NavBar
+                            pushRoute={pushRoute}
+                        />
+                    </Fragment>
                 }
                 <Switch>
                     <Route

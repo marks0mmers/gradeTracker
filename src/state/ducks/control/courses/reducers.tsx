@@ -1,5 +1,5 @@
 import { List, Map, Record } from "immutable";
-import { Course } from "src/models/Course";
+import { Course } from "../../../../models/Course";
 import { GradeCategory } from "../../../../models/GradeCategory";
 import { DataGridColumnDefinition } from "../../../../views/controls/data-grid";
 import {

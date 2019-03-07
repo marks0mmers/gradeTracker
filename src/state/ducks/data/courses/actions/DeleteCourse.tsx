@@ -1,4 +1,4 @@
-import { Course } from "src/models/Course";
+import { Course } from "../../../../../models/Course";
 import { CourseDataActionTypes as types } from "./types";
 
 export interface DeleteCourse {

@@ -1,5 +1,5 @@
 import { push } from "connected-react-router";
-import * as React from "react";
+import React, { Component } from "react";
 import styled from "styled-components";
 import NavButton from "../components/NavButton";
 
@@ -18,17 +18,11 @@ interface State {
     activeButton: Routes;
 }
 
-class NavBar extends React.Component<Props, State> {
+class NavBar extends Component<Props, State> {
 
-    constructor(props: Props) {
-        super(props);
-
-        this.handleNavClick = this.handleNavClick.bind(this);
-
-        this.state = {
-            activeButton: Routes.COURSE_OVERVIEW,
-        };
-    }
+    public state = {
+        activeButton: Routes.COURSE_OVERVIEW,
+    };
 
     public render() {
         const {
@@ -56,7 +50,7 @@ class NavBar extends React.Component<Props, State> {
         );
     }
 
-    private handleNavClick(id: string) {
+    private handleNavClick = (id: string) => {
         const handler = this.props.pushRoute;
         this.setState({
             activeButton: id as Routes,

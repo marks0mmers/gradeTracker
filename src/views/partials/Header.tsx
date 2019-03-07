@@ -1,11 +1,11 @@
 import { Map } from "immutable";
-import * as React from "react";
+import React, { ChangeEvent, Component } from "react";
 import styled from "styled-components";
 import { Theme } from "../../models/Theme";
 import { User } from "../../models/User";
 import { LogoutCreator } from "../../state/ducks/data/users";
 import { SetActiveThemeCreator } from "../../state/ducks/session";
-import Button from "../controls/button/package/Button";
+import Button from "../controls/button/Button";
 
 const ThemeSelector = styled.div`
     display: flex;
@@ -31,21 +31,7 @@ interface Props {
     logout?: typeof LogoutCreator;
 }
 
-interface State {
-    file?: string;
-}
-
-class Header extends React.Component<Props, State> {
-
-    constructor(props: Props) {
-        super(props);
-
-        this.handleThemeChange = this.handleThemeChange.bind(this);
-
-        this.state = {
-            file: "",
-        };
-    }
+class Header extends Component<Props> {
 
     public render() {
         const {
@@ -55,8 +41,6 @@ class Header extends React.Component<Props, State> {
             currentUser,
         } = this.props;
 
-        const {
-        } = this.state;
         return (
             <div id="header" className={className}>
                 {title && <span className="title">{title}</span>}
@@ -88,7 +72,7 @@ class Header extends React.Component<Props, State> {
         );
     }
 
-    private handleThemeChange(event: React.ChangeEvent<HTMLSelectElement>) {
+    private handleThemeChange = (event: ChangeEvent<HTMLSelectElement>) => {
         const {
             themes,
         } = this.props;

@@ -1,10 +1,10 @@
 import { Map } from "immutable";
-import * as React from "react";
+import React, { ChangeEvent, Component } from "react";
 import styled from "styled-components";
 import { Course } from "../../../models/Course";
 import { Grade } from "../../../models/Grade";
 import { GradeCategory } from "../../../models/GradeCategory";
-import Button from "../../controls/button/package/Button";
+import Button from "../../../views/controls/button/Button";
 import Input from "../styled-inputs/Input";
 
 interface Props {
@@ -23,24 +23,17 @@ interface State {
     formValues: Map<string, string>;
 }
 
-class CourseCategoryForm extends React.Component<Props, State> {
+class CourseCategoryForm extends Component<Props, State> {
 
-    constructor(props: Props) {
-        super(props);
-
-        this.handleSave = this.handleSave.bind(this);
-        this.handleInputChange = this.handleInputChange.bind(this);
-
-        this.state = {
-            formValues: props.originalCategory
-                ? Map<string, string>()
-                    .set("name", props.originalCategory.title)
-                    .set("percentage", String(props.originalCategory.percentage))
-                    .set("numberOfGrades", String(props.originalCategory.numberOfGrades))
-                : Map(),
-            isInvalidInput: false,
-        };
-    }
+    public state = {
+        formValues: this.props.originalCategory
+            ? Map<string, string>()
+                .set("name", this.props.originalCategory.title)
+                .set("percentage", String(this.props.originalCategory.percentage))
+                .set("numberOfGrades", String(this.props.originalCategory.numberOfGrades))
+            : Map<string, string>(),
+        isInvalidInput: false,
+    };
 
     public render() {
         const {
@@ -88,7 +81,7 @@ class CourseCategoryForm extends React.Component<Props, State> {
         );
     }
 
-    private buildInput(name: string, width?: number, height?: number) {
+    private buildInput = (name: string, width?: number, height?: number) => {
         const { formValues } = this.state;
         return (
             <Input
@@ -101,7 +94,7 @@ class CourseCategoryForm extends React.Component<Props, State> {
         );
     }
 
-    private handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    private handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
         const { formValues } = this.state;
         this.setState({
@@ -109,18 +102,14 @@ class CourseCategoryForm extends React.Component<Props, State> {
         });
     }
 
-    private handleSave() {
+    private handleSave = () => {
         const handler = this.props.handleFormSave;
         const { course, originalCategory } = this.props;
         const { formValues } = this.state;
         if (formValues) {
-            const numberOfGrades: number | string | undefined = !isNaN(+formValues.get("numberOfGrades"))
-                ? +formValues.get("numberOfGrades")
-                : formValues.get("numberOfGrades") === "?"
-                    ? "?"
-                    : undefined;
+            const numberOfGrades = !isNaN(+formValues.get("numberOfGrades")) && +formValues.get("numberOfGrades");
             const percentage = !isNaN(+formValues.get("percentage")) && +formValues.get("percentage");
-            const title: string | undefined = formValues.get("name", undefined);
+            const title = formValues.get("name", undefined);
             const isNumGradesValid = originalCategory && this.props.categoryGrades && typeof numberOfGrades === "number"
                 ? (numberOfGrades || 0) >= this.props.categoryGrades.size
                 : true;
@@ -133,6 +122,7 @@ class CourseCategoryForm extends React.Component<Props, State> {
                     numberOfGrades,
                     percentage,
                     title,
+                    ...(originalCategory ? originalCategory.toJS() : {}),
                 });
                 if (course && handler) {
                     handler(course, category);

@@ -1,5 +1,5 @@
-import { List } from "immutable";
-import * as React from "react";
+import { List, Map } from "immutable";
+import React, { Component } from "react";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import styled, { withTheme } from "styled-components";
 import { AnalysisCourse } from "../../models/AnalysisCourse";
@@ -23,10 +23,7 @@ interface Props {
     columns?: List<DataGridColumnDefinition<AnalysisCourse>>;
 }
 
-class AnalysisContent extends React.Component<Props> {
-    constructor(props: Props) {
-        super(props);
-    }
+class AnalysisContent extends Component<Props> {
 
     public render() {
         const {
@@ -35,18 +32,6 @@ class AnalysisContent extends React.Component<Props> {
             elements,
             theme,
         } = this.props;
-
-        const analysisCourses = elements
-            && elements.map((value: DataGridElement<AnalysisCourse>) => value.payload).toList();
-
-        const graphData: GraphData[] | undefined = analysisCourses && analysisCourses.map((value: AnalysisCourse) => {
-            return {
-                Current: value.currentGPA,
-                Guarenteed: value.guarenteedGPA,
-                Potential: value.potentialGPA,
-                name: value.title,
-            };
-        }).toArray();
 
         return (
             <div className={className}>
@@ -64,7 +49,7 @@ class AnalysisContent extends React.Component<Props> {
                     elements={elements}
                 />
                 <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={graphData}>
+                    <BarChart data={this.getGraphData()}>
                         <CartesianGrid
                             strokeDasharray="3 3"
                             vertical={false}
@@ -85,6 +70,22 @@ class AnalysisContent extends React.Component<Props> {
                 </ResponsiveContainer>
             </div>
         );
+    }
+
+    private getGraphData = () => {
+        const { elements } = this.props;
+        const analysisCourses = elements
+            && elements.map((value: DataGridElement<AnalysisCourse>) => value.payload).toList();
+
+        const graphData: GraphData[] | undefined = analysisCourses && analysisCourses.map((value: AnalysisCourse) => {
+            return {
+                Current: value.currentGPA,
+                Guarenteed: value.guarenteedGPA,
+                Potential: value.potentialGPA,
+                name: value.title,
+            };
+        }).toArray();
+        return graphData;
     }
 }
 

@@ -1,18 +1,18 @@
 import { push } from "connected-react-router";
 import { Map } from "immutable";
-import * as React from "react";
-import { User } from "src/models/User";
+import React, { Component, Fragment, MouseEvent } from "react";
 import styled from "styled-components";
 import { CourseOverviewMode } from "../../constants/CourseOverviewMode";
 import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
+import { User } from "../../models/User";
 import {
     SetActiveCourseCreator,
 } from "../../state/ducks/control/courses";
 import { CreateNewCourseCreator, DeleteCourseCreator, EditCourseCreator } from "../../state/ducks/data/courses";
 import CourseOverviewButton from "../components/course/CourseOverviewButton";
 import Divider from "../components/Divider";
-import Button from "../controls/button/package/Button";
+import Button from "../controls/button/Button";
 import { ButtonWrapper } from "../wrappers/ButtonWrapper";
 
 interface Props {
@@ -34,29 +34,17 @@ interface State {
     editingCourse?: Course;
 }
 
-class HomeContent extends React.Component<Props, State> {
+class HomeContent extends Component<Props, State> {
 
-    constructor(props: Props) {
-        super(props);
-
-        this.handleCourseClick = this.handleCourseClick.bind(this);
-        this.handleNewCourseClick = this.handleNewCourseClick.bind(this);
-        this.handleNewCourseCancel = this.handleNewCourseCancel.bind(this);
-        this.handleCourseSave = this.handleCourseSave.bind(this);
-        this.handleEditClick = this.handleEditClick.bind(this);
-        this.handleDeleteClick = this.handleDeleteClick.bind(this);
-
-        this.state = {
-            isCreating: false,
-            isEditing: false,
-            editingCourse: undefined,
-        };
-    }
+    public state: State = {
+        isCreating: false,
+        isEditing: false,
+        editingCourse: undefined,
+    };
 
     public render() {
         const {
             className,
-            courses,
         } = this.props;
 
         const {
@@ -67,26 +55,22 @@ class HomeContent extends React.Component<Props, State> {
 
         return (
             <div id="home-content" className={className}>
-                <h2
-                    className="route"
-                >
-                    Courses
-                </h2>
+                <h2 className="route">Courses</h2>
                 <ButtonWrapper id="button-wrapper">
                     {
                         !isCreating &&
-                        <>
-                        <span className="button-label">Create New Course:</span>
-                        <Button
-                            id="create-new-course"
-                            tooltip="Create New Course"
-                            icon="add"
-                            height={30}
-                            width={50}
-                            marginLeftRight={5}
-                            onClick={this.handleNewCourseClick}
-                        />
-                        </>
+                        <Fragment>
+                            <span className="button-label">Create New Course:</span>
+                            <Button
+                                id="create-new-course"
+                                tooltip="Create New Course"
+                                icon="add"
+                                height={30}
+                                width={50}
+                                marginLeftRight={5}
+                                onClick={this.handleNewCourseClick}
+                            />
+                        </Fragment>
                     }
                 </ButtonWrapper>
                 <Divider isVertical={false} gridArea="divider"/>
@@ -110,40 +94,44 @@ class HomeContent extends React.Component<Props, State> {
                             onFormSubmit={this.handleCourseSave}
                         />
                     }
-                    {
-                        courses && courses.reverse().map((course: Course, key: string) => {
-                            return isEditing && editingCourse === course
-                            ? null
-                            : (
-                                <CourseOverviewButton
-                                    key={key}
-                                    mode={CourseOverviewMode.DISPLAY}
-                                    courseId={course.id || ""}
-                                    originalCourse={course}
-                                    courseCreditHours={course.creditHours}
-                                    courseDescription={course.description}
-                                    courseSection={course.section}
-                                    courseTitle={course.title}
-                                    onClick={this.handleCourseClick}
-                                    onDeleteClick={this.handleDeleteClick}
-                                    onEditClick={this.handleEditClick}
-                                />
-                            );
-                        }).toList()
-                    }
+                    {this.getCourseButtons()}
                 </div>
             </div>
         );
     }
 
-    private handleDeleteClick(id: string) {
+    private getCourseButtons = () => {
+        const { courses } = this.props;
+        const { isEditing, editingCourse } = this.state;
+        return courses && courses.map((course: Course, key: string) => {
+            return isEditing && editingCourse === course
+            ? null
+            : (
+                <CourseOverviewButton
+                    key={key}
+                    mode={CourseOverviewMode.DISPLAY}
+                    courseId={course.id || ""}
+                    originalCourse={course}
+                    courseCreditHours={course.creditHours}
+                    courseDescription={course.description}
+                    courseSection={course.section}
+                    courseTitle={course.title}
+                    onClick={this.handleCourseClick}
+                    onDeleteClick={this.handleDeleteClick}
+                    onEditClick={this.handleEditClick}
+                />
+            );
+        }).toList();
+    }
+
+    private handleDeleteClick = (id: string) => {
         const handler = this.props.handleDeleteCourse;
         if (handler) {
             handler(id);
         }
     }
 
-    private handleEditClick(event: React.MouseEvent<HTMLButtonElement>, course?: Course) {
+    private handleEditClick = (event: MouseEvent<HTMLButtonElement>, course?: Course) => {
         event.stopPropagation();
         this.setState({
             isCreating: false,
@@ -152,7 +140,7 @@ class HomeContent extends React.Component<Props, State> {
         });
     }
 
-    private handleCourseSave(course: Course, originalCourse?: Course) {
+    private handleCourseSave = (course: Course, originalCourse?: Course) => {
         const { currentUser } = this.props;
         const { isCreating, isEditing } = this.state;
         if (isCreating) {
@@ -169,21 +157,21 @@ class HomeContent extends React.Component<Props, State> {
         }
     }
 
-    private handleCourseClick(course?: Course) {
+    private handleCourseClick = (course?: Course) => {
         const handler = this.props.handleSetActiveCourse;
         if (handler && course) {
             handler(course);
         }
     }
 
-    private handleNewCourseClick() {
+    private handleNewCourseClick = () => {
         this.setState({
             isCreating: true,
             isEditing: false,
         });
     }
 
-    private handleNewCourseCancel() {
+    private handleNewCourseCancel = () => {
         this.setState({
             isCreating: false,
             isEditing: false,

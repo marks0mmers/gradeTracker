@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, {  } from "react";
 import styled from "styled-components";
 
 interface Props {
@@ -6,24 +6,11 @@ interface Props {
     grade?: number;
 }
 
-class ColoredCell extends React.Component<Props> {
-
-    constructor(props: Props) {
-        super(props);
-    }
-
-    public render() {
-        const {
-            className,
-        } = this.props;
-
-        return (
-            <span className={className}>
-                {this.props.grade}
-            </span>
-        );
-    }
-}
+const ColoredCell = (props: Props) => (
+    <span className={props.className}>
+        {props.grade}
+    </span>
+);
 
 export default styled(ColoredCell)`
     width: 100%;
@@ -31,7 +18,7 @@ export default styled(ColoredCell)`
     text-align: center;
     color: ${(props) => props.grade && props.grade >= 80 && props.grade < 90
         ? props.theme.quinaryText
-        : props.theme.primaryText}
+        : props.theme.primaryText};
     background: ${(props) => {
         const grade = props.grade || 0;
         switch (true) {

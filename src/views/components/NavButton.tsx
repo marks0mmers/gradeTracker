@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { Component } from "react";
 import styled from "styled-components";
 import Icon from "./Icon";
 
@@ -11,13 +11,7 @@ interface Props {
     onClick?: (id: string) => void;
 }
 
-class NavButton extends React.Component<Props> {
-
-    constructor(props: Props) {
-        super(props);
-
-        this.handleClick = this.handleClick.bind(this);
-    }
+class NavButton extends Component<Props> {
 
     public render() {
         const {
@@ -37,7 +31,7 @@ class NavButton extends React.Component<Props> {
         );
     }
 
-    private handleClick() {
+    private handleClick = () => {
         const handler = this.props.onClick;
         const { id } = this.props;
         if (handler && id) {

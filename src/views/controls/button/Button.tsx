@@ -1,6 +1,6 @@
-import * as React from "react";
+import React, { MouseEvent } from "react";
 import styled from "styled-components";
-import Icon from "../../../components/Icon";
+import Icon from "../../components/Icon";
 
 interface Props {
     className?: string;
@@ -13,38 +13,20 @@ interface Props {
     marginTopBottom?: number;
     marginLeftRight?: number;
     gridArea?: string;
-    onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
-class Button extends React.Component<Props> {
-
-    constructor(props: Props) {
-        super(props);
-    }
-
-    public render() {
-        const {
-            className,
-            text,
-            icon,
-            onClick,
-            id,
-            tooltip,
-        } = this.props;
-
-        return (
-            <button
-                id={id}
-                className={className}
-                onClick={onClick}
-                title={tooltip}
-            >
-                {icon && <Icon iconName={icon} margin={5}/>}
-                {text}
-            </button>
-        );
-    }
-}
+const Button = (props: Props) => (
+    <button
+        id={props.id}
+        className={props.className}
+        onClick={props.onClick}
+        title={props.tooltip}
+    >
+        {props.icon && <Icon iconName={props.icon} margin={5}/>}
+        {props.text}
+    </button>
+);
 
 export default styled(Button)`
     height: ${(props) => props.height}px;

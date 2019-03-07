@@ -1,10 +1,10 @@
 import { Map } from "immutable";
-import * as React from "react";
+import React, { ChangeEvent, Component, Fragment } from "react";
 import styled from "styled-components";
 import { LoginUser, User } from "../../models/User";
 import { CreateNewUserCreator, LoginCreator } from "../../state/ducks/data/users";
 import Input from "../components/styled-inputs/Input";
-import Button from "../controls/button/package/Button";
+import Button from "../controls/button/Button";
 
 interface Props {
     className?: string;
@@ -20,21 +20,13 @@ interface State {
     creatingNewUser: boolean;
 }
 
-class LoginContent extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
+class LoginContent extends Component<Props, State> {
 
-        this.onInputChange = this.onInputChange.bind(this);
-        this.handleLogin = this.handleLogin.bind(this);
-        this.toggleCreate = this.toggleCreate.bind(this);
-        this.validateForm = this.validateForm.bind(this);
-
-        this.state = {
-            formValues: Map(),
-            formErrors: Map(),
-            creatingNewUser: false,
-        };
-    }
+    public state = {
+        formValues: Map<string, string>(),
+        formErrors: Map<string, boolean>(),
+        creatingNewUser: false,
+    };
 
     public render() {
         const {
@@ -42,143 +34,89 @@ class LoginContent extends React.Component<Props, State> {
         } = this.props;
 
         const {
-            formValues,
             creatingNewUser,
-            formErrors,
         } = this.state;
 
         return (
             <div className={className}>
                 {
                     !creatingNewUser &&
-                    <>
-                    <span className="header">Welcome to Grade Tracker</span>
-                    <Input
-                        name="email"
-                        placeholder="Email"
-                        isInvalid={formErrors.get("email")}
-                        height={25}
-                        width={200}
-                        gridArea="email"
-                        value={formValues.get("email")}
-                        onChange={this.onInputChange}
-                    />
-                    <Input
-                        name="password"
-                        placeholder="Password"
-                        type="password"
-                        isInvalid={formErrors.get("password")}
-                        height={25}
-                        width={200}
-                        gridArea="password"
-                        value={formValues.get("password")}
-                        onChange={this.onInputChange}
-                    />
-                    <Button
-                        width={200}
-                        height={30}
-                        text="Login"
-                        gridArea="login"
-                        tooltip="Click to login"
-                        onClick={this.validateForm}
-                    />
-                    <Button
-                        width={200}
-                        height={20}
-                        text="Create New User"
-                        gridArea="create"
-                        tooltip="Switch to create a new user"
-                        onClick={this.toggleCreate}
-                    />
-                    </>
+                    <Fragment>
+                        <span className="header">Welcome to Grade Tracker</span>
+                        {this.buildInputField("email", "Email", 200, "email")}
+                        {this.buildInputField("password", "Password", 200, "password", "password")}
+                        {this.buildButton(30, "Login", "login", "Click to login", this.validateForm)}
+                        {this.buildButton(20, "Create New User", "create", "Create a new user", this.toggleCreate)}
+                    </Fragment>
                 }
                 {
                     creatingNewUser &&
-                    <>
-                    <div className="first-last">
-                        <Input
-                            name="firstName"
-                            placeholder="First Name"
-                            isInvalid={formErrors.get("firstName")}
-                            height={25}
-                            width={95}
-                            marginRight={5}
-                            value={formValues.get("firstName")}
-                            onChange={this.onInputChange}
-                        />
-                        <Input
-                            name="lastName"
-                            placeholder="Last Name"
-                            isInvalid={formErrors.get("lastName")}
-                            height={25}
-                            width={95}
-                            marginLeft={5}
-                            value={formValues.get("lastName")}
-                            onChange={this.onInputChange}
-                        />
-                    </div>
-                    <Input
-                        name="email"
-                        placeholder="Email"
-                        isInvalid={formErrors.get("email")}
-                        height={25}
-                        width={200}
-                        gridArea="email"
-                        value={formValues.get("email")}
-                        onChange={this.onInputChange}
-                    />
-                    <div className="password-dup">
-                        <Input
-                            name="password"
-                            placeholder="Password"
-                            type="password"
-                            isInvalid={formErrors.get("password")}
-                            height={25}
-                            width={200}
-                            value={formValues.get("password")}
-                            onChange={this.onInputChange}
-                        />
-                        <Input
-                            name="passwordRepeat"
-                            placeholder="Repeat Password"
-                            type="password"
-                            isInvalid={formErrors.get("passwordRepeat")}
-                            height={25}
-                            width={200}
-                            value={formValues.get("passwordRepeat")}
-                            onChange={this.onInputChange}
-                        />
-                    </div>
-                    <Button
-                        width={200}
-                        height={30}
-                        text="Create User"
-                        gridArea="login"
-                        tooltip="Click to create a new user"
-                        onClick={this.validateForm}
-                    />
-                    <Button
-                        width={200}
-                        height={20}
-                        text="Back to Login"
-                        gridArea="create"
-                        tooltip="Switch to login"
-                        onClick={this.toggleCreate}
-                    />
-                    </>
+                    <Fragment>
+                        <div className="first-last">
+                            {this.buildInputField("firstName", "First Name", 95)}
+                            {this.buildInputField("lastName", "Last Name", 95)}
+                        </div>
+                        {this.buildInputField("email", "Email", 200, "email")}
+                        <div className="password-dup">
+                            {this.buildInputField("password", "Password", 200, undefined, "password")}
+                            {this.buildInputField("passwordRepeat", "Repeat Password", 200, undefined, "password")}
+                        </div>
+                        {this.buildButton(30, "Create User", "login", "Click to create a new user", this.validateForm)}
+                        {this.buildButton(20, "Back to Login", "create", "Switch to Login", this.toggleCreate)}
+                    </Fragment>
                 }
             </div>
         );
     }
 
-    private onInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    private buildInputField = (
+        name: string,
+        placeholder: string,
+        width: number,
+        gridArea?: string,
+        type?: string,
+    ) => {
+        const { formValues, formErrors } = this.state;
+        return (
+            <Input
+                name={name}
+                placeholder={placeholder}
+                type={type}
+                isInvalid={formErrors.get(name)}
+                gridArea={gridArea}
+                height={25}
+                width={width}
+                value={formValues.get(name)}
+                onChange={this.onInputChange}
+            />
+        );
+    }
+
+    private buildButton = (
+        height: number,
+        text: string,
+        gridArea: string,
+        tooltip: string,
+        onClick: () => void,
+    ) => (
+        <Button
+            width={200}
+            height={height}
+            text={text}
+            gridArea={gridArea}
+            tooltip={tooltip}
+            onClick={onClick}
+        />
+    )
+
+    private onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
         this.setState({
             formValues: this.state.formValues.set(name, value),
         });
     }
 
-    private handleLogin() {
+    private handleLogin = () => {
         const { formValues } = this.state;
         const handler = this.props.login;
         const loginUser: LoginUser = {
@@ -190,7 +128,7 @@ class LoginContent extends React.Component<Props, State> {
         }
     }
 
-    private toggleCreate() {
+    private toggleCreate = () => {
         this.setState({
             creatingNewUser: !this.state.creatingNewUser,
             formValues: Map(),
@@ -198,7 +136,7 @@ class LoginContent extends React.Component<Props, State> {
         });
     }
 
-    private handleNewUser() {
+    private handleNewUser = () => {
         const { formValues } = this.state;
         const handler = this.props.createNewUser;
         const user = new User({
@@ -210,13 +148,13 @@ class LoginContent extends React.Component<Props, State> {
         });
         if (handler) {
             handler(user);
-            this.setState({
-                formValues: Map(),
-            });
         }
+        this.setState({
+            formValues: Map(),
+        });
     }
 
-    private validateForm() {
+    private validateForm = () => {
         const { formValues, creatingNewUser } = this.state;
         let formErrors = Map<string, boolean>();
         if (creatingNewUser) {

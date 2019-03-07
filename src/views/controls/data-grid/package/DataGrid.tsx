@@ -1,5 +1,5 @@
 import { List } from "immutable";
-import * as React from "react";
+import React, { Component, MouseEvent } from "react";
 import styled from "styled-components";
 import { BodyCellProps } from "../components/BodyCell";
 import ElementRow from "../components/ElementRow";
@@ -14,17 +14,10 @@ interface Props<T> {
     columnDefinitions?: List<DataGridColumnDefinition<T>>;
     elements?: List<DataGridElement<T>>;
     gridArea?: string;
-    onBodyCellClick?: (event: React.MouseEvent<HTMLDivElement>, payload: T, props: BodyCellProps) => void;
+    onBodyCellClick?: (event: MouseEvent<HTMLDivElement>, payload: T, props: BodyCellProps) => void;
 }
 
-class DataGrid<T> extends React.Component<Props<T>> {
-
-    constructor(props: Props<T>) {
-        super(props);
-
-        this.renderBodyCells = this.renderBodyCells.bind(this);
-        this.renderHeaderCells = this.renderHeaderCells.bind(this);
-    }
+class DataGrid<T> extends Component<Props<T>> {
 
     public render() {
         const {
@@ -41,7 +34,7 @@ class DataGrid<T> extends React.Component<Props<T>> {
         );
     }
 
-    private renderHeaderCells() {
+    private renderHeaderCells = () => {
         const {
             columnDefinitions,
             rowHeight,
@@ -60,7 +53,7 @@ class DataGrid<T> extends React.Component<Props<T>> {
         }).toList();
     }
 
-    private renderBodyCells() {
+    private renderBodyCells = () => {
         const {
             columnDefinitions,
             elements,

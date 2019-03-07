@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { ChangeEvent } from "react";
 import styled from "styled-components";
 
 interface Props {
@@ -8,9 +8,11 @@ interface Props {
     height?: number;
     placeholder?: string;
     type?: string;
-    gridArea?: string;
     value?: string;
     isInvalid?: boolean;
+    defaultValue?: string;
+
+    gridArea?: string;
     marginRight?: number;
     marginTop?: number;
     marginLeft?: number;
@@ -19,10 +21,11 @@ interface Props {
     paddingTop?: number;
     paddingLeft?: number;
     paddingBottom?: number;
-    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+
+    onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const Input: React.SFC<Props> = (props: Props) => (
+const Input = (props: Props) => (
     <input
         name={props.name}
         type={props.type || "text"}
@@ -30,6 +33,7 @@ const Input: React.SFC<Props> = (props: Props) => (
         className={props.className}
         onChange={props.onChange}
         value={props.value}
+        defaultValue={props.defaultValue || ""}
     />
 );
 

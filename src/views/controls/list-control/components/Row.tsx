@@ -1,8 +1,8 @@
 import { Map } from "immutable";
-import * as React from "react";
+import React, { ChangeEvent, Component, Fragment } from "react";
 import styled from "styled-components";
 import Input from "../../../components/styled-inputs/Input";
-import Button from "../../button/package/Button";
+import Button from "../../button/Button";
 
 interface Props {
     className?: string;
@@ -25,21 +25,12 @@ interface State {
     initialKey: string;
 }
 
-class Row extends React.Component<Props, State> {
+class Row extends Component<Props, State> {
 
-    constructor(props: Props) {
-        super(props);
-
-        this.handleInputChange = this.handleInputChange.bind(this);
-        this.handleSave = this.handleSave.bind(this);
-        this.handleClick = this.handleClick.bind(this);
-        this.handleClear = this.handleClear.bind(this);
-
-        this.state = {
-            formValues: Map(),
-            initialKey: "",
-        };
-    }
+    public state = {
+        formValues: Map<string, string>(),
+        initialKey: "",
+    };
 
     public componentDidUpdate(prevProps: Props) {
         if (this.props.isEditing !== prevProps.isEditing) {
@@ -76,11 +67,11 @@ class Row extends React.Component<Props, State> {
             >
                 {
                     !isCreating && !isEditing
-                    ? <>
+                    ? <Fragment>
                         <span className="primary">{primaryProperty}</span>
                         {secondaryProperty && <span className="secondary"><i>{secondaryProperty}</i></span>}
-                    </>
-                    : <>
+                    </Fragment>
+                    : <Fragment>
                         <Input
                             name="primary"
                             value={formValues.get("primary")}
@@ -115,13 +106,13 @@ class Row extends React.Component<Props, State> {
                             marginLeftRight={5}
                             onClick={this.handleSave}
                         />
-                    </>
+                    </Fragment>
                 }
             </div>
         );
     }
 
-    private handleClick() {
+    private handleClick = () => {
         const { primaryProperty, secondaryProperty } = this.props;
         const handler = this.props.onClick;
         if (handler && primaryProperty) {
@@ -129,7 +120,7 @@ class Row extends React.Component<Props, State> {
         }
     }
 
-    private handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    private handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { formValues } = this.state;
         const { name, value } = event.target;
         this.setState({
@@ -137,7 +128,7 @@ class Row extends React.Component<Props, State> {
         });
     }
 
-    private handleSave() {
+    private handleSave = () => {
         const { formValues, initialKey } = this.state;
         const primary = formValues.get("primary");
         const secondary = formValues.get("secondary");
@@ -147,7 +138,7 @@ class Row extends React.Component<Props, State> {
         }
     }
 
-    private handleClear() {
+    private handleClear = () => {
         this.setState({
             formValues: Map(),
         });

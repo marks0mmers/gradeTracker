@@ -1,4 +1,4 @@
-import { generateHeaders } from "src/util/GenerateHeaders";
+import { generateHeaders } from "../../../../../util/GenerateHeaders";
 import { AjaxMethodType, epicBuilder } from "../../common/EpicBuilder";
 import { EditCourse, EditCourseSuccessCreator } from "../actions";
 import { CourseDataActionTypes as types} from "../actions";

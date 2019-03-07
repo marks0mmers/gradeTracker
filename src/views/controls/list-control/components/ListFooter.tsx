@@ -1,30 +1,16 @@
-import * as React from "react";
+import React, { ReactNode } from "react";
 import styled from "styled-components";
 
 interface Props {
     className?: string;
-    content?: JSX.Element;
+    content?: ReactNode;
 }
 
-class ListFooter extends React.Component<Props> {
-
-    constructor(props: Props) {
-        super(props);
-    }
-
-    public render() {
-        const {
-            className,
-            content,
-        } = this.props;
-
-        return (
-            <div className={className}>
-                {content}
-            </div>
-        );
-    }
-}
+const ListFooter = (props: Props) => (
+    <div className={props.className}>
+        {props.content}
+    </div>
+);
 
 export default styled(ListFooter)`
     display: flex;

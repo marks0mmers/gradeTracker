@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import styled, { css } from "styled-components";
 
 interface Props {
@@ -11,22 +11,9 @@ interface Props {
     gridArea?: string;
 }
 
-class Divider extends React.Component<Props> {
-
-    constructor(props: Props) {
-        super(props);
-    }
-
-    public render() {
-        const {
-            className,
-        } = this.props;
-
-        return (
-            <hr id="divider" className={className}/>
-        );
-    }
-}
+const Divider = (props: Props) => (
+    <hr id="divider" className={props.className} />
+);
 
 export default styled(Divider)`
     ${(props) => props.isVertical ? css`min-width: 1px` : css`min-height: 1px`};

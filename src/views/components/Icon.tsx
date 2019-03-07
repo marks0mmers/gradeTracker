@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, {  } from "react";
 import styled from "styled-components";
 
 interface Props {
@@ -8,23 +8,9 @@ interface Props {
     margin?: number;
 }
 
-class Icon extends React.Component<Props> {
-
-    constructor(props: Props) {
-        super(props);
-    }
-
-    public render() {
-        const {
-            className,
-            iconName,
-        } = this.props;
-
-        return (
-            <i id="icon" className={`${className} material-icons`}>{iconName}</i>
-        );
-    }
-}
+const Icon = (props: Props) => (
+    <i id="icon" className={`${props.className} material-icons`}>{props.iconName}</i>
+);
 
 export default styled(Icon)`
     margin: auto ${(props) => props.margin ? `${props.margin}px` : `auto`};

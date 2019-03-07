@@ -5,8 +5,8 @@ import "rxjs/add/observable/of";
 import { AjaxResponse } from "rxjs/internal-compatibility";
 import { ajax } from "rxjs/observable/dom/ajax";
 import { catchError, map, mergeMap } from "rxjs/operators";
-import { RootState } from "src/state/rootReducer";
-import { Toast } from "src/util/Toast";
+import { RootState } from "../../../../state/rootReducer";
+import { Toast } from "../../../../util/Toast";
 
 export enum AjaxMethodType {
     GET,

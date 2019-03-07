@@ -1,12 +1,11 @@
 import { push } from "connected-react-router";
 import { Map } from "immutable";
-import * as React from "react";
+import React, {  } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
-import { User } from "src/models/User";
-import { getCurrentUser } from "src/state/ducks/data/users";
 import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
+import { User } from "../../models/User";
 import {
     getDetailedColumns,
     getDetailedCourseElements,
@@ -20,38 +19,31 @@ import {
     EditCourseCreator,
     getCourses,
 } from "../../state/ducks/data/courses";
+import { getCurrentUser } from "../../state/ducks/data/users";
 import { RootState } from "../../state/rootReducer";
 import HomeContent from "../content/HomeContent";
 
 interface PropsFromState {
-    courses?: Map<string, Course>;
-    selectedGradeCategory?: GradeCategory;
-    currentUser?: User;
+    courses: Map<string, Course>;
+    selectedGradeCategory: GradeCategory;
+    currentUser: User;
 }
 
 interface PropsFromDispatch {
-    handleCreateNewCourse?: typeof CreateNewCourseCreator;
-    handleEditCourse?: typeof EditCourseCreator;
-    handleDeleteCourse?: typeof DeleteCourseCreator;
-    handleSetActiveCourse?: typeof SetActiveCourseCreator;
-    push?: typeof push;
+    handleCreateNewCourse: typeof CreateNewCourseCreator;
+    handleEditCourse: typeof EditCourseCreator;
+    handleDeleteCourse: typeof DeleteCourseCreator;
+    handleSetActiveCourse: typeof SetActiveCourseCreator;
+    push: typeof push;
 }
 
 type Props = PropsFromDispatch & PropsFromState;
 
-class ConnectedHomePage extends React.Component<Props> {
-    constructor(props: Props) {
-        super(props);
-    }
-
-    public render() {
-        return (
-            <HomeContent
-                {...this.props}
-            />
-        );
-    }
-}
+const ConnectedHomePage = (props: Props) => (
+<HomeContent
+    {...props}
+/>
+);
 
 const mapStateToProps = (state: RootState) => {
     return ({

@@ -1,11 +1,11 @@
 import { Map } from "immutable";
-import * as React from "react";
-import { leadingZeros } from "src/util/General";
+import React, { ChangeEvent, Component, Fragment, MouseEvent} from "react";
 import styled from "styled-components";
 import { CourseOverviewMode } from "../../../constants/CourseOverviewMode";
 import { Course } from "../../../models/Course";
+import { leadingZeros } from "../../../util/General";
+import Button from "../../../views/controls/button/Button";
 import Divider from "../../components/Divider";
-import Button from "../../controls/button/package/Button";
 import Input from "../styled-inputs/Input";
 
 interface Props {
@@ -18,7 +18,7 @@ interface Props {
     originalCourse?: Course;
     mode?: CourseOverviewMode;
 
-    onEditClick?: (event: React.MouseEvent<HTMLButtonElement>, course?: Course) => void;
+    onEditClick?: (event: MouseEvent<HTMLButtonElement>, course?: Course) => void;
     onFormSubmit?: (course: Course, originalCourse?: Course) => void;
     onClick?: (course?: Course) => void;
     cancelCreate?: () => void;
@@ -29,28 +29,17 @@ interface State {
     formValues: Map<string, string>;
 }
 
-class CourseOverviewButton extends React.Component<Props, State> {
+class CourseOverviewButton extends Component<Props, State> {
 
-    constructor(props: Props) {
-        super(props);
-
-        this.handleClick = this.handleClick.bind(this);
-        this.handleCancel = this.handleCancel.bind(this);
-        this.handleExecute = this.handleExecute.bind(this);
-        this.handleInputChange = this.handleInputChange.bind(this);
-        this.handleDelete = this.handleDelete.bind(this);
-        this.handleEditClick = this.handleEditClick.bind(this);
-
-        this.state = {
-            formValues: props.originalCourse
-            ? Map<string, string>()
-                .set("description", props.originalCourse.description)
-                .set("title", props.originalCourse.title)
-                .set("section", `00${props.originalCourse.section}`)
-                .set("hours", String(props.originalCourse.creditHours))
-            : Map(),
-        };
-    }
+    public state = {
+        formValues: this.props.originalCourse
+        ? Map<string, string>()
+            .set("description", this.props.originalCourse.description)
+            .set("title", this.props.originalCourse.title)
+            .set("section", `00${this.props.originalCourse.section}`)
+            .set("hours", String(this.props.originalCourse.creditHours))
+        : Map<string, string>(),
+    };
 
     public render() {
         const {
@@ -84,10 +73,10 @@ class CourseOverviewButton extends React.Component<Props, State> {
                             ? <span className="value">
                                 {`Course: ${courseTitle} ${leadingZeros(3, courseSection)}`}
                             </span>
-                            : <>
+                            : <Fragment>
                                 {this.buildInput("title", "Course (ABC-123)", "", 130, 20)}
                                 {this.buildInput("section", "Section (123)", "", 95, 20)}
-                            </>
+                            </Fragment>
                         }
                     </div>
                     <div className="label">
@@ -105,43 +94,43 @@ class CourseOverviewButton extends React.Component<Props, State> {
                         <span className="value">Course Actions: </span>
                         {
                             mode === CourseOverviewMode.DISPLAY
-                            ? <>
-                            <Button
-                                tooltip="Edit Course"
-                                icon="create"
-                                height={40}
-                                width={60}
-                                marginLeftRight={5}
-                                onClick={this.handleEditClick}
-                            />
-                            <Button
-                                tooltip="Delete Course"
-                                id="delete_course"
-                                icon="delete_sweep"
-                                height={40}
-                                width={60}
-                                marginLeftRight={5}
-                                onClick={this.handleDelete}
-                            />
-                            </>
-                            : <>
-                            <Button
-                                tooltip="Cancel"
-                                icon="clear"
-                                height={40}
-                                width={60}
-                                marginLeftRight={5}
-                                onClick={this.handleCancel}
-                            />
-                            <Button
-                                tooltip="Save"
-                                icon="save"
-                                height={40}
-                                width={60}
-                                marginLeftRight={5}
-                                onClick={this.handleExecute}
-                            />
-                            </>
+                            ? <Fragment>
+                                <Button
+                                    tooltip="Edit Course"
+                                    icon="create"
+                                    height={40}
+                                    width={60}
+                                    marginLeftRight={5}
+                                    onClick={this.handleEditClick}
+                                />
+                                <Button
+                                    tooltip="Delete Course"
+                                    id="delete_course"
+                                    icon="delete_sweep"
+                                    height={40}
+                                    width={60}
+                                    marginLeftRight={5}
+                                    onClick={this.handleDelete}
+                                />
+                            </Fragment>
+                            : <Fragment>
+                                <Button
+                                    tooltip="Cancel"
+                                    icon="clear"
+                                    height={40}
+                                    width={60}
+                                    marginLeftRight={5}
+                                    onClick={this.handleCancel}
+                                />
+                                <Button
+                                    tooltip="Save"
+                                    icon="save"
+                                    height={40}
+                                    width={60}
+                                    marginLeftRight={5}
+                                    onClick={this.handleExecute}
+                                />
+                            </Fragment>
                         }
                     </div>
                 </div>
@@ -149,14 +138,14 @@ class CourseOverviewButton extends React.Component<Props, State> {
         );
     }
 
-    private handleClick() {
+    private handleClick = () => {
         const handler = this.props.onClick;
         if (handler) {
             handler(this.props.originalCourse);
         }
     }
 
-    private handleEditClick(event: React.MouseEvent<HTMLButtonElement>) {
+    private handleEditClick = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         const handler = this.props.onEditClick;
         if (handler) {
@@ -164,7 +153,7 @@ class CourseOverviewButton extends React.Component<Props, State> {
         }
     }
 
-    private handleDelete(event: React.MouseEvent<HTMLButtonElement>) {
+    private handleDelete = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         if (confirm("Are you sure you want to delete this course? (This cannot be undone)")) {
             const handler = this.props.onDeleteClick;
@@ -174,7 +163,7 @@ class CourseOverviewButton extends React.Component<Props, State> {
         }
     }
 
-    private handleCancel() {
+    private handleCancel = () => {
         this.setState({
             formValues: Map(),
         });
@@ -184,7 +173,7 @@ class CourseOverviewButton extends React.Component<Props, State> {
         }
     }
 
-    private handleExecute() {
+    private handleExecute = () => {
         const { originalCourse } = this.props;
         const { formValues } = this.state;
         const handler = this.props.onFormSubmit;
@@ -205,7 +194,13 @@ class CourseOverviewButton extends React.Component<Props, State> {
         }
     }
 
-    private buildInput(name: string, placeholder: string, gridArea: string, width?: number, height?: number) {
+    private buildInput = (
+        name: string,
+        placeholder: string,
+        gridArea: string,
+        width?: number,
+        height?: number,
+    ) => {
         const { formValues } = this.state;
         return (
             <Input
@@ -220,7 +215,7 @@ class CourseOverviewButton extends React.Component<Props, State> {
         );
     }
 
-    private handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    private handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
         const { formValues } = this.state;
         this.setState({

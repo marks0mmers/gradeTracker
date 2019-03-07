@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, {  } from "react";
 import styled from "styled-components";
 
 interface Props {
@@ -9,25 +9,11 @@ interface Props {
     columnIndex?: number;
 }
 
-class HeaderCell extends React.Component<Props> {
-
-    constructor(props: Props) {
-        super(props);
-    }
-
-    public render() {
-        const {
-            className,
-            content,
-        } = this.props;
-
-        return (
-            <div className={className}>
-                <span className="header-label">{content}</span>
-            </div>
-        );
-    }
-}
+const HeaderCell = (props: Props) => (
+    <div className={props.className}>
+        <span className="header-label">{props.content}</span>
+    </div>
+);
 
 export default styled(HeaderCell)`
     display: flex;

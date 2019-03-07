@@ -1,4 +1,4 @@
-import { Course } from "src/models/Course";
+import { Course } from "../models/Course";
 
 export const getLetterGrade = (grade: number, course: Course) => {
     // F

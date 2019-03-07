@@ -1,5 +1,5 @@
 import { List } from "immutable";
-import * as React from "react";
+import React, { ReactNode } from "react";
 import styled from "styled-components";
 import ListFooter from "../components/ListFooter";
 import ListHeader from "../components/ListHeader";
@@ -14,7 +14,7 @@ interface Props {
     footer?: boolean;
     gridArea?: string;
     padding?: number;
-    footerContent?: JSX.Element;
+    footerContent?: ReactNode | ReactNode[];
     showInputRow?: boolean;
     primaryPlaceHolder?: string;
     secondaryPlaceHolder?: string;
@@ -24,71 +24,52 @@ interface Props {
     onRowSave?: (primary: string, secondary?: string, initialKey?: string) => void;
 }
 
-class ListControl extends React.Component<Props> {
-
-    constructor(props: Props) {
-        super(props);
-    }
-
-    public render() {
-        const {
-            className,
-            header,
-            footer,
-            elements,
-            footerContent,
-            headerText,
-            showInputRow,
-        } = this.props;
-
-        return (
-            <div className={className}>
-                {
-                    header &&
-                    <ListHeader
-                        headerText={headerText}
-                    />
-                }
-                <div className="body">
-                    {
-                        showInputRow &&
+const ListControl = (props: Props) => (
+    <div className={props.className}>
+        {
+            props.header &&
+            <ListHeader
+                headerText={props.headerText}
+            />
+        }
+        <div className="body">
+            {
+                props.showInputRow &&
+                <Row
+                    isCreating={props.showInputRow}
+                    onSave={props.onRowSave}
+                    onClear={props.onRowClear}
+                    primaryPlaceHolder={props.primaryPlaceHolder}
+                    secondaryPlaceHolder={props.secondaryPlaceHolder}
+                />
+            }
+            {
+                props.elements && props.elements.map((value: ListControlElement, key: number) => {
+                    return (
                         <Row
-                            isCreating={showInputRow}
-                            onSave={this.props.onRowSave}
-                            onClear={this.props.onRowClear}
-                            primaryPlaceHolder={this.props.primaryPlaceHolder}
-                            secondaryPlaceHolder={this.props.secondaryPlaceHolder}
+                            key={key}
+                            primaryProperty={value.primaryProperty}
+                            secondaryProperty={value.secondaryProperty}
+                            isSelected={value.isSelected}
+                            isEditing={value.isEditing}
+                            primaryPlaceHolder={props.primaryPlaceHolder}
+                            secondaryPlaceHolder={props.secondaryPlaceHolder}
+                            onClick={props.onRowClick}
+                            onClear={props.onRowClear}
+                            onSave={props.onRowSave}
                         />
-                    }
-                    {
-                        elements && elements.map((value: ListControlElement, key: number) => {
-                            return (
-                                <Row
-                                    key={key}
-                                    primaryProperty={value.primaryProperty}
-                                    secondaryProperty={value.secondaryProperty}
-                                    isSelected={value.isSelected}
-                                    isEditing={value.isEditing}
-                                    primaryPlaceHolder={this.props.primaryPlaceHolder}
-                                    secondaryPlaceHolder={this.props.secondaryPlaceHolder}
-                                    onClick={this.props.onRowClick}
-                                    onClear={this.props.onRowClear}
-                                    onSave={this.props.onRowSave}
-                                />
-                            );
-                        }).toArray()
-                    }
-                </div>
-                {
-                    footer &&
-                    <ListFooter
-                        content={footerContent}
-                    />
-                }
-            </div>
-        );
-    }
-}
+                    );
+                }).toArray()
+            }
+        </div>
+        {
+            props.footer &&
+            <ListFooter
+                content={props.footerContent}
+            />
+        }
+    </div>
+);
 
 export default styled(ListControl)`
     grid-area: ${(props) => props.gridArea};

@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, {  } from "react";
 import styled from "styled-components";
 
 interface Props {
@@ -6,25 +6,11 @@ interface Props {
     headerText?: string;
 }
 
-class ListHeader extends React.Component<Props> {
-
-    constructor(props: Props) {
-        super(props);
-    }
-
-    public render() {
-        const {
-            className,
-            headerText,
-        } = this.props;
-
-        return (
-            <div className={className}>
-                <span>{headerText}</span>
-            </div>
-        );
-    }
-}
+const ListHeader = (props: Props) => (
+    <div className={props.className}>
+        <span>{props.headerText}</span>
+    </div>
+);
 
 export default styled(ListHeader)`
     font-size: 20px;

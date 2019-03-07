@@ -1,21 +1,16 @@
-import * as React from "react";
+import React, { Component, MouseEvent, ReactNode } from "react";
 import styled from "styled-components";
 
 export interface BodyCellProps {
     className?: string;
     height: number;
     width: number;
-    content?: string | JSX.Element;
+    content?: string | ReactNode;
     columnIndex?: number;
-    onCellClick?: (event: React.MouseEvent<HTMLDivElement>, props: BodyCellProps) => void;
+    onCellClick?: (event: MouseEvent<HTMLDivElement>, props: BodyCellProps) => void;
 }
 
-class BodyCell extends React.Component<BodyCellProps> {
-
-    constructor(props: BodyCellProps) {
-        super(props);
-        this.handleCellClick = this.handleCellClick.bind(this);
-    }
+class BodyCell extends Component<BodyCellProps> {
 
     public render() {
         const {
@@ -34,7 +29,7 @@ class BodyCell extends React.Component<BodyCellProps> {
         );
     }
 
-    private handleCellClick(event: React.MouseEvent<HTMLDivElement>) {
+    private handleCellClick = (event: MouseEvent<HTMLDivElement>) => {
         const handler = this.props.onCellClick;
         if (handler) {
             handler(event, this.props);

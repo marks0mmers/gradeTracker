@@ -1,9 +1,9 @@
 import { Map } from "immutable";
-import * as React from "react";
+import React, { Component, Fragment } from "react";
 import styled from "styled-components";
 import { Grade } from "../../../models/Grade";
 import { GradeCategory } from "../../../models/GradeCategory";
-import Button from "../../controls/button/package/Button";
+import Button from "../../../views/controls/button/Button";
 import { ListControlElement } from "../../controls/list-control/models/ListControlElement";
 import ListControl from "../../controls/list-control/package/ListControl";
 
@@ -21,25 +21,14 @@ interface State {
     isEditing: boolean;
 }
 
-class CategoryDetailedPane extends React.Component<Props, State> {
+class CategoryDetailedPane extends Component<Props, State> {
 
-    constructor(props: Props) {
-        super(props);
-
-        this.handleNewGrade = this.handleNewGrade.bind(this);
-        this.handleSaveGrade = this.handleSaveGrade.bind(this);
-        this.handleDeleteGrade = this.handleDeleteGrade.bind(this);
-        this.handleSelectGrade = this.handleSelectGrade.bind(this);
-        this.handleEditGrade = this.handleEditGrade.bind(this);
-        this.handleCancelModify = this.handleCancelModify.bind(this);
-
-        this.state = {
-            invalidGrade: false,
-            isAddingGrade: false,
-            isEditing: false,
-            selectedGrade: undefined,
-        };
-    }
+    public state = {
+        invalidGrade: false,
+        isAddingGrade: false,
+        isEditing: false,
+        selectedGrade: undefined,
+    };
 
     public render() {
         const {
@@ -50,20 +39,8 @@ class CategoryDetailedPane extends React.Component<Props, State> {
 
         const {
             invalidGrade,
-            selectedGrade,
-            isEditing,
         } = this.state;
 
-        const elements = grades && grades.map((value: Grade, key: string) => {
-            const element: ListControlElement = {
-                isEditing: key === selectedGrade && isEditing,
-                isSelected: key === selectedGrade,
-                primaryProperty: value.name,
-                secondaryProperty: `${value.grade.toString()} %`,
-            };
-            return element;
-        }).toList();
-        const numberOfGradesOrSize = selectedCategory && selectedCategory.numberOfGrades;
         return (
             <div className={className}>
                 {this.buildDisplayLabel("Category Name:", selectedCategory ? selectedCategory.title : "", "title")}
@@ -79,7 +56,7 @@ class CategoryDetailedPane extends React.Component<Props, State> {
                     )}
                 {this.buildDisplayLabel(
                     "Remaining Grades:",
-                    grades && numberOfGradesOrSize ? numberOfGradesOrSize - grades.size : "",
+                    grades && selectedCategory ? selectedCategory.numberOfGrades - grades.size : "",
                     "gradesRemaining",
                 )}
                 {this.buildDisplayLabel(
@@ -104,36 +81,36 @@ class CategoryDetailedPane extends React.Component<Props, State> {
                         headerText="Grades"
                         footer={true}
                         footerContent={
-                            <>
-                            <Button
-                                tooltip="Create New Grade"
-                                icon="add"
-                                height={40}
-                                width={60}
-                                marginLeftRight={5}
-                                onClick={this.handleNewGrade}
-                            />
-                            <Button
-                                tooltip="Edit Selected Grade"
-                                icon="create"
-                                height={40}
-                                width={60}
-                                marginLeftRight={5}
-                                onClick={this.handleEditGrade}
-                            />
-                            <Button
-                                tooltip="Delete Selected Grade"
-                                icon="delete"
-                                height={40}
-                                width={60}
-                                marginLeftRight={5}
-                                onClick={this.handleDeleteGrade}
-                            />
-                            </>
+                            <Fragment>
+                                <Button
+                                    tooltip="Create New Grade"
+                                    icon="add"
+                                    height={40}
+                                    width={60}
+                                    marginLeftRight={5}
+                                    onClick={this.handleNewGrade}
+                                />
+                                <Button
+                                    tooltip="Edit Selected Grade"
+                                    icon="create"
+                                    height={40}
+                                    width={60}
+                                    marginLeftRight={5}
+                                    onClick={this.handleEditGrade}
+                                />
+                                <Button
+                                    tooltip="Delete Selected Grade"
+                                    icon="delete"
+                                    height={40}
+                                    width={60}
+                                    marginLeftRight={5}
+                                    onClick={this.handleDeleteGrade}
+                                />
+                            </Fragment>
                         }
                         showInputRow={this.state.isAddingGrade}
                         onRowSave={this.handleSaveGrade}
-                        elements={elements}
+                        elements={this.getListElements()}
                         padding={10}
                         primaryPlaceHolder="Grade Name"
                         secondaryPlaceHolder="Grade (NO % SIGN)"
@@ -145,7 +122,21 @@ class CategoryDetailedPane extends React.Component<Props, State> {
         );
     }
 
-    private handleCancelModify() {
+    private getListElements = () => {
+        const { grades } = this.props;
+        const { isEditing, selectedGrade } = this.state;
+        return grades && grades.map((value: Grade, key: string) => {
+            const element: ListControlElement = {
+                isEditing: key === selectedGrade && isEditing,
+                isSelected: key === selectedGrade,
+                primaryProperty: value.name,
+                secondaryProperty: `${value.grade.toString()} %`,
+            };
+            return element;
+        }).toList();
+    }
+
+    private handleCancelModify = () => {
         this.setState({
             invalidGrade: false,
             isAddingGrade: false,
@@ -153,7 +144,7 @@ class CategoryDetailedPane extends React.Component<Props, State> {
         });
     }
 
-    private handleNewGrade() {
+    private handleNewGrade = () => {
         const { grades, selectedCategory } = this.props;
         if (selectedCategory && grades && selectedCategory.numberOfGrades >= grades.size + 1) {
             this.setState({
@@ -168,7 +159,7 @@ class CategoryDetailedPane extends React.Component<Props, State> {
         }
     }
 
-    private handleEditGrade() {
+    private handleEditGrade = () => {
         const { selectedGrade } = this.state;
         if (selectedGrade) {
             this.setState({
@@ -178,20 +169,20 @@ class CategoryDetailedPane extends React.Component<Props, State> {
         }
     }
 
-    private handleDeleteGrade() {
+    private handleDeleteGrade = () => {
         const { selectedGrade } = this.state;
         if (selectedGrade) {
             // rewrite this
         }
     }
 
-    private handleSelectGrade(primaryProperty: string) {
+    private handleSelectGrade = (primaryProperty: string) => {
         this.setState({
             selectedGrade: primaryProperty,
         });
     }
 
-    private handleSaveGrade(description: string, grade?: string, initialKey?: string) {
+    private handleSaveGrade = (description: string, grade?: string, initialKey?: string) => {
         const parsedGrade = (!grade || isNaN(+grade)) ? -1 : +grade;
         if (parsedGrade >= 0) {
             this.setState({
@@ -209,14 +200,12 @@ class CategoryDetailedPane extends React.Component<Props, State> {
         }
     }
 
-    private buildDisplayLabel(label: string, value: string | number, gridArea: string) {
-        return (
-            <div className="label-container" style={{gridArea}}>
-                <div className="prop-label">{label}</div>
-                <div className="prop-value">{value}</div>
-            </div>
-        );
-    }
+    private buildDisplayLabel = (label: string, value: string | number, gridArea: string) => (
+        <div className="label-container" style={{gridArea}}>
+            <div className="prop-label">{label}</div>
+            <div className="prop-value">{value}</div>
+        </div>
+    )
 }
 
 export default styled(CategoryDetailedPane)`

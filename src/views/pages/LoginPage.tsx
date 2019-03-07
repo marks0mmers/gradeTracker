@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, {  } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { User } from "../../models/User";
@@ -8,7 +8,7 @@ import { RootState } from "../../state/rootReducer";
 import LoginContent from "../content/LoginContent";
 
 interface PropsFromState {
-    currentUser?: User;
+    currentUser: User;
 }
 
 interface PropsFromDispatch {
@@ -18,19 +18,11 @@ interface PropsFromDispatch {
 
 type Props = PropsFromDispatch & PropsFromState;
 
-class LoginPage extends React.Component<Props> {
-    constructor(props: Props) {
-        super(props);
-    }
-
-    public render() {
-        return (
-            <LoginContent
-                {...this.props}
-            />
-        );
-    }
-}
+const LoginPage = (props: Props) => (
+    <LoginContent
+        {...props}
+    />
+);
 
 const mapStateToProps = (state: RootState) => ({
     currentUser: getCurrentUser(state),
