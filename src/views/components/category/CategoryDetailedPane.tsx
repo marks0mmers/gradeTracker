@@ -23,7 +23,7 @@ interface State {
 
 class CategoryDetailedPane extends Component<Props, State> {
 
-    public state = {
+    public readonly state = {
         invalidGrade: false,
         isAddingGrade: false,
         isEditing: false,
@@ -36,10 +36,6 @@ class CategoryDetailedPane extends Component<Props, State> {
             grades,
             selectedCategory,
         } = this.props;
-
-        const {
-            invalidGrade,
-        } = this.state;
 
         return (
             <div className={className}>
@@ -75,7 +71,9 @@ class CategoryDetailedPane extends Component<Props, State> {
                     "potentialAverage",
                 )}
                 <div className="grades">
-                    {invalidGrade && <span className="error">Invalid Grade</span>}
+                    {
+                        this.state.invalidGrade && <span className="error">Invalid Grade</span>
+                    }
                     <ListControl
                         header={true}
                         headerText="Grades"
@@ -223,7 +221,7 @@ export default styled(CategoryDetailedPane)`
     @media screen and (max-width: 800px) {
         grid-template-columns: 1fr 1fr;
     }
-    background: ${(props) => props.theme.hover};
+    background: #eeeeee;
     margin-bottom: 10px;
 
     .label-container {
@@ -234,7 +232,6 @@ export default styled(CategoryDetailedPane)`
     }
 
     .prop-label {
-        color: ${(props) => props.theme.primaryText};
         grid-area: label;
     }
 
@@ -242,7 +239,6 @@ export default styled(CategoryDetailedPane)`
         grid-area: value;
         display: flex;
         justify-content: flex-end;
-        color: ${(props) => props.theme.primaryText};
     }
 
     .grades {
@@ -251,6 +247,6 @@ export default styled(CategoryDetailedPane)`
     }
 
     .error {
-        color: ${(props) => props.theme.error};
+        color: #b00020;
     }
 `;

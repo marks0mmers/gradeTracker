@@ -54,7 +54,6 @@ class ElementRow<T> extends Component<Props<T>> {
 export default styled(ElementRow)`
     display: flex;
     flex-direction: row;
-    background: ${(props) => props.element.isSelected ? props.theme.quinary : props.theme.hover};
-    color: ${(props) => props.element.isSelected ? props.theme.primaryText : props.theme.primaryText};
-    border-top: ${(props) => props.element.isBottom ? `solid ${props.theme.primaryText} 1px` : "none"};
+    background: ${(props) => props.element.isSelected ? "#edb5bf" : "#eeeeee"};
+    border-top: ${(props) => props.element.isBottom ? "solid black 1px" : "none"};
 `;

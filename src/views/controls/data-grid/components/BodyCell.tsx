@@ -7,33 +7,25 @@ export interface BodyCellProps {
     width: number;
     content?: string | ReactNode;
     columnIndex?: number;
-    onCellClick?: (event: MouseEvent<HTMLDivElement>, props: BodyCellProps) => void;
+    onCellClick: (event: MouseEvent<HTMLDivElement>, props: BodyCellProps) => void;
 }
 
 class BodyCell extends Component<BodyCellProps> {
 
     public render() {
-        const {
-            className,
-            content,
-        } = this.props;
-
         return (
             <div
                 id="body-cell"
-                className={className}
+                className={this.props.className}
                 onClick={this.handleCellClick}
             >
-                {content}
+                {this.props.content}
             </div>
         );
     }
 
     private handleCellClick = (event: MouseEvent<HTMLDivElement>) => {
-        const handler = this.props.onCellClick;
-        if (handler) {
-            handler(event, this.props);
-        }
+        this.props.onCellClick(event, this.props);
     }
 }
 

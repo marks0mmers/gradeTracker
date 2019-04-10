@@ -18,15 +18,14 @@ const HeaderCell = (props: Props) => (
 export default styled(HeaderCell)`
     display: flex;
     flex: 1;
-    background: ${(props) => props.theme.quaternary};
+    background: "#99ced3";
     width: ${(props) => props.width}px;
     height: ${(props) => props.height}px;
-    border-bottom: solid ${(props) => props.theme.black} 1px;
+    border-bottom: solid black 1px;
 
     .header-label {
         margin: auto;
         line-height: ${(props) => props.height}px;
-        color: ${(props) => props.theme.black};
         font-size: 1.1vw;
     }
 `;

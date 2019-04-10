@@ -17,20 +17,18 @@ export default styled(ColoredCell)`
     line-height: 30px;
     text-align: center;
     color: ${(props) => props.grade && props.grade >= 80 && props.grade < 90
-        ? props.theme.quinaryText
-        : props.theme.primaryText};
+        ? "white"
+        : "black"};
     background: ${(props) => {
         const grade = props.grade || 0;
-        switch (true) {
-            case (grade >= 90):
-                return "#409C40";
-            case (grade >= 80):
-                return "#FFFF76";
-            case (grade >= 70):
-                return "#de8054";
-            case (grade >= 60):
-            default:
-                return "#de5454";
+        if (grade >= 90) {
+            return "#409C40";
+        } else if (grade >= 80) {
+            return "#FFFF76";
+        } else if (grade >= 70) {
+            return "#de8054";
+        } else {
+            return "#de5454";
         }
-    }}
+    }};
 `;

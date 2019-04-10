@@ -20,12 +20,8 @@ interface Props<T> {
 class DataGrid<T> extends Component<Props<T>> {
 
     public render() {
-        const {
-            className,
-        } = this.props;
-
         return (
-            <div className={className}>
+            <div className={this.props.className}>
                 <div className="header-cells">
                     {this.renderHeaderCells()}
                 </div>

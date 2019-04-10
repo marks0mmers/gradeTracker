@@ -14,8 +14,8 @@ interface Props {
     categoryGrades?: Map<string, Grade>;
 
     handleFormChange?: (name: string, value: string) => void;
-    handleFormSave?: (course: Course, category: GradeCategory) => void;
-    handleCancelCreate?: () => void;
+    handleFormSave: (course: Course, category: GradeCategory) => void;
+    handleCancelCreate: () => void;
 }
 
 interface State {
@@ -25,7 +25,7 @@ interface State {
 
 class CourseCategoryForm extends Component<Props, State> {
 
-    public state = {
+    public readonly state = {
         formValues: this.props.originalCategory
             ? Map<string, string>()
                 .set("name", this.props.originalCategory.title)
@@ -36,17 +36,9 @@ class CourseCategoryForm extends Component<Props, State> {
     };
 
     public render() {
-        const {
-            className,
-        } = this.props;
-
-        const {
-            isInvalidInput,
-        } = this.state;
-
         return (
             <div>
-                <div className={className}>
+                <div className={this.props.className}>
                     <div className="form-input">
                         <span className="label">Category Name:</span>
                         {this.buildInput("name", 300, 20)}
@@ -76,7 +68,9 @@ class CourseCategoryForm extends Component<Props, State> {
                         onClick={this.handleSave}
                     />
                 </div>
-                {isInvalidInput && <span className="error">Invalid Numerical Value</span>}
+                {
+                    this.state.isInvalidInput && <span className="error">Invalid Numerical Value</span>
+                }
             </div>
         );
     }
@@ -103,8 +97,7 @@ class CourseCategoryForm extends Component<Props, State> {
     }
 
     private handleSave = () => {
-        const handler = this.props.handleFormSave;
-        const { course, originalCategory } = this.props;
+        const { course, originalCategory, handleFormSave } = this.props;
         const { formValues } = this.state;
         if (formValues) {
             const numberOfGrades = !isNaN(+formValues.get("numberOfGrades")) && +formValues.get("numberOfGrades");
@@ -124,8 +117,8 @@ class CourseCategoryForm extends Component<Props, State> {
                     title,
                     ...(originalCategory ? originalCategory.toJS() : {}),
                 });
-                if (course && handler) {
-                    handler(course, category);
+                if (course ) {
+                    handleFormSave(course, category);
                 }
                 const clear = this.props.handleCancelCreate;
                 if (clear) {
@@ -151,11 +144,10 @@ export default styled(CourseCategoryForm)`
     }
 
     .label {
-        color: ${(props) => props.theme.primaryText};
         margin-right: 10px;
     }
 
     .error {
-        color: ${(props) => props.theme.error};
+        color: #b00020;
     }
 `;

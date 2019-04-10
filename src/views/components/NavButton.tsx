@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import styled from "styled-components";
 import Icon from "./Icon";
 
@@ -8,43 +8,33 @@ interface Props {
     iconName: string;
     activeButton?: string;
 
-    onClick?: (id: string) => void;
+    onClick: (id: string) => void;
 }
 
-class NavButton extends Component<Props> {
+const NavButton = (props: Props) => {
 
-    public render() {
-        const {
-            className,
-            id,
-            iconName,
-        } = this.props;
-
-        return (
-            <div id={id} className={className} onClick={this.handleClick}>
-                <Icon
-                    iconName={iconName}
-                    size={50}
-                    margin={5}
-                />
-            </div>
-        );
-    }
-
-    private handleClick = () => {
-        const handler = this.props.onClick;
-        const { id } = this.props;
-        if (handler && id) {
-            handler(id);
+    const handleClick = () => {
+        if (props.id) {
+            props.onClick(props.id);
         }
-    }
-}
+    };
+
+    return (
+        <div id={props.id} className={props.className} onClick={handleClick}>
+            <Icon
+                iconName={props.iconName}
+                size={50}
+                margin={5}
+            />
+        </div>
+    );
+};
 
 export default styled(NavButton)`
-    color: ${(props) => props.theme.secondaryText};
+    color: #333333;
+    background: ${(props) => props.id === props.activeButton ? "#4c4f52" : "#5f6366"};
     :hover {
-        background: ${(props) => props.theme.secondaryHover};
+        background: #6e7377;
         cursor: pointer;
     }
-    background: ${(props) => props.id === props.activeButton ? props.theme.secondaryActive : props.theme.secondary};
 `;

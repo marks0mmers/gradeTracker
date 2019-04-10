@@ -7,6 +7,7 @@ interface Props {
     id?: string;
     text?: string;
     tooltip?: string;
+    type?: string;
     icon?: string;
     width?: number;
     height?: number;
@@ -22,6 +23,7 @@ const Button = (props: Props) => (
         className={props.className}
         onClick={props.onClick}
         title={props.tooltip}
+        type={props.type}
     >
         {props.icon && <Icon iconName={props.icon} margin={5}/>}
         {props.text}
@@ -29,14 +31,13 @@ const Button = (props: Props) => (
 );
 
 export default styled(Button)`
+    background: lightgray;
     height: ${(props) => props.height}px;
-    width: ${(props) => props.width}px;
+    width: ${(props) => props.width ? `${props.width}px` : "100%"};
     margin: ${(props) => props.marginTopBottom || 0}px ${(props) => props.marginLeftRight || 0}px;
-    background: ${(props) => props.theme.white};
     border: none;
-    color: ${(props) => props.theme.primaryText};
     grid-area: ${(props) => props.gridArea};
     :hover {
-        background: ${(props) => props.theme.hover};
+        background: #eeeeee;
     }
 `;

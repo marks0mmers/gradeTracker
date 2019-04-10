@@ -15,8 +15,6 @@ const ListFooter = (props: Props) => (
 export default styled(ListFooter)`
     display: flex;
     justify-content: flex-end;
-    color: ${(props) => props.theme.primaryText};
-    border-bottom: solid ${(props) => props.theme.primaryText} 1px;
-    background: ${(props) => props.theme.white};
+    border-bottom: solid black 1px;
     min-height: fit-content;
 `;

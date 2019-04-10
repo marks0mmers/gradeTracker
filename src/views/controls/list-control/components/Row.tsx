@@ -27,7 +27,7 @@ interface State {
 
 class Row extends Component<Props, State> {
 
-    public state = {
+    public readonly state = {
         formValues: Map<string, string>(),
         initialKey: "",
     };
@@ -113,10 +113,12 @@ class Row extends Component<Props, State> {
     }
 
     private handleClick = () => {
-        const { primaryProperty, secondaryProperty } = this.props;
         const handler = this.props.onClick;
-        if (handler && primaryProperty) {
-            handler(primaryProperty, secondaryProperty);
+        if (handler && this.props.primaryProperty) {
+            handler(
+                this.props.primaryProperty,
+                this.props.secondaryProperty,
+            );
         }
     }
 
@@ -165,22 +167,12 @@ export default styled(Row)`
              ". secondary ."`
     };
     grid-row-gap: 5px;
-    background: ${(props) => props.isSelected
-        ? props.isEditing
-            ? props.theme.white
-            : props.theme.quinary
-        : props.theme.white};
-    color: ${(props) => props.isSelected ? props.theme.primaryText : props.theme.primaryText};
+    background: ${(props) => props.isSelected && !props.isEditing ? "#edb5bf" : "white"};
     padding: 5px 0;
     border-bottom: solid #898989 1px;
 
     :hover {
-        background: ${(props) => props.isCreating || props.isEditing
-            ? props.theme.white
-            : props.isSelected
-                ? props.theme.quinaryHover
-                : props.theme.hover
-        };
+        background: ${(props) => props.isCreating || props.isEditing ? "white" : "eee"};
     }
 
     .primary {

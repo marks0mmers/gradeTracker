@@ -18,7 +18,7 @@ const Divider = (props: Props) => (
 export default styled(Divider)`
     ${(props) => props.isVertical ? css`min-width: 1px` : css`min-height: 1px`};
     grid-area: ${(props) => props.gridArea};
-    background-color: ${(props) => props.theme.primaryText};
+    background-color: black;
     border: none;
     margin-top: ${(props) => props.top}px;
     margin-right: ${(props) => props.right}px;

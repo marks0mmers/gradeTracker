@@ -1,22 +1,23 @@
-import { List, Map } from "immutable";
+import { Map } from "immutable";
 import { createSelector } from "reselect";
-import { Course } from "../../../../models/Course";
 import { GradeCategory } from "../../../../models/GradeCategory";
 import { DataGridElement } from "../../../../views/controls/data-grid";
 import { RootState } from "../../../rootReducer";
-import { getCourses } from "../../data/courses";
+import { getGradeCategories } from "../../data/gradeCategories";
 
 export const getActiveCourse = (state: RootState) => state.control.course.activeCourse;
 export const getDetailedColumns = (state: RootState) => state.control.course.detailedColumns;
 export const getSelectedGradeCategory = (state: RootState) => state.control.course.selectedGradeCategory;
 
 export const getDetailedCourseElements = createSelector(
-    [getCourses, getActiveCourse, getSelectedGradeCategory],
+    [getGradeCategories],
     (
-        courses: Map<string, Course>,
-        activeCourse: Course,
-        selectedGradeCategory: string,
+        selectedGradeCategory: Map<string, GradeCategory>,
     ) => {
-        return List <DataGridElement<GradeCategory>>();
+        return selectedGradeCategory.map((gradeCategory: GradeCategory) => {
+            return new DataGridElement<GradeCategory>({
+                payload: gradeCategory,
+            });
+        }).toList();
     },
 );

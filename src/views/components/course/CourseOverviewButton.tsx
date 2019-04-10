@@ -1,233 +1,93 @@
-import { Map } from "immutable";
-import React, { ChangeEvent, Component, Fragment, MouseEvent} from "react";
+import React, { Fragment, MouseEvent} from "react";
 import styled from "styled-components";
-import { CourseOverviewMode } from "../../../constants/CourseOverviewMode";
 import { Course } from "../../../models/Course";
 import { leadingZeros } from "../../../util/General";
 import Button from "../../../views/controls/button/Button";
 import Divider from "../../components/Divider";
-import Input from "../styled-inputs/Input";
 
 interface Props {
     className?: string;
-    courseId: string;
-    courseDescription?: string;
-    courseTitle?: string;
-    courseSection?: number;
-    courseCreditHours?: number;
-    originalCourse?: Course;
-    mode?: CourseOverviewMode;
+    course: Course;
 
-    onEditClick?: (event: MouseEvent<HTMLButtonElement>, course?: Course) => void;
-    onFormSubmit?: (course: Course, originalCourse?: Course) => void;
-    onClick?: (course?: Course) => void;
-    cancelCreate?: () => void;
-    onDeleteClick?: (id: string) => void;
+    onClick: (course?: Course) => void;
+    onEditClick: (course?: Course) => void;
+    onDeleteClick: (id: string) => void;
 }
 
-interface State {
-    formValues: Map<string, string>;
-}
+const CourseOverviewButton = (props: Props) => {
 
-class CourseOverviewButton extends Component<Props, State> {
-
-    public state = {
-        formValues: this.props.originalCourse
-        ? Map<string, string>()
-            .set("description", this.props.originalCourse.description)
-            .set("title", this.props.originalCourse.title)
-            .set("section", `00${this.props.originalCourse.section}`)
-            .set("hours", String(this.props.originalCourse.creditHours))
-        : Map<string, string>(),
+    const handleClick = () => {
+        const { onClick, course } = props;
+        onClick(course);
     };
 
-    public render() {
-        const {
-            className,
-            courseDescription,
-            courseTitle,
-            courseSection,
-            courseCreditHours,
-            mode,
-        } = this.props;
-
-        return (
-            <div
-                id={`${courseTitle ? courseTitle.toLowerCase() : ""}-button`}
-                className={className}
-                onClick={this.handleClick}
-            >
-                <div className="course-info">
-                    {
-                        mode === CourseOverviewMode.DISPLAY
-                        ? <h1 className="value">{courseDescription}</h1>
-                        : this.buildInput("description", "Course Description", "description", undefined, 30)
-                    }
-                    <Divider
-                        isVertical={false}
-                        gridArea="divider1"
-                    />
-                    <div className="label">
-                        {
-                            mode === CourseOverviewMode.DISPLAY
-                            ? <span className="value">
-                                {`Course: ${courseTitle} ${leadingZeros(3, courseSection)}`}
-                            </span>
-                            : <Fragment>
-                                {this.buildInput("title", "Course (ABC-123)", "", 130, 20)}
-                                {this.buildInput("section", "Section (123)", "", 95, 20)}
-                            </Fragment>
-                        }
-                    </div>
-                    <div className="label">
-                        {
-                            mode === CourseOverviewMode.DISPLAY
-                            ? <span className="value">{`Credit Hours: ${courseCreditHours}`}</span>
-                            : this.buildInput("hours", "Hours", "", 100, 20)
-                        }
-                    </div>
-                    <Divider
-                        isVertical={false}
-                        gridArea="divider2"
-                    />
-                    <div className="buttons">
-                        <span className="value">Course Actions: </span>
-                        {
-                            mode === CourseOverviewMode.DISPLAY
-                            ? <Fragment>
-                                <Button
-                                    tooltip="Edit Course"
-                                    icon="create"
-                                    height={40}
-                                    width={60}
-                                    marginLeftRight={5}
-                                    onClick={this.handleEditClick}
-                                />
-                                <Button
-                                    tooltip="Delete Course"
-                                    id="delete_course"
-                                    icon="delete_sweep"
-                                    height={40}
-                                    width={60}
-                                    marginLeftRight={5}
-                                    onClick={this.handleDelete}
-                                />
-                            </Fragment>
-                            : <Fragment>
-                                <Button
-                                    tooltip="Cancel"
-                                    icon="clear"
-                                    height={40}
-                                    width={60}
-                                    marginLeftRight={5}
-                                    onClick={this.handleCancel}
-                                />
-                                <Button
-                                    tooltip="Save"
-                                    icon="save"
-                                    height={40}
-                                    width={60}
-                                    marginLeftRight={5}
-                                    onClick={this.handleExecute}
-                                />
-                            </Fragment>
-                        }
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    private handleClick = () => {
-        const handler = this.props.onClick;
-        if (handler) {
-            handler(this.props.originalCourse);
-        }
-    }
-
-    private handleEditClick = (event: MouseEvent<HTMLButtonElement>) => {
+    const handleEditClick = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
-        const handler = this.props.onEditClick;
-        if (handler) {
-            handler(event, this.props.originalCourse);
-        }
-    }
+        const { onEditClick, course } = props;
+        onEditClick(course);
+    };
 
-    private handleDelete = (event: MouseEvent<HTMLButtonElement>) => {
+    const handleDelete = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         if (confirm("Are you sure you want to delete this course? (This cannot be undone)")) {
-            const handler = this.props.onDeleteClick;
-            if (handler) {
-                handler(this.props.courseId);
-            }
+            const { onDeleteClick, course } = props;
+            onDeleteClick(course.id || "");
         }
-    }
+    };
 
-    private handleCancel = () => {
-        this.setState({
-            formValues: Map(),
-        });
-        const handler = this.props.cancelCreate;
-        if (handler) {
-            handler();
-        }
-    }
-
-    private handleExecute = () => {
-        const { originalCourse } = this.props;
-        const { formValues } = this.state;
-        const handler = this.props.onFormSubmit;
-        const course = new Course({
-            id: originalCourse && originalCourse.id,
-            userId: originalCourse && originalCourse.userId,
-            creditHours: formValues && +formValues.get("hours"),
-            description: formValues && formValues.get("description"),
-            section: formValues && +formValues.get("section"),
-            title: formValues && formValues.get("title"),
-        });
-        if (handler) {
-            handler(course, originalCourse);
-        }
-        const clear = this.props.cancelCreate;
-        if (clear) {
-            clear();
-        }
-    }
-
-    private buildInput = (
-        name: string,
-        placeholder: string,
-        gridArea: string,
-        width?: number,
-        height?: number,
-    ) => {
-        const { formValues } = this.state;
-        return (
-            <Input
-                name={name}
-                height={height}
-                width={width}
-                placeholder={placeholder}
-                value={formValues && formValues.get(name) || ""}
-                onChange={this.handleInputChange}
-                gridArea={gridArea}
-            />
-        );
-    }
-
-    private handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
-        const { formValues } = this.state;
-        this.setState({
-            formValues: formValues.set(name, value),
-        });
-    }
-}
+    return (
+        <div
+            id={`${props.course.title.toLowerCase()}-button`}
+            className={props.className}
+            onClick={handleClick}
+        >
+            <div className="course-info">
+                <h1 className="value">{props.course.description}</h1>
+                <Divider
+                    isVertical={false}
+                    gridArea="divider1"
+                />
+                <div className="label">
+                    <span className="value">
+                        {`Course: ${props.course.title} ${leadingZeros(3, props.course.section)}`}
+                    </span>
+                </div>
+                <div className="label">
+                    <span className="value">{`Credit Hours: ${props.course.creditHours}`}</span>
+                </div>
+                <Divider
+                    isVertical={false}
+                    gridArea="divider2"
+                />
+                <div className="buttons">
+                    <span className="value">Course Actions: </span>
+                    <Fragment>
+                        <Button
+                            tooltip="Edit Course"
+                            icon="create"
+                            height={40}
+                            width={60}
+                            marginLeftRight={5}
+                            onClick={handleEditClick}
+                        />
+                        <Button
+                            tooltip="Delete Course"
+                            id="delete_course"
+                            icon="delete_sweep"
+                            height={40}
+                            width={60}
+                            marginLeftRight={5}
+                            onClick={handleDelete}
+                        />
+                    </Fragment>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 export default styled(CourseOverviewButton)`
-    background: ${(props) => props.mode === CourseOverviewMode.DISPLAY
-        ? props.theme.tertiary
-        : props.theme.tertiaryActive};
+    background: #86b3d1;
     min-height: 135px;
     border: none;
     display: grid;
@@ -235,20 +95,14 @@ export default styled(CourseOverviewButton)`
     grid-template-areas: " . info . ";
     border-radius: 10px;
     margin: 10px;
-    border: solid ${
-        (props) => props.mode === CourseOverviewMode.DISPLAY
-            ? props.theme.tertiary
-            : props.theme.tertiaryActive
-    } 2px;
+    border: solid #86b3d1 2px;
     :hover {
-        border: solid ${(props) => props.mode === CourseOverviewMode.DISPLAY
-            ? props.theme.tertiaryHover
-            : props.theme.tertiaryActive} 2px;
+        border: solid #8bb9d9 2px;
         cursor: pointer;
     }
 
     .course-info {
-        background: ${(props) => props.theme.white};
+        background: white;
         padding: 5px 10px;
         grid-area: info;
         display: grid;
@@ -273,7 +127,6 @@ export default styled(CourseOverviewButton)`
     }
 
     .value {
-        color: ${(props) => props.theme.primaryText};
         font-weight: normal;
         margin: auto 0;
         grid-area: description;
