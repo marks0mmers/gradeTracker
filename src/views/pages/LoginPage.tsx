@@ -208,7 +208,7 @@ class LoginPage extends Component<Props, State> {
         height: number,
         text: string,
         tooltip: string,
-        type?: string,
+        type?: "button" | "submit" | "reset",
         onClick?: () => void,
     ) => (
         <Button
