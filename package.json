@@ -44,7 +44,7 @@
     "@types/toastr": "2.1.35",
     "@types/yup": "^0.26.12",
     "typescript": "3.3.3"
-  }, 
+  },
   "main": "src/index.tsx",
   "scripts": {
     "start": "react-scripts-ts start",

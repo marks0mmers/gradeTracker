@@ -7,7 +7,7 @@ interface Props {
     id?: string;
     text?: string;
     tooltip?: string;
-    type?: string;
+    type?: "button" | "submit" | "reset";
     icon?: string;
     width?: number;
     height?: number;
