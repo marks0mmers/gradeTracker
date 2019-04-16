@@ -2,11 +2,11 @@ import { Formik, FormikProps } from "formik";
 import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
-import { Grade } from "src/models/Grade";
-import { GradeCategory } from "src/models/GradeCategory";
-import { CreateGradeCreator, EditGradeCreator } from "src/state/ducks/data/gradeCategories";
 import styled from "styled-components";
 import * as Yup from "yup";
+import { Grade } from "../../models/Grade";
+import { GradeCategory } from "../../models/GradeCategory";
+import { CreateGradeCreator, EditGradeCreator } from "../../state/ducks/data/gradeCategories";
 import Input from "../components/styled-inputs/Input";
 import Button from "../controls/button/Button";
 

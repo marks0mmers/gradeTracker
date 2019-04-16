@@ -1,4 +1,4 @@
-import { GradeCategory } from "src/models/GradeCategory";
+import { GradeCategory } from "../../../../../models/GradeCategory";
 import { GradeCategoryDataActionTypes as types } from "./types";
 
 export interface GetGradeCategoryForCourse {

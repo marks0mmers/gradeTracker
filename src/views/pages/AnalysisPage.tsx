@@ -3,13 +3,13 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { bindActionCreators, Dispatch } from "redux";
-import { getAnalysisGridColumns, getAnalysisGridData } from "src/state/ducks/control/analysis/selectors";
-import { getCourses } from "src/state/ducks/data/courses";
-import { GetGradeCategoriesForCurrentUserCreator } from "src/state/ducks/data/gradeCategories";
-import { RootState } from "src/state/rootReducer";
 import styled from "styled-components";
 import { AnalysisCourse } from "../../models/AnalysisCourse";
 import { Course } from "../../models/Course";
+import { getAnalysisGridColumns, getAnalysisGridData } from "../../state/ducks/control/analysis/selectors";
+import { getCourses } from "../../state/ducks/data/courses";
+import { GetGradeCategoriesForCurrentUserCreator } from "../../state/ducks/data/gradeCategories";
+import { RootState } from "../../state/rootReducer";
 import Divider from "../components/Divider";
 import DataGrid, { DataGridColumnDefinition, DataGridElement } from "../controls/data-grid";
 

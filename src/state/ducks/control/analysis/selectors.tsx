@@ -1,9 +1,9 @@
 import { List, Map } from "immutable";
 import { createSelector } from "reselect";
-import { GradeCategory } from "src/models/GradeCategory";
-import { getGPAFromLetter, getLetterFromGPA, getLetterGrade } from "src/util/GpaCalculator";
 import { AnalysisCourse } from "../../../../models/AnalysisCourse";
 import { Course } from "../../../../models/Course";
+import { GradeCategory } from "../../../../models/GradeCategory";
+import { getGPAFromLetter, getLetterFromGPA, getLetterGrade } from "../../../../util/GpaCalculator";
 import { DataGridElement } from "../../../../views/controls/data-grid";
 import { RootState } from "../../../rootReducer";
 import { getCourses } from "../../data/courses";

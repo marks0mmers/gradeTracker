@@ -2,15 +2,15 @@ import React, { Fragment, useState } from "react";
 import ReactModal from "react-modal";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
-import { DeleteGradeCreator } from "src/state/ducks/data/gradeCategories";
-import ModalHeader from "src/views/modals/common/ModalHeader";
-import GradeFormModal from "src/views/modals/GradeFormModal";
 import styled from "styled-components";
 import { Grade } from "../../../models/Grade";
 import { GradeCategory } from "../../../models/GradeCategory";
+import { DeleteGradeCreator } from "../../../state/ducks/data/gradeCategories";
 import Button from "../../../views/controls/button/Button";
 import { ListControlElement } from "../../controls/list-control/models/ListControlElement";
 import ListControl from "../../controls/list-control/package/ListControl";
+import ModalHeader from "../../modals/common/ModalHeader";
+import GradeFormModal from "../../modals/GradeFormModal";
 
 interface PassedProps {
     className?: string;

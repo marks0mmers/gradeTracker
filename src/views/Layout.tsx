@@ -9,6 +9,7 @@ import { Course } from "../models/Course";
 import { User } from "../models/User";
 import { getActiveCourse } from "../state/ducks/control/courses";
 import { getCurrentUser, GetCurrentUserCreator, LogoutCreator } from "../state/ducks/data/users";
+import { getPathName } from "../state/ducks/router/selectors";
 import { RootState } from "../state/rootReducer";
 import Header from "./components/Header";
 import NavBar from "./components/NavBar";
@@ -97,7 +98,7 @@ const Layout = (props: Props) => {
 const mapStateToProps = (state: RootState) => {
     return ({
         detailedCourse: getActiveCourse(state),
-        location: state.router.location.pathname,
+        location: getPathName(state),
         currentUser: getCurrentUser(state),
     });
 };

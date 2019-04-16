@@ -3,8 +3,8 @@ import { ofType, StateObservable } from "redux-observable";
 import { empty, Observable } from "rxjs";
 import "rxjs/add/observable/of";
 import { mergeMap } from "rxjs/operators";
-import { GetCoursesCurrentUserCreator } from "src/state/ducks/data/courses";
-import { RootState } from "src/state/rootReducer";
+import { RootState } from "../../../../rootReducer";
+import { GetCoursesCurrentUserCreator } from "../../../data/courses/actions";
 
 export const FetchGradesOnLoginEpic = (
     action$: Observable<LocationChangeAction>,

@@ -3,11 +3,11 @@ import { Formik, FormikProps } from "formik";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
-import { RootState } from "src/state/rootReducer";
 import styled from "styled-components";
 import * as Yup from "yup";
 import { LoginUser, User } from "../../models/User";
 import { CreateNewUserCreator, getCurrentUser, LoginCreator } from "../../state/ducks/data/users";
+import { RootState } from "../../state/rootReducer";
 import Input from "../components/styled-inputs/Input";
 import Button from "../controls/button/Button";
 

@@ -4,8 +4,6 @@ import React, { Fragment, useEffect, useState } from "react";
 import ReactModal from "react-modal";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
-import { getCurrentUser } from "src/state/ducks/data/users";
-import { RootState } from "src/state/rootReducer";
 import styled from "styled-components";
 import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
@@ -19,6 +17,8 @@ import {
     EditCourseCreator,
     getCourses,
 } from "../../state/ducks/data/courses";
+import { getCurrentUser } from "../../state/ducks/data/users";
+import { RootState } from "../../state/rootReducer";
 import CourseOverviewButton from "../components/course/CourseOverviewButton";
 import Divider from "../components/Divider";
 import Button from "../controls/button/Button";

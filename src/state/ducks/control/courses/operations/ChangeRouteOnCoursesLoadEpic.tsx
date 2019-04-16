@@ -2,8 +2,8 @@ import { ofType } from "redux-observable";
 import { empty, Observable } from "rxjs";
 import "rxjs/add/observable/of";
 import { mergeMap } from "rxjs/operators";
-import { Course } from "src/models/Course";
-import { CourseDataActionTypes, GetCoursesCurrentUserSuccess } from "src/state/ducks/data/courses";
+import { Course } from "../../../../../models/Course";
+import { CourseDataActionTypes, GetCoursesCurrentUserSuccess } from "../../../../../state/ducks/data/courses";
 import { SetActiveCourseCreator } from "../actions";
 
 export const ChangeRouteOnCoursesLoadEpic = (

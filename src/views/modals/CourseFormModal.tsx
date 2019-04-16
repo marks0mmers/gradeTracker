@@ -2,13 +2,13 @@ import { Formik, FormikProps } from "formik";
 import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
-import { Course } from "src/models/Course";
-import { User } from "src/models/User";
-import { CreateNewCourseCreator, EditCourseCreator } from "src/state/ducks/data/courses";
-import { getCurrentUser } from "src/state/ducks/data/users";
-import { RootState } from "src/state/rootReducer";
 import styled from "styled-components";
 import * as Yup from "yup";
+import { Course } from "../../models/Course";
+import { User } from "../../models/User";
+import { CreateNewCourseCreator, EditCourseCreator } from "../../state/ducks/data/courses";
+import { getCurrentUser } from "../../state/ducks/data/users";
+import { RootState } from "../../state/rootReducer";
 import Input from "../components/styled-inputs/Input";
 import Button from "../controls/button/Button";
 

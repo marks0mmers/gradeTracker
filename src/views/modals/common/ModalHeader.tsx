@@ -1,7 +1,7 @@
 import React from "react";
-import Divider from "src/views/components/Divider";
-import Button from "src/views/controls/button/Button";
 import styled from "styled-components";
+import Divider from "../../components/Divider";
+import Button from "../../controls/button/Button";
 
 interface Props {
     className?: string;
