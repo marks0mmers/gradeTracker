@@ -1,6 +1,7 @@
 import { push } from "connected-react-router";
 import { List, Map } from "immutable";
 import React, { Component, Fragment, MouseEvent } from "react";
+import ReactModal from "react-modal";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { getCurrentUser } from "src/state/ducks/data/users";
@@ -17,14 +18,19 @@ import {
     SelectGradeCategoryCreator,
     SetActiveCourseCreator,
 } from "../../state/ducks/control/courses";
-import { CreateGradeCategoryCreator, GetGradeCategoryForCourseCreator } from "../../state/ducks/data/gradeCategories";
+import {
+    DeleteGradeCategoryCreator,
+    getGradeCategories,
+    GetGradeCategoryForCourseCreator,
+} from "../../state/ducks/data/gradeCategories";
 import CategoryDetailedPane from "../components/category/CategoryDetailedPane";
-import CourseCategoryForm from "../components/category/CourseCategoryForm";
 import Divider from "../components/Divider";
 import Button from "../controls/button/Button";
 import DataGrid from "../controls/data-grid";
 import { DataGridElement } from "../controls/data-grid";
 import { DataGridColumnDefinition } from "../controls/data-grid";
+import CategoryFormModal from "../modals/CategoryFormModal";
+import ModalHeader from "../modals/common/ModalHeader";
 
 interface PassedProps {
     className?: string;
@@ -35,14 +41,14 @@ interface PropsFromState {
     categoryElements: List<DataGridElement<GradeCategory>>;
     course: Course;
     currentUser: User;
-    categories: Map<string, GradeCategory>;
+    categories?: Map<string, GradeCategory>;
     selectedCategory: string;
 }
 
 interface PropsFromDispatch {
     setActiveCourse: typeof SetActiveCourseCreator;
     selectGradeCategory: typeof SelectGradeCategoryCreator;
-    createGradeCategory: typeof CreateGradeCategoryCreator;
+    deleteGradeCategory: typeof DeleteGradeCategoryCreator;
     getGradeCategoriesForCourse: typeof GetGradeCategoryForCourseCreator;
     push: typeof push;
 }
@@ -133,28 +139,37 @@ class CourseDetailedPage extends Component<Props, State> {
                         onClick={this.handleDelete}
                     />
                 </div>
-                {/* <Divider
-                    gridArea="divider"
-                /> */}
                 <Content>
-                    {
-                        isCreating &&
-                        <CourseCategoryForm
-                            course={course}
-                            handleCancelCreate={this.handleCancelCreate}
-                            handleFormSave={this.handleFormSave}
+                    <ReactModal
+                        style={{
+                            overlay: {
+                                background: "rgba(0, 0, 0, 0.5)",
+                            },
+                            content: {
+                                height: "fit-content",
+                                width: "40%",
+                                left: "30%",
+                            },
+                        }}
+                        isOpen={isCreating || isEditing}
+                        onRequestClose={this.handleCancel}
+                    >
+                        <ModalHeader
+                            title="Course Category Form"
+                            exitModal={this.handleCancel}
                         />
-                    }
-                    {
-                        isEditing &&
-                        <CourseCategoryForm
+                        <CategoryFormModal
+                            isCreating={isCreating}
                             course={course}
-                            handleCancelCreate={this.handleCancelCreate}
-                            originalCategory={categories && categories &&
-                                categories.find((value: GradeCategory) => value.title === selectedCategory)}
-                            handleFormSave={this.handleFormSave}
+                            exitModal={this.handleCancel}
+                            originalCategory={categories && categories.get(selectedCategory)}
+                            initialValues={categories && categories.get(selectedCategory) && {
+                                title: categories.get(selectedCategory).title,
+                                percentage: categories.get(selectedCategory).percentage,
+                                numberOfGrades: categories.get(selectedCategory).numberOfGrades,
+                            }}
                         />
-                    }
+                    </ReactModal>
                     <DataGrid
                         id="grade-category-grid"
                         columnDefinitions={categoryColumns}
@@ -177,19 +192,6 @@ class CourseDetailedPage extends Component<Props, State> {
                 </Content>
             </div>
         );
-    }
-
-    private handleFormSave = (course: Course, category: GradeCategory) => {
-        const { isCreating, isEditing } = this.state;
-        if (isCreating && this.props.currentUser) {
-            this.props.createGradeCategory(
-                category.set("courseId", course.id).set("userId", this.props.currentUser._id) as GradeCategory,
-                course.id || "",
-            );
-        }
-        if (isEditing) {
-            // reimplement this
-        }
     }
 
     private handleBodyCellClick = (event: MouseEvent<HTMLDivElement>, payload: GradeCategory) => {
@@ -217,10 +219,13 @@ class CourseDetailedPage extends Component<Props, State> {
     }
 
     private handleDelete = () => {
-        // reimplement this
+        if (this.props.selectedCategory) {
+            this.props.deleteGradeCategory(this.props.selectedCategory);
+            this.props.selectGradeCategory(undefined);
+        }
     }
 
-    private handleCancelCreate = () => {
+    private handleCancel = () => {
         this.setState({
             isCreating: false,
             isEditing: false,
@@ -228,7 +233,7 @@ class CourseDetailedPage extends Component<Props, State> {
     }
 
     private handleRootClick = () => {
-        this.props.setActiveCourse(undefined);
+        this.props.setActiveCourse();
         this.props.push("/");
     }
 
@@ -240,6 +245,7 @@ const mapStateToProps = (state: RootState) => ({
     detailedCourse: getActiveCourse(state),
     selectedCategory: getSelectedGradeCategory(state),
     currentUser: getCurrentUser(state),
+    categories: getGradeCategories(state),
     course: getActiveCourse(state),
 });
 
@@ -248,7 +254,7 @@ const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
         push,
         selectGradeCategory: SelectGradeCategoryCreator,
         setActiveCourse: SetActiveCourseCreator,
-        createGradeCategory: CreateGradeCategoryCreator,
+        deleteGradeCategory: DeleteGradeCategoryCreator,
         getGradeCategoriesForCourse: GetGradeCategoryForCourseCreator,
     }, dispatch);
 };

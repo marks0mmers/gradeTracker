@@ -1,4 +1,4 @@
-import { List, Map, Record } from "immutable";
+import { List, Record } from "immutable";
 import { Course } from "../../../../models/Course";
 import { GradeCategory } from "../../../../models/GradeCategory";
 import { DataGridColumnDefinition } from "../../../../views/controls/data-grid";
@@ -55,7 +55,6 @@ new DataGridColumnDefinition({
 
 export const CourseControlStateRecord = Record({
     activeCourse: undefined,
-    createFormValues: Map(),
     detailedColumns,
     selectedGradeCategory: undefined,
 });

@@ -167,7 +167,7 @@ export default styled(Row)`
              ". secondary ."`
     };
     grid-row-gap: 5px;
-    background: ${(props) => props.isSelected && !props.isEditing ? "#edb5bf" : "white"};
+    background: ${(props) => props.isSelected && !props.isEditing ? "#79c8ec" : "white"};
     padding: 5px 0;
     border-bottom: solid #898989 1px;
 

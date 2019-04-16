@@ -77,6 +77,7 @@ export default styled(ListControl)`
     padding: ${(props) => props.padding}px;
     display: flex;
     flex-direction: column;
+    border: solid black 1px;
     max-height: 93%;
     .body {
         overflow-y: scroll;

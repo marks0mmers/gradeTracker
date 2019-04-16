@@ -59,6 +59,12 @@ class HomePage extends Component<Props, State> {
         editingCourse: undefined,
     };
 
+    public componentDidMount() {
+        if (!this.props.currentUser) {
+            this.props.push("/login");
+        }
+    }
+
     public render() {
         const {
             isCreating,

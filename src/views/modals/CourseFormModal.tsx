@@ -13,7 +13,6 @@ import Input from "../components/styled-inputs/Input";
 import Button from "../controls/button/Button";
 
 interface PassedProps {
-    className?: string;
     isCreating: boolean;
     initialValues?: CourseForm;
     originalCourse?: Course;
@@ -42,24 +41,22 @@ interface CourseForm {
 class CourseFormModal extends Component<Props> {
     public render() {
         return (
-            <div className={this.props.className}>
-                <Formik
-                    initialValues={this.props.initialValues || {
-                        title: "",
-                        description: "",
-                        section: 0,
-                        creditHours: 0,
-                    }}
-                    onSubmit={this.handleFormSubmit}
-                    validationSchema={Yup.object().shape({
-                        title: Yup.string().max(8, "Course can only be up to 8 Characters").required(),
-                        description: Yup.string().required(),
-                        section: Yup.number().moreThan(0).required(),
-                        creditHours: Yup.number().moreThan(0).lessThan(5).required(),
-                    })}
-                    render={this.renderForm}
-                />
-            </div>
+            <Formik
+                initialValues={this.props.initialValues || {
+                    title: "",
+                    description: "",
+                    section: 0,
+                    creditHours: 0,
+                }}
+                onSubmit={this.handleFormSubmit}
+                validationSchema={Yup.object().shape({
+                    title: Yup.string().max(8, "Course can only be up to 8 Characters").required(),
+                    description: Yup.string().required(),
+                    section: Yup.number().moreThan(0).required(),
+                    creditHours: Yup.number().moreThan(0).lessThan(5).required(),
+                })}
+                render={this.renderForm}
+            />
         );
     }
 
@@ -126,10 +123,7 @@ class CourseFormModal extends Component<Props> {
             if (this.props.isCreating) {
                 const course = new Course({
                     userId: this.props.currentUser._id,
-                    title: values.title,
-                    description: values.description,
-                    creditHours: values.creditHours,
-                    section: values.section,
+                    ...values,
                 });
                 this.props.handleCreateCourse(course);
                 this.props.exitModal();

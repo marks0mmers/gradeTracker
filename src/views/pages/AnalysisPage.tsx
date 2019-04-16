@@ -1,9 +1,11 @@
 import { List, Map } from "immutable";
-import React from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { bindActionCreators, Dispatch } from "redux";
 import { getAnalysisGridColumns, getAnalysisGridData } from "src/state/ducks/control/analysis/selectors";
 import { getCourses } from "src/state/ducks/data/courses";
+import { GetGradeCategoriesForCurrentUserCreator } from "src/state/ducks/data/gradeCategories";
 import { RootState } from "src/state/rootReducer";
 import styled from "styled-components";
 import { AnalysisCourse } from "../../models/AnalysisCourse";
@@ -28,9 +30,18 @@ interface PropsFromState {
     columns: List<DataGridColumnDefinition<AnalysisCourse>>;
 }
 
-type Props = PropsFromState & PassedProps;
+interface PropsFromDispatch {
+    getAllCategories: typeof GetGradeCategoriesForCurrentUserCreator;
+}
+
+type Props = PropsFromState & PropsFromDispatch & PassedProps;
 
 const AnalysisPage = (props: Props) => {
+
+    // componentDidMount
+    useEffect(() => {
+        props.getAllCategories();
+    }, []);
 
     const getGraphData = () => {
         const analysisCourses = props.elements
@@ -90,7 +101,13 @@ const mapStateToProps = (state: RootState) => ({
     elements: getAnalysisGridData(state),
 });
 
-export default styled(connect(mapStateToProps)(AnalysisPage))`
+const mapDispatchToProps = (dispatch: Dispatch) => {
+    return bindActionCreators({
+        getAllCategories: GetGradeCategoriesForCurrentUserCreator,
+    }, dispatch);
+};
+
+export default styled(connect(mapStateToProps, mapDispatchToProps)(AnalysisPage))`
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto auto 1fr 1fr;

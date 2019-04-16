@@ -16,9 +16,7 @@ export default styled(ColoredCell)`
     width: 100%;
     line-height: 30px;
     text-align: center;
-    color: ${(props) => props.grade && props.grade >= 80 && props.grade < 90
-        ? "white"
-        : "black"};
+    color: black;
     background: ${(props) => {
         const grade = props.grade || 0;
         if (grade >= 90) {

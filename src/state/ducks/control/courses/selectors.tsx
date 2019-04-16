@@ -10,13 +10,15 @@ export const getDetailedColumns = (state: RootState) => state.control.course.det
 export const getSelectedGradeCategory = (state: RootState) => state.control.course.selectedGradeCategory;
 
 export const getDetailedCourseElements = createSelector(
-    [getGradeCategories],
+    [getGradeCategories, getSelectedGradeCategory],
     (
-        selectedGradeCategory: Map<string, GradeCategory>,
+        gradeCategories: Map<string, GradeCategory>,
+        selectedGradeCategory: string,
     ) => {
-        return selectedGradeCategory.map((gradeCategory: GradeCategory) => {
+        return gradeCategories.map((gradeCategory: GradeCategory) => {
             return new DataGridElement<GradeCategory>({
                 payload: gradeCategory,
+                isSelected: gradeCategory.id === selectedGradeCategory,
             });
         }).toList();
     },

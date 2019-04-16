@@ -1,6 +1,4 @@
-import { Course } from "../models/Course";
-
-export const getLetterGrade = (grade: number, course: Course) => {
+export const getLetterGrade = (grade: number) => {
     // F
     if (grade < 60) {
         return "F";

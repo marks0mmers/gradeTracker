@@ -1,5 +1,10 @@
-import { Map } from "immutable";
 import React, { Component, Fragment } from "react";
+import ReactModal from "react-modal";
+import { connect } from "react-redux";
+import { bindActionCreators, Dispatch } from "redux";
+import { DeleteGradeCreator } from "src/state/ducks/data/gradeCategories";
+import ModalHeader from "src/views/modals/common/ModalHeader";
+import GradeFormModal from "src/views/modals/GradeFormModal";
 import styled from "styled-components";
 import { Grade } from "../../../models/Grade";
 import { GradeCategory } from "../../../models/GradeCategory";
@@ -7,25 +12,27 @@ import Button from "../../../views/controls/button/Button";
 import { ListControlElement } from "../../controls/list-control/models/ListControlElement";
 import ListControl from "../../controls/list-control/package/ListControl";
 
-interface Props {
+interface PassedProps {
     className?: string;
     selectedCategory?: GradeCategory;
-    grades?: Map<string, Grade>;
-    categoryDidUpdate?: boolean;
 }
+
+interface PropsFromDispatch {
+    handleDeleteGrade: typeof DeleteGradeCreator;
+}
+
+type Props = PassedProps & PropsFromDispatch;
 
 interface State {
     selectedGrade?: string;
-    isAddingGrade: boolean;
-    invalidGrade: boolean;
+    isCreating: boolean;
     isEditing: boolean;
 }
 
 class CategoryDetailedPane extends Component<Props, State> {
 
     public readonly state = {
-        invalidGrade: false,
-        isAddingGrade: false,
+        isCreating: false,
         isEditing: false,
         selectedGrade: undefined,
     };
@@ -33,13 +40,20 @@ class CategoryDetailedPane extends Component<Props, State> {
     public render() {
         const {
             className,
-            grades,
             selectedCategory,
         } = this.props;
 
+        const selectedGrade = selectedCategory && selectedCategory.grades.find(
+            (g: Grade) => g.name === this.state.selectedGrade,
+        );
+
         return (
             <div className={className}>
-                {this.buildDisplayLabel("Category Name:", selectedCategory ? selectedCategory.title : "", "title")}
+                {this.buildDisplayLabel(
+                    "Category Name:",
+                    selectedCategory ? selectedCategory.title : "",
+                    "title",
+                )}
                 {this.buildDisplayLabel(
                     "Percentage:",
                     selectedCategory ? `${selectedCategory.percentage} %` : "",
@@ -47,12 +61,12 @@ class CategoryDetailedPane extends Component<Props, State> {
                 )}
                 {this.buildDisplayLabel(
                     "Number of Grades:",
-                    grades ? grades.size : "",
+                    selectedCategory ? selectedCategory.numberOfGrades : "",
                     "numberGrades",
                     )}
                 {this.buildDisplayLabel(
                     "Remaining Grades:",
-                    grades && selectedCategory ? selectedCategory.numberOfGrades - grades.size : "",
+                    selectedCategory ? selectedCategory.remainingGrades : "",
                     "gradesRemaining",
                 )}
                 {this.buildDisplayLabel(
@@ -71,9 +85,6 @@ class CategoryDetailedPane extends Component<Props, State> {
                     "potentialAverage",
                 )}
                 <div className="grades">
-                    {
-                        this.state.invalidGrade && <span className="error">Invalid Grade</span>
-                    }
                     <ListControl
                         header={true}
                         headerText="Grades"
@@ -106,27 +117,50 @@ class CategoryDetailedPane extends Component<Props, State> {
                                 />
                             </Fragment>
                         }
-                        showInputRow={this.state.isAddingGrade}
-                        onRowSave={this.handleSaveGrade}
                         elements={this.getListElements()}
                         padding={10}
-                        primaryPlaceHolder="Grade Name"
-                        secondaryPlaceHolder="Grade (NO % SIGN)"
                         onRowClick={this.handleSelectGrade}
-                        onRowClear={this.handleCancelModify}
                     />
                 </div>
+                <ReactModal
+                    style={{
+                        overlay: {
+                            background: "rgba(0, 0, 0, 0.5)",
+                        },
+                        content: {
+                            height: "fit-content",
+                            width: "40%",
+                            left: "30%",
+                        },
+                    }}
+                    isOpen={this.state.isCreating || this.state.isEditing}
+                    onRequestClose={this.handleCancel}
+                >
+                    <ModalHeader
+                        title="Grade Form"
+                        exitModal={this.handleCancel}
+                    />
+                    <GradeFormModal
+                        isCreating={this.state.isCreating}
+                        gradeCategory={selectedCategory}
+                        exitModal={this.handleCancel}
+                        originalGrade={selectedGrade}
+                        initialValues={selectedGrade && {
+                            name: selectedGrade.name,
+                            grade: selectedGrade.grade,
+                        }}
+                    />
+                </ReactModal>
             </div>
         );
     }
 
     private getListElements = () => {
-        const { grades } = this.props;
-        const { isEditing, selectedGrade } = this.state;
-        return grades && grades.map((value: Grade, key: string) => {
+        const { selectedCategory } = this.props;
+        const { selectedGrade } = this.state;
+        return selectedCategory && selectedCategory.grades.map((value: Grade) => {
             const element: ListControlElement = {
-                isEditing: key === selectedGrade && isEditing,
-                isSelected: key === selectedGrade,
+                isSelected: value.name === selectedGrade,
                 primaryProperty: value.name,
                 secondaryProperty: `${value.grade.toString()} %`,
             };
@@ -134,25 +168,18 @@ class CategoryDetailedPane extends Component<Props, State> {
         }).toList();
     }
 
-    private handleCancelModify = () => {
+    private handleCancel = () => {
         this.setState({
-            invalidGrade: false,
-            isAddingGrade: false,
+            isCreating: false,
             isEditing: false,
         });
     }
 
     private handleNewGrade = () => {
-        const { grades, selectedCategory } = this.props;
-        if (selectedCategory && grades && selectedCategory.numberOfGrades >= grades.size + 1) {
+        const { selectedCategory } = this.props;
+        if (selectedCategory && selectedCategory.numberOfGrades >= selectedCategory.grades.size + 1) {
             this.setState({
-                invalidGrade: false,
-                isAddingGrade: true,
-            });
-        } else {
-            this.setState({
-                invalidGrade: false,
-                isAddingGrade: false,
+                isCreating: true,
             });
         }
     }
@@ -161,16 +188,17 @@ class CategoryDetailedPane extends Component<Props, State> {
         const { selectedGrade } = this.state;
         if (selectedGrade) {
             this.setState({
-                invalidGrade: false,
                 isEditing: true,
+                isCreating: false,
             });
         }
     }
 
     private handleDeleteGrade = () => {
         const { selectedGrade } = this.state;
-        if (selectedGrade) {
-            // rewrite this
+        if (selectedGrade && this.props.selectedCategory) {
+            const grade = this.props.selectedCategory.grades.find((g: Grade) => g.name === selectedGrade);
+            this.props.handleDeleteGrade(grade.id);
         }
     }
 
@@ -178,24 +206,6 @@ class CategoryDetailedPane extends Component<Props, State> {
         this.setState({
             selectedGrade: primaryProperty,
         });
-    }
-
-    private handleSaveGrade = (description: string, grade?: string, initialKey?: string) => {
-        const parsedGrade = (!grade || isNaN(+grade)) ? -1 : +grade;
-        if (parsedGrade >= 0) {
-            this.setState({
-                invalidGrade: false,
-                isAddingGrade: false,
-                isEditing: false,
-            });
-
-            // TODO rewrite this
-
-        } else {
-            this.setState({
-                invalidGrade: true,
-            });
-        }
     }
 
     private buildDisplayLabel = (label: string, value: string | number, gridArea: string) => (
@@ -206,7 +216,13 @@ class CategoryDetailedPane extends Component<Props, State> {
     )
 }
 
-export default styled(CategoryDetailedPane)`
+const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
+    return bindActionCreators({
+        handleDeleteGrade: DeleteGradeCreator,
+    }, dispatch);
+};
+
+const Styled =  styled(CategoryDetailedPane)`
     display: grid;
     grid-template-rows: repeat(7, 1fr);
     grid-column-gap: 10px;
@@ -221,7 +237,6 @@ export default styled(CategoryDetailedPane)`
     @media screen and (max-width: 800px) {
         grid-template-columns: 1fr 1fr;
     }
-    background: #eeeeee;
     margin-bottom: 10px;
 
     .label-container {
@@ -250,3 +265,5 @@ export default styled(CategoryDetailedPane)`
         color: #b00020;
     }
 `;
+
+export default connect(null, mapDispatchToProps)(Styled);
