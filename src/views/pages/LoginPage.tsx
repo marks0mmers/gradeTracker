@@ -1,6 +1,6 @@
 import { push } from "connected-react-router";
 import { Formik, FormikProps } from "formik";
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { RootState } from "src/state/rootReducer";
@@ -77,50 +77,28 @@ const LoginValidation = Yup.object().shape({
     password: Yup.string().required("Password is Required"),
 });
 
-class LoginPage extends Component<Props, State> {
+const LoginPage = (componentProps: Props) => {
 
-    public readonly state = {
+    const [state, setState] = useState<State>({
         creatingNewUser: false,
-    };
+    });
 
-    public componentDidUpdate() {
-        if (this.props.currentUser) {
-            this.props.pushRoute("/");
+    useEffect(() => {
+        if (componentProps.currentUser) {
+            componentProps.pushRoute("/");
         }
-    }
+    });
 
-    public render() {
-        const {
-            creatingNewUser,
-        } = this.state;
-
-        return (
-            <div id="login-content" className={this.props.className}>
-                <LoginContainer id="login-container">
-                    <Header>
-                        <HeaderText>{creatingNewUser ? "Create new User" : "Login to Grade Tracker"}</HeaderText>
-                    </Header>
-                    <Formik
-                        initialValues={creatingNewUser ? NewUserValues : LoginValues}
-                        onSubmit={this.handleFormSubmit}
-                        validationSchema={creatingNewUser ? NewUserValidation : LoginValidation}
-                        render={creatingNewUser ? this.renderNewUserForm : this.renderLoginForm}
-                    />
-                </LoginContainer>
-            </div>
-        );
-    }
-
-    private renderLoginForm = (props: FormikProps<LoginForm>) => (
+    const renderLoginForm = (props: FormikProps<LoginForm>) => (
         <Form onSubmit={props.handleSubmit}>
-            {this.buildInputField(
+            {buildInputField(
                 "Email",
                 props.values.email,
                 props,
                 "email",
                 props.errors.email,
             )}
-            {this.buildInputField(
+            {buildInputField(
                 "Password",
                 props.values.password,
                 props,
@@ -129,36 +107,36 @@ class LoginPage extends Component<Props, State> {
                 "password",
             )}
             <Buttons>
-                {this.buildButton(30, "Create User", "Switch to Create User", undefined, this.toggleCreate)}
-                {this.buildButton(30, "Login", "Click to Login", "submit")}
+                {buildButton(30, "Create User", "Switch to Create User", undefined, toggleCreate)}
+                {buildButton(30, "Login", "Click to Login", "submit")}
             </Buttons>
         </Form>
-    )
+    );
 
-    private renderNewUserForm = (props: FormikProps<NewUserForm>) => (
+    const renderNewUserForm = (props: FormikProps<NewUserForm>) => (
         <Form onSubmit={props.handleSubmit}>
-            {this.buildInputField(
+            {buildInputField(
                 "First Name",
                 props.values.firstName,
                 props,
                 "firstName",
                 props.errors.firstName,
             )}
-            {this.buildInputField(
+            {buildInputField(
                 "Last Name",
                 props.values.lastName,
                 props,
                 "lastName",
                 props.errors.lastName,
             )}
-            {this.buildInputField(
+            {buildInputField(
                 "Email",
                 props.values.email,
                 props,
                 "email",
                 props.errors.email,
             )}
-            {this.buildInputField(
+            {buildInputField(
                 "Password",
                 props.values.password,
                 props,
@@ -166,7 +144,7 @@ class LoginPage extends Component<Props, State> {
                 props.errors.password,
                 "password",
             )}
-            {this.buildInputField(
+            {buildInputField(
                 "Repeat Password",
                 props.values.repeatPassword,
                 props,
@@ -175,13 +153,13 @@ class LoginPage extends Component<Props, State> {
                 "password",
             )}
             <Buttons>
-                {this.buildButton(30, "Back to Login", "Switch to Login", undefined, this.toggleCreate)}
-                {this.buildButton(30, "Create User", "Click to Create New User", "submit")}
+                {buildButton(30, "Back to Login", "Switch to Login", undefined, toggleCreate)}
+                {buildButton(30, "Create User", "Click to Create New User", "submit")}
             </Buttons>
         </Form>
-    )
+    );
 
-    private buildInputField = <T extends {}>(
+    const buildInputField = <T extends {}>(
         label: string,
         value: string,
         props: FormikProps<T>,
@@ -202,9 +180,9 @@ class LoginPage extends Component<Props, State> {
                 {error && <Error>{error}</Error>}
             </LabelInput>
         );
-    }
+    };
 
-    private buildButton = (
+    const buildButton = (
         height: number,
         text: string,
         tooltip: string,
@@ -219,26 +197,42 @@ class LoginPage extends Component<Props, State> {
             tooltip={tooltip}
             onClick={onClick}
         />
-    )
+    );
 
-    private toggleCreate = () => {
-        this.setState({
-            creatingNewUser: !this.state.creatingNewUser,
+    const toggleCreate = () => {
+        setState({
+            creatingNewUser: !state.creatingNewUser,
         });
-    }
+    };
 
-    private handleFormSubmit = (values: LoginForm | NewUserForm) => {
+    const handleFormSubmit = (values: LoginForm | NewUserForm) => {
         if (isNewUserForm(values)) {
             const newUser = new User({
                 ...values,
             });
-            this.props.createNewUser(newUser);
+            componentProps.createNewUser(newUser);
         } else {
-            this.props.login(values as LoginUser);
+            componentProps.login(values as LoginUser);
         }
-    }
+    };
 
-}
+    return (
+        <div id="login-content" className={componentProps.className}>
+            <LoginContainer id="login-container">
+                <Header>
+                    <HeaderText>{state.creatingNewUser ? "Create new User" : "Login to Grade Tracker"}</HeaderText>
+                </Header>
+                <Formik
+                    initialValues={state.creatingNewUser ? NewUserValues : LoginValues}
+                    onSubmit={handleFormSubmit}
+                    validationSchema={state.creatingNewUser ? NewUserValidation : LoginValidation}
+                    render={state.creatingNewUser ? renderNewUserForm : renderLoginForm}
+                />
+            </LoginContainer>
+        </div>
+    );
+
+};
 
 const Form = styled.form`
     margin: 10px;

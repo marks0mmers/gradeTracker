@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import ReactModal from "react-modal";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
@@ -29,135 +29,17 @@ interface State {
     isEditing: boolean;
 }
 
-class CategoryDetailedPane extends Component<Props, State> {
+const CategoryDetailedPane = (props: Props) => {
 
-    public readonly state = {
+    const [state, setState] = useState<State>({
         isCreating: false,
         isEditing: false,
         selectedGrade: undefined,
-    };
+    });
 
-    public render() {
-        const {
-            className,
-            selectedCategory,
-        } = this.props;
-
-        const selectedGrade = selectedCategory && selectedCategory.grades.find(
-            (g: Grade) => g.name === this.state.selectedGrade,
-        );
-
-        return (
-            <div className={className}>
-                {this.buildDisplayLabel(
-                    "Category Name:",
-                    selectedCategory ? selectedCategory.title : "",
-                    "title",
-                )}
-                {this.buildDisplayLabel(
-                    "Percentage:",
-                    selectedCategory ? `${selectedCategory.percentage} %` : "",
-                    "percentage",
-                )}
-                {this.buildDisplayLabel(
-                    "Number of Grades:",
-                    selectedCategory ? selectedCategory.numberOfGrades : "",
-                    "numberGrades",
-                    )}
-                {this.buildDisplayLabel(
-                    "Remaining Grades:",
-                    selectedCategory ? selectedCategory.remainingGrades : "",
-                    "gradesRemaining",
-                )}
-                {this.buildDisplayLabel(
-                    "Current Average:",
-                    selectedCategory ? `${selectedCategory.currentAverage.toPrecision(4)}` : "",
-                    "currentAverage",
-                )}
-                {this.buildDisplayLabel(
-                    "Guarenteed Average:",
-                    selectedCategory ? `${selectedCategory.guarenteedAverage.toPrecision(4)}` : "",
-                    "guarenteedAverage",
-                )}
-                {this.buildDisplayLabel(
-                    "Potential Average:",
-                    selectedCategory ? `${selectedCategory.potentialAverage.toPrecision(4)}` : "",
-                    "potentialAverage",
-                )}
-                <div className="grades">
-                    <ListControl
-                        header={true}
-                        headerText="Grades"
-                        footer={true}
-                        footerContent={
-                            <Fragment>
-                                <Button
-                                    tooltip="Create New Grade"
-                                    icon="add"
-                                    height={40}
-                                    width={60}
-                                    marginLeftRight={5}
-                                    onClick={this.handleNewGrade}
-                                />
-                                <Button
-                                    tooltip="Edit Selected Grade"
-                                    icon="create"
-                                    height={40}
-                                    width={60}
-                                    marginLeftRight={5}
-                                    onClick={this.handleEditGrade}
-                                />
-                                <Button
-                                    tooltip="Delete Selected Grade"
-                                    icon="delete"
-                                    height={40}
-                                    width={60}
-                                    marginLeftRight={5}
-                                    onClick={this.handleDeleteGrade}
-                                />
-                            </Fragment>
-                        }
-                        elements={this.getListElements()}
-                        padding={10}
-                        onRowClick={this.handleSelectGrade}
-                    />
-                </div>
-                <ReactModal
-                    style={{
-                        overlay: {
-                            background: "rgba(0, 0, 0, 0.5)",
-                        },
-                        content: {
-                            height: "fit-content",
-                            width: "40%",
-                            left: "30%",
-                        },
-                    }}
-                    isOpen={this.state.isCreating || this.state.isEditing}
-                    onRequestClose={this.handleCancel}
-                >
-                    <ModalHeader
-                        title="Grade Form"
-                        exitModal={this.handleCancel}
-                    />
-                    <GradeFormModal
-                        isCreating={this.state.isCreating}
-                        gradeCategory={selectedCategory}
-                        exitModal={this.handleCancel}
-                        originalGrade={selectedGrade}
-                        initialValues={selectedGrade && {
-                            name: selectedGrade.name,
-                            grade: selectedGrade.grade,
-                        }}
-                    />
-                </ReactModal>
-            </div>
-        );
-    }
-
-    private getListElements = () => {
-        const { selectedCategory } = this.props;
-        const { selectedGrade } = this.state;
+    const getListElements = () => {
+        const { selectedCategory } = props;
+        const { selectedGrade } = state;
         return selectedCategory && selectedCategory.grades.map((value: Grade) => {
             const element: ListControlElement = {
                 isSelected: value.name === selectedGrade,
@@ -166,55 +48,169 @@ class CategoryDetailedPane extends Component<Props, State> {
             };
             return element;
         }).toList();
-    }
+    };
 
-    private handleCancel = () => {
-        this.setState({
+    const handleCancel = () => {
+        setState({
             isCreating: false,
             isEditing: false,
         });
-    }
+    };
 
-    private handleNewGrade = () => {
-        const { selectedCategory } = this.props;
+    const handleNewGrade = () => {
+        const { selectedCategory } = props;
         if (selectedCategory && selectedCategory.numberOfGrades >= selectedCategory.grades.size + 1) {
-            this.setState({
+            setState({
                 isCreating: true,
+                isEditing: false,
             });
         }
-    }
+    };
 
-    private handleEditGrade = () => {
-        const { selectedGrade } = this.state;
+    const handleEditGrade = () => {
+        const { selectedGrade } = state;
         if (selectedGrade) {
-            this.setState({
+            setState({
                 isEditing: true,
                 isCreating: false,
             });
         }
-    }
+    };
 
-    private handleDeleteGrade = () => {
-        const { selectedGrade } = this.state;
-        if (selectedGrade && this.props.selectedCategory) {
-            const grade = this.props.selectedCategory.grades.find((g: Grade) => g.name === selectedGrade);
-            this.props.handleDeleteGrade(grade.id);
+    const handleDeleteGrade = () => {
+        const { selectedGrade } = state;
+        if (selectedGrade && props.selectedCategory) {
+            const grade = props.selectedCategory.grades.find((g: Grade) => g.name === selectedGrade);
+            props.handleDeleteGrade(grade.id);
         }
-    }
+    };
 
-    private handleSelectGrade = (primaryProperty: string) => {
-        this.setState({
+    const handleSelectGrade = (primaryProperty: string) => {
+        setState({
             selectedGrade: primaryProperty,
+            ...state,
         });
-    }
+    };
 
-    private buildDisplayLabel = (label: string, value: string | number, gridArea: string) => (
+    const buildDisplayLabel = (label: string, value: string | number, gridArea: string) => (
         <div className="label-container" style={{gridArea}}>
             <div className="prop-label">{label}</div>
             <div className="prop-value">{value}</div>
         </div>
-    )
-}
+    );
+
+    const selectedGradeObject = props.selectedCategory && props.selectedCategory.grades.find(
+        (g: Grade) => g.name === state.selectedGrade,
+    );
+
+    return (
+        <div className={props.className}>
+            {buildDisplayLabel(
+                "Category Name:",
+                props.selectedCategory ? props.selectedCategory.title : "",
+                "title",
+            )}
+            {buildDisplayLabel(
+                "Percentage:",
+                props.selectedCategory ? `${props.selectedCategory.percentage} %` : "",
+                "percentage",
+            )}
+            {buildDisplayLabel(
+                "Number of Grades:",
+                props.selectedCategory ? props.selectedCategory.numberOfGrades : "",
+                "numberGrades",
+                )}
+            {buildDisplayLabel(
+                "Remaining Grades:",
+                props.selectedCategory ? props.selectedCategory.remainingGrades : "",
+                "gradesRemaining",
+            )}
+            {buildDisplayLabel(
+                "Current Average:",
+                props.selectedCategory ? `${props.selectedCategory.currentAverage.toPrecision(4)}` : "",
+                "currentAverage",
+            )}
+            {buildDisplayLabel(
+                "Guarenteed Average:",
+                props.selectedCategory ? `${props.selectedCategory.guarenteedAverage.toPrecision(4)}` : "",
+                "guarenteedAverage",
+            )}
+            {buildDisplayLabel(
+                "Potential Average:",
+                props.selectedCategory ? `${props.selectedCategory.potentialAverage.toPrecision(4)}` : "",
+                "potentialAverage",
+            )}
+            <div className="grades">
+                <ListControl
+                    header={true}
+                    headerText="Grades"
+                    footer={true}
+                    footerContent={
+                        <Fragment>
+                            <Button
+                                tooltip="Create New Grade"
+                                icon="add"
+                                height={40}
+                                width={60}
+                                marginLeftRight={5}
+                                onClick={handleNewGrade}
+                            />
+                            <Button
+                                tooltip="Edit Selected Grade"
+                                icon="create"
+                                height={40}
+                                width={60}
+                                marginLeftRight={5}
+                                onClick={handleEditGrade}
+                            />
+                            <Button
+                                tooltip="Delete Selected Grade"
+                                icon="delete"
+                                height={40}
+                                width={60}
+                                marginLeftRight={5}
+                                onClick={handleDeleteGrade}
+                            />
+                        </Fragment>
+                    }
+                    elements={getListElements()}
+                    padding={10}
+                    onRowClick={handleSelectGrade}
+                />
+            </div>
+            <ReactModal
+                style={{
+                    overlay: {
+                        background: "rgba(0, 0, 0, 0.5)",
+                    },
+                    content: {
+                        height: "fit-content",
+                        width: "40%",
+                        left: "30%",
+                    },
+                }}
+                isOpen={state.isCreating || state.isEditing}
+                onRequestClose={handleCancel}
+            >
+                <ModalHeader
+                    title="Grade Form"
+                    exitModal={handleCancel}
+                />
+                <GradeFormModal
+                    isCreating={state.isCreating}
+                    gradeCategory={props.selectedCategory}
+                    exitModal={handleCancel}
+                    originalGrade={selectedGradeObject}
+                    initialValues={selectedGradeObject && {
+                        name: selectedGradeObject.name,
+                        grade: selectedGradeObject.grade,
+                    }}
+                />
+            </ReactModal>
+        </div>
+    );
+
+};
 
 const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
     return bindActionCreators({

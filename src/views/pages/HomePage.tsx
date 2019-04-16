@@ -1,6 +1,6 @@
 import { push } from "connected-react-router";
 import { Map } from "immutable";
-import React, { Component, Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import ReactModal from "react-modal";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
@@ -51,121 +51,114 @@ interface State {
     editingCourse?: Course;
 }
 
-class HomePage extends Component<Props, State> {
+const HomePage = (props: Props) => {
 
-    public state: State = {
+    const [state, setState] = useState<State>({
         isCreating: false,
         isEditing: false,
         editingCourse: undefined,
-    };
+    });
 
-    public componentDidMount() {
-        if (!this.props.currentUser) {
-            this.props.push("/login");
+    useEffect(() => {
+        if (!props.currentUser) {
+            props.push("/login");
         }
-    }
+    }, []);
 
-    public render() {
-        const {
-            isCreating,
-            isEditing,
-        } = this.state;
-
-        return (
-            <div id="home-content" className={this.props.className}>
-                <h2 className="route">Courses</h2>
-                <ButtonWrapper id="button-wrapper">
-                    {
-                        !isCreating &&
-                        <Fragment>
-                            <span className="button-label">Create New Course:</span>
-                            <Button
-                                id="create-new-course"
-                                tooltip="Create New Course"
-                                icon="add"
-                                height={30}
-                                width={50}
-                                marginLeftRight={5}
-                                onClick={this.handleNewCourseClick}
-                            />
-                        </Fragment>
-                    }
-                </ButtonWrapper>
-                <Divider isVertical={false} gridArea="divider"/>
-                <div className="content">
-                    <ReactModal
-                        style={{
-                            overlay: {
-                                background: "rgba(0, 0, 0, 0.5)",
-                            },
-                            content: {
-                                height: "fit-content",
-                                width: "40%",
-                                left: "30%",
-                            },
-                        }}
-                        isOpen={isCreating || isEditing}
-                        onRequestClose={this.handleCancel}
-                    >
-                        <ModalHeader
-                            title="Add Course to Tracker"
-                            exitModal={this.handleCancel}
-                        />
-                        <CourseFormModal
-                            isCreating={isCreating}
-                            exitModal={this.handleCancel}
-                            originalCourse={this.state.editingCourse}
-                            initialValues={this.state.editingCourse && {
-                                title: this.state.editingCourse.title,
-                                description: this.state.editingCourse.description,
-                                creditHours: this.state.editingCourse.creditHours,
-                                section: this.state.editingCourse.section,
-                            }}
-                        />
-                    </ReactModal>
-                    {this.getCourseButtons()}
-                </div>
-            </div >
-        );
-    }
-
-    private getCourseButtons = () => {
-        return this.props.courses && this.props.courses.map((course: Course, key: string) => {
+    const getCourseButtons = () => {
+        return props.courses && props.courses.map((course: Course, key: string) => {
             return (
                 <CourseOverviewButton
                     key={key}
                     course={course}
-                    onClick={this.props.handleSetActiveCourse}
-                    onDeleteClick={this.props.handleDeleteCourse}
-                    onEditClick={this.handleEditClick}
+                    onClick={props.handleSetActiveCourse}
+                    onDeleteClick={props.handleDeleteCourse}
+                    onEditClick={handleEditClick}
                 />
             );
         }).toList();
-    }
+    };
 
-    private handleEditClick = (course?: Course) => {
-        this.setState({
+    const handleEditClick = (course?: Course) => {
+        setState({
             isCreating: false,
             isEditing: true,
             editingCourse: course,
         });
-    }
+    };
 
-    private handleNewCourseClick = () => {
-        this.setState({
+    const handleNewCourseClick = () => {
+        setState({
             isCreating: true,
             isEditing: false,
         });
-    }
+    };
 
-    private handleCancel = () => {
-        this.setState({
+    const handleCancel = () => {
+        setState({
             isCreating: false,
             isEditing: false,
         });
-    }
+    };
 
-}
+    return (
+        <div id="home-content" className={props.className}>
+            <h2 className="route">Courses</h2>
+            <ButtonWrapper id="button-wrapper">
+                {
+                    !state.isCreating &&
+                    <Fragment>
+                        <span className="button-label">Create New Course:</span>
+                        <Button
+                            id="create-new-course"
+                            tooltip="Create New Course"
+                            icon="add"
+                            height={30}
+                            width={50}
+                            marginLeftRight={5}
+                            onClick={handleNewCourseClick}
+                        />
+                    </Fragment>
+                }
+            </ButtonWrapper>
+            <Divider isVertical={false} gridArea="divider"/>
+            <div className="content">
+                <ReactModal
+                    style={{
+                        overlay: {
+                            background: "rgba(0, 0, 0, 0.5)",
+                        },
+                        content: {
+                            height: "fit-content",
+                            width: "40%",
+                            left: "30%",
+                        },
+                    }}
+                    isOpen={state.isCreating || state.isEditing}
+                    onRequestClose={handleCancel}
+                >
+                    <ModalHeader
+                        title="Add Course to Tracker"
+                        exitModal={handleCancel}
+                    />
+                    <CourseFormModal
+                        isCreating={state.isCreating}
+                        exitModal={handleCancel}
+                        originalCourse={state.editingCourse}
+                        initialValues={state.editingCourse && {
+                            title: state.editingCourse.title,
+                            description: state.editingCourse.description,
+                            creditHours: state.editingCourse.creditHours,
+                            section: state.editingCourse.section,
+                        }}
+                    />
+                </ReactModal>
+                {getCourseButtons()}
+            </div>
+        </div >
+    );
+
+};
 
 const ButtonWrapper = styled.div`
     display: flex;

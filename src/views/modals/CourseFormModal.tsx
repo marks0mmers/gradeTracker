@@ -1,5 +1,5 @@
 import { Formik, FormikProps } from "formik";
-import React, { Component } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { Course } from "src/models/Course";
@@ -38,52 +38,32 @@ interface CourseForm {
     creditHours: number;
 }
 
-class CourseFormModal extends Component<Props> {
-    public render() {
-        return (
-            <Formik
-                initialValues={this.props.initialValues || {
-                    title: "",
-                    description: "",
-                    section: 0,
-                    creditHours: 0,
-                }}
-                onSubmit={this.handleFormSubmit}
-                validationSchema={Yup.object().shape({
-                    title: Yup.string().max(8, "Course can only be up to 8 Characters").required(),
-                    description: Yup.string().required(),
-                    section: Yup.number().moreThan(0).required(),
-                    creditHours: Yup.number().moreThan(0).lessThan(5).required(),
-                })}
-                render={this.renderForm}
-            />
-        );
-    }
+const CourseFormModal = (componentProps: Props) => {
 
-    private renderForm = (props: FormikProps<CourseForm>) => (
+    const renderForm = (props: FormikProps<CourseForm>) => (
         <form onSubmit={props.handleSubmit}>
-            {this.buildFormValue(
+            {buildFormValue(
                 "Course Title",
                 props.values.title,
                 props,
                 "title",
                 props.errors.title,
             )}
-            {this.buildFormValue(
+            {buildFormValue(
                 "Course Description",
                 props.values.description,
                 props,
                 "description",
                 props.errors.description,
             )}
-            {this.buildFormValue(
+            {buildFormValue(
                 "Course Section",
                 props.values.section,
                 props,
                 "section",
                 props.errors.section,
             )}
-            {this.buildFormValue(
+            {buildFormValue(
                 "Credit Hours",
                 props.values.creditHours,
                 props,
@@ -96,9 +76,9 @@ class CourseFormModal extends Component<Props> {
                 height={40}
             />
         </form>
-    )
+    );
 
-    private buildFormValue = (
+    const buildFormValue = (
         label: string,
         value: string | number,
         props: FormikProps<CourseForm>,
@@ -116,31 +96,50 @@ class CourseFormModal extends Component<Props> {
             />
             {error && <Error>{error}</Error>}
         </LabelInput>
-    )
+    );
 
-    private handleFormSubmit = (values: CourseForm) => {
-        if (this.props.currentUser) {
-            if (this.props.isCreating) {
+    const handleFormSubmit = (values: CourseForm) => {
+        if (componentProps.currentUser) {
+            if (componentProps.isCreating) {
                 const course = new Course({
-                    userId: this.props.currentUser._id,
+                    userId: componentProps.currentUser._id,
                     ...values,
                 });
-                this.props.handleCreateCourse(course);
-                this.props.exitModal();
-            } else if (this.props.originalCourse) {
+                componentProps.handleCreateCourse(course);
+                componentProps.exitModal();
+            } else if (componentProps.originalCourse) {
                 const course = new Course({
-                    ...this.props.originalCourse.toObject(),
+                    ...componentProps.originalCourse.toObject(),
                     title: values.title,
                     description: values.description,
                     creditHours: values.creditHours,
                     section: values.section,
                 });
-                this.props.handleUpdateCourse(course);
-                this.props.exitModal();
+                componentProps.handleUpdateCourse(course);
+                componentProps.exitModal();
             }
         }
-    }
-}
+    };
+
+    return (
+        <Formik
+            initialValues={componentProps.initialValues || {
+                title: "",
+                description: "",
+                section: 0,
+                creditHours: 0,
+            }}
+            onSubmit={handleFormSubmit}
+            validationSchema={Yup.object().shape({
+                title: Yup.string().max(8, "Course can only be up to 8 Characters").required(),
+                description: Yup.string().required(),
+                section: Yup.number().moreThan(0).required(),
+                creditHours: Yup.number().moreThan(0).lessThan(5).required(),
+            })}
+            render={renderForm}
+        />
+    );
+};
 
 const LabelInput = styled.div`
     margin-bottom: 10px;
@@ -162,4 +161,5 @@ const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
     }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CourseFormModal);
+export default connect<PropsFromState, PropsFromDispatch, PassedProps>(
+    mapStateToProps, mapDispatchToProps)(CourseFormModal);

@@ -1,4 +1,3 @@
-import React from "react";
 import styled, { css } from "styled-components";
 
 interface Props {
@@ -11,11 +10,7 @@ interface Props {
     gridArea?: string;
 }
 
-const Divider = (props: Props) => (
-    <hr id="divider" className={props.className} />
-);
-
-export default styled(Divider)`
+export default styled.hr<Props>`
     ${(props) => props.isVertical ? css`min-width: 1px` : css`min-height: 1px`};
     grid-area: ${(props) => props.gridArea};
     background-color: black;

@@ -1,5 +1,5 @@
 import { Formik, FormikProps } from "formik";
-import React, { Component } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { Course } from "src/models/Course";
@@ -32,73 +32,49 @@ interface CategoryForm {
     numberOfGrades: number;
 }
 
-class CategoryFormModal extends Component<Props> {
-    public render() {
-        return (
-            <Formik
-                initialValues={!this.props.isCreating && this.props.initialValues || {
-                    title: "",
-                    percentage: 1,
-                    numberOfGrades: 1,
-                }}
-                onSubmit={this.handleFormSubmit}
-                validationSchema={Yup.object().shape({
-                    title: Yup.string()
-                        .required("Grade Category is Required"),
-                    percentage: Yup.number()
-                        .positive("Percentage has to be positive.")
-                        .lessThan(101, "Max percentage is 100")
-                        .required("Percentage is required"),
-                    numberOfGrades: Yup.number()
-                        .positive("Number of Grades must be positive")
-                        .required("Number of Grades is Required"),
-                })}
-                render={this.renderForm}
-            />
-        );
-    }
+const CategoryFormModal = (props: Props) => {
 
-    private handleFormSubmit = (values: CategoryForm) => {
-        if (this.props.isCreating && this.props.course) {
+    const handleFormSubmit = (values: CategoryForm) => {
+        if (props.isCreating && props.course) {
             const category = new GradeCategory({
-                courseId: this.props.course.id,
+                courseId: props.course.id,
                 ...values,
             });
-            this.props.handleCreateCategory(category, this.props.course.id || "");
-            this.props.exitModal();
-        } else if (this.props.originalCategory) {
+            props.handleCreateCategory(category, props.course.id || "");
+            props.exitModal();
+        } else if (props.originalCategory) {
             const category = new GradeCategory({
-                id: this.props.originalCategory.id,
-                courseId: this.props.originalCategory.courseId,
+                id: props.originalCategory.id,
+                courseId: props.originalCategory.courseId,
                 ...values,
             });
-            this.props.handleUpdateCategory(category);
-            this.props.exitModal();
+            props.handleUpdateCategory(category);
+            props.exitModal();
         }
-    }
+    };
 
-    private renderForm = (props: FormikProps<CategoryForm>) => (
-        <form onSubmit={props.handleSubmit}>
-            {this.buildFormValue(
+    const renderForm = (formProps: FormikProps<CategoryForm>) => (
+        <form onSubmit={formProps.handleSubmit}>
+            {buildFormValue(
                 "Category Title",
-                props.values.title,
-                props,
+                formProps.values.title,
+                formProps,
                 "title",
-                props.errors.title,
+                formProps.errors.title,
             )}
-            {this.buildFormValue(
+            {buildFormValue(
                 "Category Percentage",
-                props.values.percentage,
-                props,
+                formProps.values.percentage,
+                formProps,
                 "percentage",
-                props.errors.percentage,
+                formProps.errors.percentage,
             )}
-            {this.buildFormValue(
+            {buildFormValue(
                 "Number of Grades",
-                props.values.numberOfGrades,
-                props,
+                formProps.values.numberOfGrades,
+                formProps,
                 "numberOfGrades",
-                props.errors.numberOfGrades,
+                formProps.errors.numberOfGrades,
             )}
             <Button
                 type="submit"
@@ -106,12 +82,12 @@ class CategoryFormModal extends Component<Props> {
                 height={40}
             />
         </form>
-    )
+    );
 
-    private buildFormValue = (
+    const buildFormValue = (
         label: string,
         value: string | number,
-        props: FormikProps<CategoryForm>,
+        formProps: FormikProps<CategoryForm>,
         name: string,
         error?: string,
     ) => (
@@ -119,15 +95,38 @@ class CategoryFormModal extends Component<Props> {
             {label}
             <Input
                 type="text"
-                onChange={props.handleChange}
-                onBlur={props.handleBlur}
+                onChange={formProps.handleChange}
+                onBlur={formProps.handleBlur}
                 value={value}
                 name={name}
             />
             {error && <Error>{error}</Error>}
         </LabelInput>
-    )
-}
+    );
+
+    return (
+        <Formik
+            initialValues={!props.isCreating && props.initialValues || {
+                title: "",
+                percentage: 1,
+                numberOfGrades: 1,
+            }}
+            onSubmit={handleFormSubmit}
+            validationSchema={Yup.object().shape({
+                title: Yup.string()
+                    .required("Grade Category is Required"),
+                percentage: Yup.number()
+                    .positive("Percentage has to be positive.")
+                    .lessThan(101, "Max percentage is 100")
+                    .required("Percentage is required"),
+                numberOfGrades: Yup.number()
+                    .positive("Number of Grades must be positive")
+                    .required("Number of Grades is Required"),
+            })}
+            render={renderForm}
+        />
+    );
+};
 
 const LabelInput = styled.div`
     margin-bottom: 10px;
@@ -145,4 +144,4 @@ const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
     }, dispatch);
 };
 
-export default connect(null, mapDispatchToProps)(CategoryFormModal);
+export default connect<{}, PropsFromDispatch, PassedProps>(null, mapDispatchToProps)(CategoryFormModal);

@@ -1,5 +1,5 @@
 import { Map } from "immutable";
-import React, { ChangeEvent, Component, Fragment } from "react";
+import React, { ChangeEvent, Fragment, useEffect, useState } from "react";
 import styled from "styled-components";
 import Input from "../../../components/styled-inputs/Input";
 import Button from "../../button/Button";
@@ -25,131 +25,114 @@ interface State {
     initialKey: string;
 }
 
-class Row extends Component<Props, State> {
+const Row = (props: Props) => {
 
-    public readonly state = {
+    const [state, setState] = useState<State>({
         formValues: Map<string, string>(),
         initialKey: "",
-    };
+    });
 
-    public componentDidUpdate(prevProps: Props) {
-        if (this.props.isEditing !== prevProps.isEditing) {
-            this.setState({
-                formValues: Map<string, string>()
-                    .set("primary", this.props.primaryProperty || "")
-                    .set("secondary", this.props.secondaryProperty ? this.props.secondaryProperty.split("%")[0] : ""),
-                initialKey: this.props.primaryProperty ? this.props.primaryProperty : "",
-            });
-        }
-    }
+    useEffect(() => {
+        setState({
+            formValues: Map<string, string>()
+                .set("primary", props.primaryProperty || "")
+                .set("secondary", props.secondaryProperty ? props.secondaryProperty.split("%")[0] : ""),
+            initialKey: props.primaryProperty ? props.primaryProperty : "",
+        });
+    }, [props.isEditing]);
 
-    public render() {
-        const {
-            className,
-            key,
-            primaryProperty,
-            secondaryProperty,
-            isCreating,
-            isEditing,
-            primaryPlaceHolder,
-            secondaryPlaceHolder,
-        } = this.props;
-
-        const {
-            formValues,
-        } = this.state;
-
-        return (
-            <div
-                className={className}
-                key={key}
-                onClick={this.handleClick}
-            >
-                {
-                    !isCreating && !isEditing
-                    ? <Fragment>
-                        <span className="primary">{primaryProperty}</span>
-                        {secondaryProperty && <span className="secondary"><i>{secondaryProperty}</i></span>}
-                    </Fragment>
-                    : <Fragment>
-                        <Input
-                            name="primary"
-                            value={formValues.get("primary")}
-                            height={20}
-                            gridArea="primary"
-                            onChange={this.handleInputChange}
-                            placeholder={primaryPlaceHolder}
-                        />
-                        <Input
-                            name="secondary"
-                            value={formValues.get("secondary")}
-                            height={20}
-                            gridArea="secondary"
-                            onChange={this.handleInputChange}
-                            placeholder={secondaryPlaceHolder}
-                        />
-                        <Button
-                            tooltip="Cancel"
-                            gridArea="cancel"
-                            icon="clear"
-                            height={50}
-                            width={50}
-                            marginLeftRight={5}
-                            onClick={this.handleClear}
-                        />
-                        <Button
-                            tooltip="Save"
-                            gridArea="save"
-                            icon="save"
-                            height={50}
-                            width={50}
-                            marginLeftRight={5}
-                            onClick={this.handleSave}
-                        />
-                    </Fragment>
-                }
-            </div>
-        );
-    }
-
-    private handleClick = () => {
-        const handler = this.props.onClick;
-        if (handler && this.props.primaryProperty) {
+    const handleClick = () => {
+        const handler = props.onClick;
+        if (handler && props.primaryProperty) {
             handler(
-                this.props.primaryProperty,
-                this.props.secondaryProperty,
+                props.primaryProperty,
+                props.secondaryProperty,
             );
         }
-    }
+    };
 
-    private handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { formValues } = this.state;
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const { formValues } = state;
         const { name, value } = event.target;
-        this.setState({
+        setState({
             formValues: formValues.set(name, value),
+            ...state,
         });
-    }
+    };
 
-    private handleSave = () => {
-        const { formValues, initialKey } = this.state;
+    const handleSave = () => {
+        const { formValues, initialKey } = state;
         const primary = formValues.get("primary");
         const secondary = formValues.get("secondary");
-        const handler = this.props.onSave;
+        const handler = props.onSave;
         if (handler) {
             handler(primary, secondary, initialKey);
         }
-    }
+    };
 
-    private handleClear = () => {
-        this.setState({
+    const handleClear = () => {
+        setState({
             formValues: Map(),
+            ...state,
         });
-        const handler = this.props.onClear;
+        const handler = props.onClear;
         if (handler) {
             handler();
         }
-    }
-}
+    };
+
+    return (
+        <div
+            className={props.className}
+            key={props.key}
+            onClick={handleClick}
+        >
+            {
+                !props.isCreating && !props.isEditing
+                ? <Fragment>
+                    <span className="primary">{props.primaryProperty}</span>
+                    {props.secondaryProperty && <span className="secondary"><i>{props.secondaryProperty}</i></span>}
+                </Fragment>
+                : <Fragment>
+                    <Input
+                        name="primary"
+                        value={state.formValues.get("primary")}
+                        height={20}
+                        gridArea="primary"
+                        onChange={handleInputChange}
+                        placeholder={props.primaryPlaceHolder}
+                    />
+                    <Input
+                        name="secondary"
+                        value={state.formValues.get("secondary")}
+                        height={20}
+                        gridArea="secondary"
+                        onChange={handleInputChange}
+                        placeholder={props.secondaryPlaceHolder}
+                    />
+                    <Button
+                        tooltip="Cancel"
+                        gridArea="cancel"
+                        icon="clear"
+                        height={50}
+                        width={50}
+                        marginLeftRight={5}
+                        onClick={handleClear}
+                    />
+                    <Button
+                        tooltip="Save"
+                        gridArea="save"
+                        icon="save"
+                        height={50}
+                        width={50}
+                        marginLeftRight={5}
+                        onClick={handleSave}
+                    />
+                </Fragment>
+            }
+        </div>
+    );
+};
 
 export default styled(Row)`
     display: grid;

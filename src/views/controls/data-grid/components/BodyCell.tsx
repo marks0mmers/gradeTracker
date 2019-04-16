@@ -1,4 +1,4 @@
-import React, { Component, MouseEvent, ReactNode } from "react";
+import React, { MouseEvent, ReactNode } from "react";
 import styled from "styled-components";
 
 export interface BodyCellProps {
@@ -10,24 +10,21 @@ export interface BodyCellProps {
     onCellClick: (event: MouseEvent<HTMLDivElement>, props: BodyCellProps) => void;
 }
 
-class BodyCell extends Component<BodyCellProps> {
+const BodyCell = (props: BodyCellProps) => {
+    const handleCellClick = (event: MouseEvent<HTMLDivElement>) => {
+        props.onCellClick(event, props);
+    };
 
-    public render() {
-        return (
-            <div
-                id="body-cell"
-                className={this.props.className}
-                onClick={this.handleCellClick}
-            >
-                {this.props.content}
-            </div>
-        );
-    }
-
-    private handleCellClick = (event: MouseEvent<HTMLDivElement>) => {
-        this.props.onCellClick(event, this.props);
-    }
-}
+    return (
+        <div
+            id="body-cell"
+            className={props.className}
+            onClick={handleCellClick}
+        >
+            {props.content}
+        </div>
+    );
+};
 
 export default styled(BodyCell)`
     display: flex;

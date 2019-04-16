@@ -1,5 +1,5 @@
 import { push } from "connected-react-router";
-import React, { Component } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import NavButton from "../components/NavButton";
 
@@ -18,38 +18,36 @@ interface State {
     activeButton: Routes;
 }
 
-class NavBar extends Component<Props, State> {
+const NavBar = (props: Props) => {
 
-    public readonly state = {
+    const [state, setState] = useState<State>({
         activeButton: Routes.COURSE_OVERVIEW,
-    };
+    });
 
-    public render() {
-        return (
-            <div id="nav-bar" className={this.props.className}>
-                <NavButton
-                    id={Routes.COURSE_OVERVIEW}
-                    iconName="view_agenda"
-                    activeButton={this.state.activeButton}
-                    onClick={this.handleNavClick}
-                />
-                <NavButton
-                    id={Routes.ANALYSIS}
-                    iconName="equalizer"
-                    activeButton={this.state.activeButton}
-                    onClick={this.handleNavClick}
-                />
-            </div>
-        );
-    }
-
-    private handleNavClick = (id: string) => {
-        this.setState({
+    const handleNavClick = (id: string) => {
+        setState({
             activeButton: id as Routes,
         });
-        this.props.pushRoute(id);
-    }
-}
+        props.pushRoute(id);
+    };
+
+    return (
+        <div id="nav-bar" className={props.className}>
+            <NavButton
+                id={Routes.COURSE_OVERVIEW}
+                iconName="view_agenda"
+                activeButton={state.activeButton}
+                onClick={handleNavClick}
+            />
+            <NavButton
+                id={Routes.ANALYSIS}
+                iconName="equalizer"
+                activeButton={state.activeButton}
+                onClick={handleNavClick}
+            />
+        </div>
+    );
+};
 
 export default styled(NavBar)`
     background: #5f6366;

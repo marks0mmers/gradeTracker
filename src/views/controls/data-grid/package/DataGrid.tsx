@@ -1,5 +1,5 @@
 import { List } from "immutable";
-import React, { Component, MouseEvent } from "react";
+import React, { MouseEvent } from "react";
 import styled from "styled-components";
 import { BodyCellProps } from "../components/BodyCell";
 import ElementRow from "../components/ElementRow";
@@ -17,57 +17,44 @@ interface Props<T> {
     onBodyCellClick?: (event: MouseEvent<HTMLDivElement>, payload: T, props: BodyCellProps) => void;
 }
 
-class DataGrid<T> extends Component<Props<T>> {
+const DataGrid = <T extends {}>(props: Props<T>) => {
 
-    public render() {
+    const renderHeaderCells = () => props.columnDefinitions && props.columnDefinitions.map((
+        column: DataGridColumnDefinition<T>,
+        idx: number,
+    ) => {
         return (
-            <div className={this.props.className}>
-                <div className="header-cells">
-                    {this.renderHeaderCells()}
-                </div>
-                {this.renderBodyCells()}
-            </div>
+            <HeaderCell
+                key={idx}
+                height={props.rowHeight || 30}
+                width={column.width || 200}
+                content={column.label || ""}
+                columnIndex={idx}
+            />
         );
-    }
+    }).toList();
 
-    private renderHeaderCells = () => {
-        const {
-            columnDefinitions,
-            rowHeight,
-        } = this.props;
+    const renderBodyCells = () => props.elements && props.elements.map((element: DataGridElement<T>, idx: number) => {
+        return (
+            <ElementRow
+                key={idx}
+                element={element}
+                columnDefinitions={props.columnDefinitions}
+                height={props.rowHeight || 30}
+                onBodyCellClick={props.onBodyCellClick}
+            />
+        );
+    });
 
-        return columnDefinitions && columnDefinitions.map((column: DataGridColumnDefinition<T>, idx: number) => {
-            return (
-                <HeaderCell
-                    key={idx}
-                    height={rowHeight || 30}
-                    width={column.width || 200}
-                    content={column.label || ""}
-                    columnIndex={idx}
-                />
-            );
-        }).toList();
-    }
-
-    private renderBodyCells = () => {
-        const {
-            columnDefinitions,
-            elements,
-            rowHeight,
-        } = this.props;
-        return elements && elements.map((element: DataGridElement<T>, idx: number) => {
-            return (
-                <ElementRow
-                    key={idx}
-                    element={element}
-                    columnDefinitions={columnDefinitions}
-                    height={rowHeight || 30}
-                    onBodyCellClick={this.props.onBodyCellClick}
-                />
-            );
-        });
-    }
-}
+    return (
+        <div className={props.className}>
+            <div className="header-cells">
+                {renderHeaderCells()}
+            </div>
+            {renderBodyCells()}
+        </div>
+    );
+};
 
 export default styled(DataGrid)`
     grid-area: ${(props) => props.gridArea ? props.gridArea : ""};

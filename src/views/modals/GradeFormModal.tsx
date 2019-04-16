@@ -1,5 +1,5 @@
 import { Formik, FormikProps } from "formik";
-import React, { Component } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
 import { Grade } from "src/models/Grade";
@@ -31,53 +31,37 @@ interface GradeForm {
     grade: number;
 }
 
-class GradeFormModal extends Component<Props> {
-    public render() {
-        return (
-            <Formik
-                initialValues={!this.props.isCreating && this.props.initialValues || {
-                    name: "",
-                    grade: 0,
-                }}
-                onSubmit={this.handleFormSubmit}
-                validationSchema={Yup.object().shape({
-                    name: Yup.string().required("Name of Grade is Required"),
-                    grade: Yup.number().required("Grade is Required"),
-                })}
-                render={this.renderForm}
-            />
-        );
-    }
+const GradeFormModal = (componentProps: Props) => {
 
-    private handleFormSubmit = (values: GradeForm) => {
-        if (this.props.isCreating && this.props.gradeCategory) {
+    const handleFormSubmit = (values: GradeForm) => {
+        if (componentProps.isCreating && componentProps.gradeCategory) {
             const grade = new Grade({
-                gradeCategoryId: this.props.gradeCategory.id,
+                gradeCategoryId: componentProps.gradeCategory.id,
                 ...values,
             });
-            this.props.handleCreateGrade(grade);
-            this.props.exitModal();
-        } else if (this.props.originalGrade) {
+            componentProps.handleCreateGrade(grade);
+            componentProps.exitModal();
+        } else if (componentProps.originalGrade) {
             const grade = new Grade({
-                id: this.props.originalGrade.id,
-                gradeCategoryId: this.props.originalGrade.gradeCategoryId,
+                id: componentProps.originalGrade.id,
+                gradeCategoryId: componentProps.originalGrade.gradeCategoryId,
                 ...values,
             });
-            this.props.handleEditGrade(grade);
-            this.props.exitModal();
+            componentProps.handleEditGrade(grade);
+            componentProps.exitModal();
         }
-    }
+    };
 
-    private renderForm = (props: FormikProps<GradeForm>) => (
+    const renderForm = (props: FormikProps<GradeForm>) => (
         <form onSubmit={props.handleSubmit}>
-            {this.buildFormValue(
+            {buildFormValue(
                 "Grade Name",
                 props.values.name,
                 props,
                 "name",
                 props.errors.name,
             )}
-            {this.buildFormValue(
+            {buildFormValue(
                 "Grade Value",
                 props.values.grade,
                 props,
@@ -90,9 +74,9 @@ class GradeFormModal extends Component<Props> {
                 height={40}
             />
         </form>
-    )
+    );
 
-    private buildFormValue = (
+    const buildFormValue = (
         label: string,
         value: string | number,
         props: FormikProps<GradeForm>,
@@ -110,8 +94,22 @@ class GradeFormModal extends Component<Props> {
             />
             {error && <Error>{error}</Error>}
         </LabelInput>
-    )
-}
+    );
+    return (
+        <Formik
+            initialValues={!componentProps.isCreating && componentProps.initialValues || {
+                name: "",
+                grade: 0,
+            }}
+            onSubmit={handleFormSubmit}
+            validationSchema={Yup.object().shape({
+                name: Yup.string().required("Name of Grade is Required"),
+                grade: Yup.number().required("Grade is Required"),
+            })}
+            render={renderForm}
+        />
+    );
+};
 
 const LabelInput = styled.div`
     margin-bottom: 10px;
@@ -129,4 +127,4 @@ const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
     }, dispatch);
 };
 
-export default connect(null, mapDispatchToProps)(GradeFormModal);
+export default connect<{}, PropsFromDispatch, PassedProps>(null, mapDispatchToProps)(GradeFormModal);

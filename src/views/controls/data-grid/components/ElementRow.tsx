@@ -1,5 +1,5 @@
 import { List } from "immutable";
-import React, { Component, MouseEvent } from "react";
+import React, { MouseEvent } from "react";
 import styled from "styled-components";
 import { DataGridColumnDefinition } from "../models/DataGridColumnDefinition";
 import { DataGridElement } from "../models/DataGridElement";
@@ -13,43 +13,36 @@ interface Props<T> {
     onBodyCellClick?: (event: MouseEvent<HTMLDivElement>, payload: T, props: BodyCellProps) => void;
 }
 
-class ElementRow<T> extends Component<Props<T>> {
+const ElementRow = <T extends {}>(props: Props<T>) => {
 
-    public render() {
-        const {
-            className,
-            columnDefinitions,
-            element,
-            height,
-        } = this.props;
-
-        return (
-            <div id="element-row" className={className}>
-                {columnDefinitions && columnDefinitions.map((column: DataGridColumnDefinition<T>, idx: number) => {
-                    const { payload } = element;
-                    const content = column.formatter && payload && column.formatter(payload);
-                    return (
-                            <BodyCell
-                                key={idx}
-                                width={column.width || 200}
-                                height={height}
-                                content={content}
-                                onCellClick={this.handleCellClick}
-                            />
-                        );
-                    })
-                }
-            </div>
-        );
-    }
-
-    private handleCellClick = (event: MouseEvent<HTMLDivElement>, props: BodyCellProps) => {
-        const handler = this.props.onBodyCellClick;
+    const handleCellClick = (event: MouseEvent<HTMLDivElement>, bodyProps: BodyCellProps) => {
+        const handler = props.onBodyCellClick;
         if (handler) {
-            handler(event, this.props.element.payload, props);
+            handler(event, props.element.payload, bodyProps);
         }
-    }
-}
+    };
+
+    return (
+        <div id="element-row" className={props.className}>
+            {props.columnDefinitions && props.columnDefinitions.map((
+                column: DataGridColumnDefinition<T>, idx: number,
+            ) => {
+                const { payload } = props.element;
+                const content = column.formatter && payload && column.formatter(payload);
+                return (
+                        <BodyCell
+                            key={idx}
+                            width={column.width || 200}
+                            height={props.height}
+                            content={content}
+                            onCellClick={handleCellClick}
+                        />
+                    );
+                })
+            }
+        </div>
+    );
+};
 
 export default styled(ElementRow)`
     display: flex;

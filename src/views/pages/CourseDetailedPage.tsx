@@ -1,6 +1,6 @@
 import { push } from "connected-react-router";
 import { List, Map } from "immutable";
-import React, { Component, Fragment, MouseEvent } from "react";
+import React, { Fragment, MouseEvent, useEffect, useState } from "react";
 import ReactModal from "react-modal";
 import { connect } from "react-redux";
 import { bindActionCreators, Dispatch } from "redux";
@@ -60,184 +60,168 @@ interface State {
     isEditing: boolean;
 }
 
-class CourseDetailedPage extends Component<Props, State> {
+const CourseDetailedPage = (props: Props) => {
 
-    public readonly state = {
+    const [state, setState] = useState<State>({
         isCreating: false,
         isEditing: false,
-    };
+    });
 
-    public componentDidMount() {
-        this.props.getGradeCategoriesForCourse(this.props.course.id || "");
-    }
+    // didMount and willUnmount
+    useEffect(() => {
+        props.getGradeCategoriesForCourse(props.course.id || "");
+        return () => {
+            props.selectGradeCategory(undefined);
+        };
+    }, []);
 
-    public componentWillUnmount() {
-        this.props.selectGradeCategory(undefined);
-    }
+    const Content = state.isCreating || state.isEditing
+        ? styled.div`
+            grid-area: content;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            grid-template-rows: auto auto 21px minmax(0, 1fr);
+        `
+        : styled.div`
+            grid-area: content;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            grid-template-rows: auto 21px minmax(0, 1fr);
+        `;
 
-    public render() {
-        const {
-            className,
-            course,
-            categories,
-            categoryElements,
-            categoryColumns,
-            selectedCategory,
-        } = this.props;
-
-        const {
-            isCreating,
-            isEditing,
-        } = this.state;
-
-        const Content = isCreating || isEditing
-            ? styled.div`
-                grid-area: content;
-                display: grid;
-                grid-template-columns: minmax(0, 1fr);
-                grid-template-rows: auto auto 21px minmax(0, 1fr);
-            `
-            : styled.div`
-                grid-area: content;
-                display: grid;
-                grid-template-columns: minmax(0, 1fr);
-                grid-template-rows: auto 21px minmax(0, 1fr);
-            `;
-
-        return (
-            <div id={`${course ? course.title : ""}-detailed`} className={className}>
-                <span
-                    className="click-route"
-                    onClick={this.handleRootClick}
-                >
-                    {"< Back to Courses"}
-                </span>
-                <div className="buttons">
-                    <span className="button-label">Grade Category Actions:</span>
-                    <Button
-                        tooltip="Create New Category"
-                        icon="add"
-                        height={30}
-                        width={50}
-                        marginLeftRight={5}
-                        onClick={this.handleCreate}
-                    />
-                    <Button
-                        tooltip="Edit Selected Category"
-                        icon="create"
-                        height={30}
-                        width={50}
-                        marginLeftRight={5}
-                        onClick={this.handleEdit}
-                    />
-                    <Button
-                        tooltip="Delete Selected Category"
-                        icon="delete_sweep"
-                        height={30}
-                        width={50}
-                        marginLeftRight={5}
-                        onClick={this.handleDelete}
-                    />
-                </div>
-                <Content>
-                    <ReactModal
-                        style={{
-                            overlay: {
-                                background: "rgba(0, 0, 0, 0.5)",
-                            },
-                            content: {
-                                height: "fit-content",
-                                width: "40%",
-                                left: "30%",
-                            },
-                        }}
-                        isOpen={isCreating || isEditing}
-                        onRequestClose={this.handleCancel}
-                    >
-                        <ModalHeader
-                            title="Course Category Form"
-                            exitModal={this.handleCancel}
-                        />
-                        <CategoryFormModal
-                            isCreating={isCreating}
-                            course={course}
-                            exitModal={this.handleCancel}
-                            originalCategory={categories && categories.get(selectedCategory)}
-                            initialValues={categories && categories.get(selectedCategory) && {
-                                title: categories.get(selectedCategory).title,
-                                percentage: categories.get(selectedCategory).percentage,
-                                numberOfGrades: categories.get(selectedCategory).numberOfGrades,
-                            }}
-                        />
-                    </ReactModal>
-                    <DataGrid
-                        id="grade-category-grid"
-                        columnDefinitions={categoryColumns}
-                        elements={categoryElements}
-                        onBodyCellClick={this.handleBodyCellClick}
-                    />
-                    {
-                        selectedCategory &&
-                        <Fragment>
-                            <Divider
-                                isVertical={false}
-                                top={10}
-                                bottom={10}
-                            />
-                            <CategoryDetailedPane
-                                selectedCategory={categories && categories.get(selectedCategory)}
-                            />
-                        </Fragment>
-                    }
-                </Content>
-            </div>
-        );
-    }
-
-    private handleBodyCellClick = (event: MouseEvent<HTMLDivElement>, payload: GradeCategory) => {
-        const { categories, selectGradeCategory } = this.props;
+    const handleBodyCellClick = (event: MouseEvent<HTMLDivElement>, payload: GradeCategory) => {
+        const { categories, selectGradeCategory } = props;
         const category = categories && categories.find((value: GradeCategory) => value.id === payload.id);
         if (category && payload.title !== "Total") {
             selectGradeCategory(category.id);
         }
-    }
+    };
 
-    private handleCreate = () => {
-        this.setState({
+    const handleCreate = () => {
+        setState({
             isCreating: true,
             isEditing: false,
         });
-    }
+    };
 
-    private handleEdit = () => {
-        if (this.props.selectedCategory) {
-            this.setState({
+    const handleEdit = () => {
+        if (props.selectedCategory) {
+            setState({
                 isCreating: false,
                 isEditing: true,
             });
         }
-    }
+    };
 
-    private handleDelete = () => {
-        if (this.props.selectedCategory) {
-            this.props.deleteGradeCategory(this.props.selectedCategory);
-            this.props.selectGradeCategory(undefined);
+    const handleDelete = () => {
+        if (props.selectedCategory) {
+            props.deleteGradeCategory(props.selectedCategory);
+            props.selectGradeCategory(undefined);
         }
-    }
+    };
 
-    private handleCancel = () => {
-        this.setState({
+    const handleCancel = () => {
+        setState({
             isCreating: false,
             isEditing: false,
         });
-    }
+    };
 
-    private handleRootClick = () => {
-        this.props.setActiveCourse();
-        this.props.push("/");
-    }
+    const handleRootClick = () => {
+        props.setActiveCourse();
+        props.push("/");
+    };
 
-}
+    return (
+        <div id={`${props.course ? props.course.title : ""}-detailed`} className={props.className}>
+            <span
+                className="click-route"
+                onClick={handleRootClick}
+            >
+                {"< Back to Courses"}
+            </span>
+            <div className="buttons">
+                <span className="button-label">Grade Category Actions:</span>
+                <Button
+                    tooltip="Create New Category"
+                    icon="add"
+                    height={30}
+                    width={50}
+                    marginLeftRight={5}
+                    onClick={handleCreate}
+                />
+                <Button
+                    tooltip="Edit Selected Category"
+                    icon="create"
+                    height={30}
+                    width={50}
+                    marginLeftRight={5}
+                    onClick={handleEdit}
+                />
+                <Button
+                    tooltip="Delete Selected Category"
+                    icon="delete_sweep"
+                    height={30}
+                    width={50}
+                    marginLeftRight={5}
+                    onClick={handleDelete}
+                />
+            </div>
+            <Content>
+                <ReactModal
+                    style={{
+                        overlay: {
+                            background: "rgba(0, 0, 0, 0.5)",
+                        },
+                        content: {
+                            height: "fit-content",
+                            width: "40%",
+                            left: "30%",
+                        },
+                    }}
+                    isOpen={state.isCreating || state.isEditing}
+                    onRequestClose={handleCancel}
+                >
+                    <ModalHeader
+                        title="Course Category Form"
+                        exitModal={handleCancel}
+                    />
+                    <CategoryFormModal
+                        isCreating={state.isCreating}
+                        course={props.course}
+                        exitModal={handleCancel}
+                        originalCategory={props.categories && props.categories.get(props.selectedCategory)}
+                        initialValues={props.categories && props.categories.get(props.selectedCategory) && {
+                            title: props.categories.get(props.selectedCategory).title,
+                            percentage: props.categories.get(props.selectedCategory).percentage,
+                            numberOfGrades: props.categories.get(props.selectedCategory).numberOfGrades,
+                        }}
+                    />
+                </ReactModal>
+                <DataGrid
+                    id="grade-category-grid"
+                    columnDefinitions={props.categoryColumns}
+                    elements={props.categoryElements}
+                    onBodyCellClick={handleBodyCellClick}
+                />
+                {
+                    props.selectedCategory &&
+                    <Fragment>
+                        <Divider
+                            isVertical={false}
+                            top={10}
+                            bottom={10}
+                        />
+                        <CategoryDetailedPane
+                            selectedCategory={props.categories && props.categories.get(props.selectedCategory)}
+                        />
+                    </Fragment>
+                }
+            </Content>
+        </div>
+    );
+
+};
 
 const mapStateToProps = (state: RootState) => ({
     categoryColumns: getDetailedColumns(state),

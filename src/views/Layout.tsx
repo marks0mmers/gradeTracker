@@ -1,5 +1,5 @@
 import { push } from "connected-react-router";
-import React, { Component, Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { connect } from "react-redux";
 import { Route, Switch } from "react-router";
 import { ToastContainer } from "react-toastify";
@@ -35,76 +35,64 @@ interface PropsFromDispatch {
 
 type Props = PropsFromDispatch & PropsFromState & PassedProps;
 
-class Layout extends Component<Props> {
+const Layout = (props: Props) => {
 
-    public componentDidMount() {
-        if (!this.props.currentUser) {
-            const { fetchCurrentUser } = this.props;
-            if (sessionStorage.getItem("jwtToken")) {
-                fetchCurrentUser();
+    useEffect(() => {
+        if (!props.currentUser && sessionStorage.getItem("jwtToken")) {
+            props.fetchCurrentUser();
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!props.currentUser) {
+            props.pushRoute("/login");
+        }
+    });
+
+    return (
+        <div id="layout" className={props.className}>
+            { props.currentUser &&
+                <Fragment>
+                    <Header
+                        icon="dashboard"
+                        title="Gradebook"
+                        currentUser={props.currentUser}
+                        logout={props.logout}
+                    />
+                    <NavBar
+                        pushRoute={props.pushRoute}
+                    />
+                </Fragment>
             }
-        }
-    }
-
-    public componentDidUpdate(prevProps: Props) {
-        if (!this.props.currentUser) {
-            this.props.pushRoute("/login");
-        }
-    }
-
-    public render() {
-        const {
-            className,
-            currentUser,
-            detailedCourse,
-            pushRoute,
-        } = this.props;
-
-        return (
-            <div id="layout" className={className}>
-                { currentUser &&
-                    <Fragment>
-                        <Header
-                            icon="dashboard"
-                            title="Gradebook"
-                            currentUser={currentUser}
-                            logout={this.props.logout}
-                        />
-                        <NavBar
-                            pushRoute={pushRoute}
-                        />
-                    </Fragment>
-                }
-                <Switch>
-                    <Route
-                        component={HomePage}
-                        exact={true}
-                        path="/"
-                    />
-                    <Route
-                        component={LoginPage}
-                        path="/login"
-                    />
-                    <Route
-                        component={CourseDetailedPage}
-                        path={`/${detailedCourse && detailedCourse.title}`}
-                    />
-                    <Route
-                        component={AnalysisPage}
-                        path="/analysis"
-                    />
-                    <Route
-                        component={HomePage}
-                        path="/*"
-                    />
-                </Switch>
-                <ToastContainer
-                    autoClose={3000}
+            <Switch>
+                <Route
+                    component={HomePage}
+                    exact={true}
+                    path="/"
                 />
-            </div>
-        );
-    }
-}
+                <Route
+                    component={LoginPage}
+                    path="/login"
+                />
+                <Route
+                    component={CourseDetailedPage}
+                    path={`/${props.detailedCourse && props.detailedCourse.title}`}
+                />
+                <Route
+                    component={AnalysisPage}
+                    path="/analysis"
+                />
+                <Route
+                    component={HomePage}
+                    path="/*"
+                />
+            </Switch>
+            <ToastContainer
+                autoClose={3000}
+            />
+        </div>
+    );
+};
 
 const mapStateToProps = (state: RootState) => {
     return ({
