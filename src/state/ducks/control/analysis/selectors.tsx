@@ -5,11 +5,8 @@ import { Course } from "../../../../models/Course";
 import { GradeCategory } from "../../../../models/GradeCategory";
 import { getGPAFromLetter, getLetterFromGPA, getLetterGrade } from "../../../../util/GpaCalculator";
 import { DataGridElement } from "../../../../views/controls/data-grid";
-import { RootState } from "../../../rootReducer";
 import { getCourses } from "../../data/courses";
 import { getGradeCategories } from "../../data/gradeCategories";
-
-export const getAnalysisGridColumns = (state: RootState) => state.control.analysis.visibleColumns;
 
 export const getAnalysisGridData = createSelector(
     [

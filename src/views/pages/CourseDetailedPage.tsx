@@ -1,16 +1,12 @@
 import { push } from "connected-react-router";
-import { List, Map } from "immutable";
-import React, { Fragment, MouseEvent, useEffect, useState } from "react";
+import React, { Fragment, MouseEvent, useState } from "react";
 import ReactModal from "react-modal";
-import { connect } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
+import { useActions, useSelector } from "src/state/hooks";
 import styled from "styled-components";
-import { Course } from "../../models/Course";
+import { categoryColumns } from "../../constants/columns/CategoryColumns";
 import { GradeCategory } from "../../models/GradeCategory";
-import { User } from "../../models/User";
 import {
     getActiveCourse,
-    getDetailedColumns,
     getDetailedCourseElements,
     getSelectedGradeCategory,
     SelectGradeCategoryCreator,
@@ -21,39 +17,18 @@ import {
     getGradeCategories,
     GetGradeCategoryForCourseCreator,
 } from "../../state/ducks/data/gradeCategories";
-import { getCurrentUser } from "../../state/ducks/data/users";
 import { RootState } from "../../state/rootReducer";
+import { useComponentMount } from "../../util/Hooks";
 import CategoryDetailedPane from "../components/category/CategoryDetailedPane";
-import Divider from "../components/Divider";
+import Divider from "../components/shared/Divider";
 import Button from "../controls/button/Button";
 import DataGrid from "../controls/data-grid";
-import { DataGridElement } from "../controls/data-grid";
-import { DataGridColumnDefinition } from "../controls/data-grid";
 import CategoryFormModal from "../modals/CategoryFormModal";
 import ModalHeader from "../modals/common/ModalHeader";
 
-interface PassedProps {
+interface Props {
     className?: string;
 }
-
-interface PropsFromState {
-    categoryColumns: List<DataGridColumnDefinition<GradeCategory>>;
-    categoryElements: List<DataGridElement<GradeCategory>>;
-    course: Course;
-    currentUser: User;
-    categories?: Map<string, GradeCategory>;
-    selectedCategory: string;
-}
-
-interface PropsFromDispatch {
-    setActiveCourse: typeof SetActiveCourseCreator;
-    selectGradeCategory: typeof SelectGradeCategoryCreator;
-    deleteGradeCategory: typeof DeleteGradeCategoryCreator;
-    getGradeCategoriesForCourse: typeof GetGradeCategoryForCourseCreator;
-    push: typeof push;
-}
-
-type Props = PassedProps & PropsFromState & PropsFromDispatch;
 
 interface State {
     isCreating: boolean;
@@ -67,13 +42,39 @@ const CourseDetailedPage = (props: Props) => {
         isEditing: false,
     });
 
-    // didMount and willUnmount
-    useEffect(() => {
-        props.getGradeCategoriesForCourse(props.course.id || "");
+    const {
+        categoryElements,
+        selectedCategory,
+        categories,
+        course,
+    } = useSelector((rootState: RootState) => ({
+        categoryElements: getDetailedCourseElements(rootState),
+        selectedCategory: getSelectedGradeCategory(rootState),
+        categories: getGradeCategories(rootState),
+        course: getActiveCourse(rootState),
+    }));
+
+    const {
+        pushRoute,
+        selectGradeCategory,
+        setActiveCourse,
+        deleteGradeCategory,
+        getGradeCategoriesForCourse,
+    } = useActions({
+        pushRoute: push,
+        selectGradeCategory: SelectGradeCategoryCreator,
+        setActiveCourse: SetActiveCourseCreator,
+        deleteGradeCategory: DeleteGradeCategoryCreator,
+        getGradeCategoriesForCourse: GetGradeCategoryForCourseCreator,
+    });
+
+    useComponentMount(() => {
+        document.title = `${course.title} Details`;
+        getGradeCategoriesForCourse(course.id || "");
         return () => {
-            props.selectGradeCategory(undefined);
+            selectGradeCategory(undefined);
         };
-    }, []);
+    });
 
     const Content = state.isCreating || state.isEditing
         ? styled.div`
@@ -90,7 +91,6 @@ const CourseDetailedPage = (props: Props) => {
         `;
 
     const handleBodyCellClick = (event: MouseEvent<HTMLDivElement>, payload: GradeCategory) => {
-        const { categories, selectGradeCategory } = props;
         const category = categories && categories.find((value: GradeCategory) => value.id === payload.id);
         if (category && payload.title !== "Total") {
             selectGradeCategory(category.id);
@@ -105,7 +105,7 @@ const CourseDetailedPage = (props: Props) => {
     };
 
     const handleEdit = () => {
-        if (props.selectedCategory) {
+        if (selectedCategory) {
             setState({
                 isCreating: false,
                 isEditing: true,
@@ -114,9 +114,9 @@ const CourseDetailedPage = (props: Props) => {
     };
 
     const handleDelete = () => {
-        if (props.selectedCategory) {
-            props.deleteGradeCategory(props.selectedCategory);
-            props.selectGradeCategory(undefined);
+        if (selectedCategory) {
+            deleteGradeCategory(selectedCategory);
+            selectGradeCategory(undefined);
         }
     };
 
@@ -128,12 +128,12 @@ const CourseDetailedPage = (props: Props) => {
     };
 
     const handleRootClick = () => {
-        props.setActiveCourse();
-        props.push("/");
+        setActiveCourse();
+        pushRoute("/");
     };
 
     return (
-        <div id={`${props.course ? props.course.title : ""}-detailed`} className={props.className}>
+        <div id={`${course ? course.title : ""}-detailed`} className={props.className}>
             <span
                 className="click-route"
                 onClick={handleRootClick}
@@ -188,24 +188,24 @@ const CourseDetailedPage = (props: Props) => {
                     />
                     <CategoryFormModal
                         isCreating={state.isCreating}
-                        course={props.course}
+                        course={course}
                         exitModal={handleCancel}
-                        originalCategory={props.categories && props.categories.get(props.selectedCategory)}
-                        initialValues={props.categories && props.categories.get(props.selectedCategory) && {
-                            title: props.categories.get(props.selectedCategory).title,
-                            percentage: props.categories.get(props.selectedCategory).percentage,
-                            numberOfGrades: props.categories.get(props.selectedCategory).numberOfGrades,
+                        originalCategory={categories && categories.get(selectedCategory)}
+                        initialValues={categories && categories.get(selectedCategory) && {
+                            title: categories.get(selectedCategory).title,
+                            percentage: categories.get(selectedCategory).percentage,
+                            numberOfGrades: categories.get(selectedCategory).numberOfGrades,
                         }}
                     />
                 </ReactModal>
                 <DataGrid
                     id="grade-category-grid"
-                    columnDefinitions={props.categoryColumns}
-                    elements={props.categoryElements}
+                    columnDefinitions={categoryColumns}
+                    elements={categoryElements}
                     onBodyCellClick={handleBodyCellClick}
                 />
                 {
-                    props.selectedCategory &&
+                    selectedCategory &&
                     <Fragment>
                         <Divider
                             isVertical={false}
@@ -213,7 +213,7 @@ const CourseDetailedPage = (props: Props) => {
                             bottom={10}
                         />
                         <CategoryDetailedPane
-                            selectedCategory={props.categories && props.categories.get(props.selectedCategory)}
+                            selectedCategory={categories && categories.get(selectedCategory)}
                         />
                     </Fragment>
                 }
@@ -223,27 +223,7 @@ const CourseDetailedPage = (props: Props) => {
 
 };
 
-const mapStateToProps = (state: RootState) => ({
-    categoryColumns: getDetailedColumns(state),
-    categoryElements: getDetailedCourseElements(state),
-    detailedCourse: getActiveCourse(state),
-    selectedCategory: getSelectedGradeCategory(state),
-    currentUser: getCurrentUser(state),
-    categories: getGradeCategories(state),
-    course: getActiveCourse(state),
-});
-
-const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
-    return bindActionCreators({
-        push,
-        selectGradeCategory: SelectGradeCategoryCreator,
-        setActiveCourse: SetActiveCourseCreator,
-        deleteGradeCategory: DeleteGradeCategoryCreator,
-        getGradeCategoriesForCourse: GetGradeCategoryForCourseCreator,
-    }, dispatch);
-};
-
-export default styled(connect(mapStateToProps, mapDispatchToProps)(CourseDetailedPage))`
+export default styled(CourseDetailedPage)`
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
     grid-template-columns: auto auto 1fr;

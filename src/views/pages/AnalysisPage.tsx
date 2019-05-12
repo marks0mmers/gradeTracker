@@ -1,17 +1,15 @@
-import { List, Map } from "immutable";
-import React, { useEffect } from "react";
-import { connect } from "react-redux";
+import React from "react";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { bindActionCreators, Dispatch } from "redux";
+import { useActions, useSelector } from "src/state/hooks";
 import styled from "styled-components";
+import { analysisColumns } from "../../constants/columns/AnalysisColumns";
 import { AnalysisCourse } from "../../models/AnalysisCourse";
-import { Course } from "../../models/Course";
-import { getAnalysisGridColumns, getAnalysisGridData } from "../../state/ducks/control/analysis/selectors";
-import { getCourses } from "../../state/ducks/data/courses";
+import { getAnalysisGridData } from "../../state/ducks/control/analysis/selectors";
 import { GetGradeCategoriesForCurrentUserCreator } from "../../state/ducks/data/gradeCategories";
 import { RootState } from "../../state/rootReducer";
-import Divider from "../components/Divider";
-import DataGrid, { DataGridColumnDefinition, DataGridElement } from "../controls/data-grid";
+import { useComponentMount } from "../../util/Hooks";
+import Divider from "../components/shared/Divider";
+import DataGrid from "../controls/data-grid";
 
 interface GraphData {
     name: string;
@@ -20,32 +18,27 @@ interface GraphData {
     Potential: number;
 }
 
-interface PassedProps {
+interface Props {
     className?: string;
 }
 
-interface PropsFromState {
-    courses: Map<string, Course>;
-    elements: List<DataGridElement<AnalysisCourse>>;
-    columns: List<DataGridColumnDefinition<AnalysisCourse>>;
-}
-
-interface PropsFromDispatch {
-    getAllCategories: typeof GetGradeCategoriesForCurrentUserCreator;
-}
-
-type Props = PropsFromState & PropsFromDispatch & PassedProps;
-
 const AnalysisPage = (props: Props) => {
 
-    // componentDidMount
-    useEffect(() => {
-        props.getAllCategories();
-    }, []);
+    const {elements} = useSelector((state: RootState) => ({
+        elements: getAnalysisGridData(state),
+    }));
+
+    const {getAllCategories} = useActions({
+        getAllCategories: GetGradeCategoriesForCurrentUserCreator,
+    });
+
+    useComponentMount(() => {
+        document.title = "Grades Analysis";
+        getAllCategories();
+    });
 
     const getGraphData = () => {
-        const analysisCourses = props.elements
-            && props.elements.map((value: DataGridElement<AnalysisCourse>) => value.payload).toList();
+        const analysisCourses = elements && elements.map((value) => value && value.payload).toList();
         return analysisCourses && analysisCourses.map((value: AnalysisCourse) => {
             return {
                 Current: value.currentGPA,
@@ -68,8 +61,8 @@ const AnalysisPage = (props: Props) => {
                 id="analysis-grid"
                 gridArea="grid"
                 rowHeight={30}
-                columnDefinitions={props.columns}
-                elements={props.elements}
+                columnDefinitions={analysisColumns}
+                elements={elements}
             />
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={getGraphData()}>
@@ -95,19 +88,7 @@ const AnalysisPage = (props: Props) => {
     );
 };
 
-const mapStateToProps = (state: RootState) => ({
-    columns: getAnalysisGridColumns(state),
-    courses: getCourses(state),
-    elements: getAnalysisGridData(state),
-});
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-    return bindActionCreators({
-        getAllCategories: GetGradeCategoriesForCurrentUserCreator,
-    }, dispatch);
-};
-
-export default styled(connect(mapStateToProps, mapDispatchToProps)(AnalysisPage))`
+export default styled(AnalysisPage)`
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto auto 1fr 1fr;

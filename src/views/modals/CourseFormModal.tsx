@@ -1,35 +1,22 @@
 import { Formik, FormikProps } from "formik";
 import React from "react";
-import { connect } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
+import { useActions, useSelector } from "src/state/hooks";
 import styled from "styled-components";
 import * as Yup from "yup";
 import { Course } from "../../models/Course";
-import { User } from "../../models/User";
 import { CreateNewCourseCreator, EditCourseCreator } from "../../state/ducks/data/courses";
 import { getCurrentUser } from "../../state/ducks/data/users";
 import { RootState } from "../../state/rootReducer";
 import Input from "../components/styled-inputs/Input";
 import Button from "../controls/button/Button";
 
-interface PassedProps {
+interface Props {
     isCreating: boolean;
     initialValues?: CourseForm;
     originalCourse?: Course;
 
     exitModal: () => void;
 }
-
-interface PropsFromState {
-    currentUser?: User;
-}
-
-interface PropsFromDispatch {
-    handleCreateCourse: typeof CreateNewCourseCreator;
-    handleUpdateCourse: typeof EditCourseCreator;
-}
-
-type Props = PassedProps & PropsFromState & PropsFromDispatch;
 
 interface CourseForm {
     title: string;
@@ -40,43 +27,12 @@ interface CourseForm {
 
 const CourseFormModal = (componentProps: Props) => {
 
-    const renderForm = (props: FormikProps<CourseForm>) => (
-        <form onSubmit={props.handleSubmit}>
-            {buildFormValue(
-                "Course Title",
-                props.values.title,
-                props,
-                "title",
-                props.errors.title,
-            )}
-            {buildFormValue(
-                "Course Description",
-                props.values.description,
-                props,
-                "description",
-                props.errors.description,
-            )}
-            {buildFormValue(
-                "Course Section",
-                props.values.section,
-                props,
-                "section",
-                props.errors.section,
-            )}
-            {buildFormValue(
-                "Credit Hours",
-                props.values.creditHours,
-                props,
-                "creditHours",
-                props.errors.creditHours,
-            )}
-            <Button
-                type="submit"
-                text="Submit"
-                height={40}
-            />
-        </form>
-    );
+    const {currentUser} = useSelector((state: RootState) => ({currentUser: getCurrentUser(state)}));
+
+    const {handleCreateCourse, handleUpdateCourse} = useActions({
+        handleCreateCourse: CreateNewCourseCreator,
+        handleUpdateCourse: EditCourseCreator,
+    });
 
     const buildFormValue = (
         label: string,
@@ -99,13 +55,13 @@ const CourseFormModal = (componentProps: Props) => {
     );
 
     const handleFormSubmit = (values: CourseForm) => {
-        if (componentProps.currentUser) {
+        if (currentUser) {
             if (componentProps.isCreating) {
                 const course = new Course({
-                    userId: componentProps.currentUser._id,
+                    userId: currentUser._id,
                     ...values,
                 });
-                componentProps.handleCreateCourse(course);
+                handleCreateCourse(course);
                 componentProps.exitModal();
             } else if (componentProps.originalCourse) {
                 const course = new Course({
@@ -115,7 +71,7 @@ const CourseFormModal = (componentProps: Props) => {
                     creditHours: values.creditHours,
                     section: values.section,
                 });
-                componentProps.handleUpdateCourse(course);
+                handleUpdateCourse(course);
                 componentProps.exitModal();
             }
         }
@@ -130,14 +86,53 @@ const CourseFormModal = (componentProps: Props) => {
                 creditHours: 0,
             }}
             onSubmit={handleFormSubmit}
+            validateOnBlur={false}
+            validateOnChange={false}
             validationSchema={Yup.object().shape({
                 title: Yup.string().max(8, "Course can only be up to 8 Characters").required(),
                 description: Yup.string().required(),
                 section: Yup.number().moreThan(0).required(),
                 creditHours: Yup.number().moreThan(0).lessThan(5).required(),
             })}
-            render={renderForm}
-        />
+        >
+            {(props: FormikProps<CourseForm>) => (
+                <form onSubmit={props.handleSubmit}>
+                    {buildFormValue(
+                        "Course Title",
+                        props.values.title,
+                        props,
+                        "title",
+                        props.errors.title,
+                    )}
+                    {buildFormValue(
+                        "Course Description",
+                        props.values.description,
+                        props,
+                        "description",
+                        props.errors.description,
+                    )}
+                    {buildFormValue(
+                        "Course Section",
+                        props.values.section,
+                        props,
+                        "section",
+                        props.errors.section,
+                    )}
+                    {buildFormValue(
+                        "Credit Hours",
+                        props.values.creditHours,
+                        props,
+                        "creditHours",
+                        props.errors.creditHours,
+                    )}
+                    <Button
+                        type="submit"
+                        text="Submit"
+                        height={40}
+                    />
+                </form>
+            )}
+        </Formik>
     );
 };
 
@@ -150,16 +145,4 @@ const Error = styled.div`
     color: red;
 `;
 
-const mapStateToProps = (state: RootState): PropsFromState => ({
-    currentUser: getCurrentUser(state),
-});
-
-const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
-    return bindActionCreators({
-        handleCreateCourse: CreateNewCourseCreator,
-        handleUpdateCourse: EditCourseCreator,
-    }, dispatch);
-};
-
-export default connect<PropsFromState, PropsFromDispatch, PassedProps>(
-    mapStateToProps, mapDispatchToProps)(CourseFormModal);
+export default CourseFormModal;

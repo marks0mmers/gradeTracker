@@ -1,6 +1,6 @@
 import React, { MouseEvent } from "react";
 import styled from "styled-components";
-import Icon from "../../components/Icon";
+import Icon from "../../components/shared/Icon";
 
 interface Props {
     className?: string;

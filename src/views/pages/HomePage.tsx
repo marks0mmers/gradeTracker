@@ -1,49 +1,22 @@
 import { push } from "connected-react-router";
-import { Map } from "immutable";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
 import ReactModal from "react-modal";
-import { connect } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
+import { useActions, useSelector } from "src/state/hooks";
 import styled from "styled-components";
 import { Course } from "../../models/Course";
-import { GradeCategory } from "../../models/GradeCategory";
-import { User } from "../../models/User";
-import {
-    getDetailedColumns, getDetailedCourseElements, getSelectedGradeCategory, SetActiveCourseCreator,
-} from "../../state/ducks/control/courses";
-import {
-    CreateNewCourseCreator,
-    DeleteCourseCreator,
-    EditCourseCreator,
-    getCourses,
-} from "../../state/ducks/data/courses";
+import { getCourses } from "../../state/ducks/data/courses";
 import { getCurrentUser } from "../../state/ducks/data/users";
 import { RootState } from "../../state/rootReducer";
+import { useComponentMount } from "../../util/Hooks";
 import CourseOverviewButton from "../components/course/CourseOverviewButton";
-import Divider from "../components/Divider";
+import Divider from "../components/shared/Divider";
 import Button from "../controls/button/Button";
 import ModalHeader from "../modals/common/ModalHeader";
 import CourseFormModal from "../modals/CourseFormModal";
 
-interface PassedProps {
+interface Props {
     className?: string;
 }
-
-interface PropsFromState {
-    courses: Map<string, Course>;
-    selectedGradeCategory: GradeCategory;
-    currentUser: User;
-}
-
-interface PropsFromDispatch {
-    handleCreateNewCourse: typeof CreateNewCourseCreator;
-    handleEditCourse: typeof EditCourseCreator;
-    handleDeleteCourse: typeof DeleteCourseCreator;
-    handleSetActiveCourse: typeof SetActiveCourseCreator;
-    push: typeof push;
-}
-
-type Props = PassedProps & PropsFromState & PropsFromDispatch;
 
 interface State {
     isCreating: boolean;
@@ -59,20 +32,26 @@ const HomePage = (props: Props) => {
         editingCourse: undefined,
     });
 
-    useEffect(() => {
-        if (!props.currentUser) {
-            props.push("/login");
+    const {courses, currentUser} = useSelector((rootState: RootState) => ({
+        courses: getCourses(rootState),
+        currentUser: getCurrentUser(rootState),
+    }));
+
+    const {pushRoute} = useActions({pushRoute: push});
+
+    useComponentMount(() => {
+        document.title = "Grade Tracker";
+        if (!currentUser) {
+            pushRoute("/login");
         }
-    }, []);
+    });
 
     const getCourseButtons = () => {
-        return props.courses && props.courses.map((course: Course, key: string) => {
+        return courses && courses.map((course: Course, key: string) => {
             return (
                 <CourseOverviewButton
                     key={key}
                     course={course}
-                    onClick={props.handleSetActiveCourse}
-                    onDeleteClick={props.handleDeleteCourse}
                     onEditClick={handleEditClick}
                 />
             );
@@ -166,27 +145,7 @@ const ButtonWrapper = styled.div`
     justify-content: flex-end;
 `;
 
-const mapStateToProps = (state: RootState) => {
-    return ({
-        courses: getCourses(state),
-        categoryColumns: getDetailedColumns(state),
-        categoryElements: getDetailedCourseElements(state),
-        currentUser: getCurrentUser(state),
-        selectedGradeCategory: getSelectedGradeCategory(state),
-    });
-};
-
-const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
-    return bindActionCreators({
-        handleSetActiveCourse: SetActiveCourseCreator,
-        handleEditCourse: EditCourseCreator,
-        handleDeleteCourse: DeleteCourseCreator,
-        handleCreateNewCourse: CreateNewCourseCreator,
-        push,
-    }, dispatch);
-};
-
-export default styled(connect(mapStateToProps, mapDispatchToProps)(HomePage))`
+export default styled(HomePage)`
     display: grid;
     grid-template-columns: 1fr auto;
     grid-template-rows: auto auto 1fr;

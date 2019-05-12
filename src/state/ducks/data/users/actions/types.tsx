@@ -7,4 +7,6 @@ export enum UserDataActionTypes {
     LOGOUT = "user/LOGOUT",
     GET_CURRENT_USER = "user/GET_CURRENT_USER",
     GET_CURRENT_USER_SUCCESS = "user/GET_CURRENT_USER_SUCCESS",
+    GET_USERS = "user/GET_USERS",
+    GET_USERS_SUCCESS = "users/GET_USERS_SUCCESS",
 }

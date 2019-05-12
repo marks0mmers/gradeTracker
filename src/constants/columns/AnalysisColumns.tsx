@@ -1,8 +1,9 @@
-import { List, Record } from "immutable";
-import { AnalysisCourse } from "../../../../models/AnalysisCourse";
-import { DataGridColumnDefinition, defaultFormatter } from "../../../../views/controls/data-grid";
+import { List } from "immutable";
+import { AnalysisCourse } from "../../models/AnalysisCourse";
+import { DataGridColumnDefinition } from "../../views/controls/data-grid/models/DataGridColumnDefinition";
+import { defaultFormatter } from "../../views/controls/data-grid/util/Formatters";
 
-const visibleColumns: List<DataGridColumnDefinition<AnalysisCourse>> = List([
+export const analysisColumns: List<DataGridColumnDefinition<AnalysisCourse>> = List([
     new DataGridColumnDefinition({
         formatter: defaultFormatter((course: AnalysisCourse) => course.title),
         label: "Course Title",
@@ -32,17 +33,3 @@ const visibleColumns: List<DataGridColumnDefinition<AnalysisCourse>> = List([
         width: 100,
     }),
 ]);
-
-export const AnalysisControlStateRecord = Record({
-    visibleColumns,
-});
-
-export class AnalysisControlState extends AnalysisControlStateRecord {
-    public visibleColumns: List<DataGridColumnDefinition<AnalysisCourse>>;
-}
-
-export const AnalysisControlReducer = (
-    state = new AnalysisControlState(),
-) => {
-    return state;
-};

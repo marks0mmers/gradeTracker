@@ -1,6 +1,7 @@
 import { Map } from "immutable";
-import React, { ChangeEvent, Fragment, useEffect, useState } from "react";
+import React, { ChangeEvent, Fragment, useState } from "react";
 import styled from "styled-components";
+import { useComponentUpdate } from "../../../../util/Hooks";
 import Input from "../../../components/styled-inputs/Input";
 import Button from "../../button/Button";
 
@@ -32,7 +33,7 @@ const Row = (props: Props) => {
         initialKey: "",
     });
 
-    useEffect(() => {
+    useComponentUpdate(() => {
         setState({
             formValues: Map<string, string>()
                 .set("primary", props.primaryProperty || "")

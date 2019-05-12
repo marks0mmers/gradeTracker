@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import { User } from "../../models/User";
-import { LogoutCreator } from "../../state/ducks/data/users";
-import Button from "../controls/button/Button";
+import { User } from "../../../models/User";
+import { LogoutCreator } from "../../../state/ducks/data/users";
+import Button from "../../controls/button/Button";
 
 interface Props {
     className?: string;

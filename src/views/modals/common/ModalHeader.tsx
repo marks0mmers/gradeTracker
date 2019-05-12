@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Divider from "../../components/Divider";
+import Divider from "../../components/shared/Divider";
 import Button from "../../controls/button/Button";
 
 interface Props {

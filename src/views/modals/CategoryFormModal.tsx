@@ -1,7 +1,6 @@
 import { Formik, FormikProps } from "formik";
 import React from "react";
-import { connect } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
+import { useActions } from "src/state/hooks";
 import styled from "styled-components";
 import * as Yup from "yup";
 import { Course } from "../../models/Course";
@@ -10,7 +9,7 @@ import { CreateGradeCategoryCreator, EditGradeCategoryCreator } from "../../stat
 import Input from "../components/styled-inputs/Input";
 import Button from "../controls/button/Button";
 
-interface PassedProps {
+interface Props {
     isCreating: boolean;
     initialValues?: CategoryForm;
     originalCategory?: GradeCategory;
@@ -18,13 +17,6 @@ interface PassedProps {
 
     exitModal: () => void;
 }
-
-interface PropsFromDispatch {
-    handleCreateCategory: typeof CreateGradeCategoryCreator;
-    handleUpdateCategory: typeof EditGradeCategoryCreator;
-}
-
-type Props = PassedProps & PropsFromDispatch;
 
 interface CategoryForm {
     title: string;
@@ -34,55 +26,33 @@ interface CategoryForm {
 
 const CategoryFormModal = (props: Props) => {
 
+    const {handleCreateCategory, handleUpdateCategory} = useActions({
+        handleCreateCategory: CreateGradeCategoryCreator,
+        handleUpdateCategory: EditGradeCategoryCreator,
+    });
+
     const handleFormSubmit = (values: CategoryForm) => {
         if (props.isCreating && props.course) {
             const category = new GradeCategory({
                 courseId: props.course.id,
-                ...values,
+                title: values.title,
+                percentage: +values.percentage,
+                numberOfGrades: +values.numberOfGrades,
             });
-            props.handleCreateCategory(category, props.course.id || "");
+            handleCreateCategory(category, props.course.id || "");
             props.exitModal();
         } else if (props.originalCategory) {
             const category = new GradeCategory({
                 id: props.originalCategory.id,
                 courseId: props.originalCategory.courseId,
-                ...values,
+                title: values.title,
+                percentage: +values.percentage,
+                numberOfGrades: +values.numberOfGrades,
             });
-            props.handleUpdateCategory(category);
+            handleUpdateCategory(category);
             props.exitModal();
         }
     };
-
-    const renderForm = (formProps: FormikProps<CategoryForm>) => (
-        <form onSubmit={formProps.handleSubmit}>
-            {buildFormValue(
-                "Category Title",
-                formProps.values.title,
-                formProps,
-                "title",
-                formProps.errors.title,
-            )}
-            {buildFormValue(
-                "Category Percentage",
-                formProps.values.percentage,
-                formProps,
-                "percentage",
-                formProps.errors.percentage,
-            )}
-            {buildFormValue(
-                "Number of Grades",
-                formProps.values.numberOfGrades,
-                formProps,
-                "numberOfGrades",
-                formProps.errors.numberOfGrades,
-            )}
-            <Button
-                type="submit"
-                text="Submit"
-                height={40}
-            />
-        </form>
-    );
 
     const buildFormValue = (
         label: string,
@@ -112,6 +82,8 @@ const CategoryFormModal = (props: Props) => {
                 numberOfGrades: 1,
             }}
             onSubmit={handleFormSubmit}
+            validateOnBlur={false}
+            validateOnChange={false}
             validationSchema={Yup.object().shape({
                 title: Yup.string()
                     .required("Grade Category is Required"),
@@ -123,8 +95,38 @@ const CategoryFormModal = (props: Props) => {
                     .positive("Number of Grades must be positive")
                     .required("Number of Grades is Required"),
             })}
-            render={renderForm}
-        />
+        >
+            {(formProps: FormikProps<CategoryForm>) => (
+                <form onSubmit={formProps.handleSubmit}>
+                    {buildFormValue(
+                        "Category Title",
+                        formProps.values.title,
+                        formProps,
+                        "title",
+                        formProps.errors.title,
+                    )}
+                    {buildFormValue(
+                        "Category Percentage",
+                        formProps.values.percentage,
+                        formProps,
+                        "percentage",
+                        formProps.errors.percentage,
+                    )}
+                    {buildFormValue(
+                        "Number of Grades",
+                        formProps.values.numberOfGrades,
+                        formProps,
+                        "numberOfGrades",
+                        formProps.errors.numberOfGrades,
+                    )}
+                    <Button
+                        type="submit"
+                        text="Submit"
+                        height={40}
+                    />
+                </form>
+            )}
+        </Formik>
     );
 };
 
@@ -137,11 +139,4 @@ const Error = styled.div`
     color: red;
 `;
 
-const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
-    return bindActionCreators({
-        handleCreateCategory: CreateGradeCategoryCreator,
-        handleUpdateCategory: EditGradeCategoryCreator,
-    }, dispatch);
-};
-
-export default connect<{}, PropsFromDispatch, PassedProps>(null, mapDispatchToProps)(CategoryFormModal);
+export default CategoryFormModal;

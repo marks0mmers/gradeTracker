@@ -1,7 +1,6 @@
 import React, { Fragment, useState } from "react";
 import ReactModal from "react-modal";
-import { connect } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
+import { useActions } from "src/state/hooks";
 import styled from "styled-components";
 import { Grade } from "../../../models/Grade";
 import { GradeCategory } from "../../../models/GradeCategory";
@@ -12,19 +11,13 @@ import ListControl from "../../controls/list-control/package/ListControl";
 import ModalHeader from "../../modals/common/ModalHeader";
 import GradeFormModal from "../../modals/GradeFormModal";
 
-interface PassedProps {
+interface Props {
     className?: string;
     selectedCategory?: GradeCategory;
 }
 
-interface PropsFromDispatch {
-    handleDeleteGrade: typeof DeleteGradeCreator;
-}
-
-type Props = PassedProps & PropsFromDispatch;
-
 interface State {
-    selectedGrade?: string;
+    selectedGrade?: Grade;
     isCreating: boolean;
     isEditing: boolean;
 }
@@ -37,12 +30,14 @@ const CategoryDetailedPane = (props: Props) => {
         selectedGrade: undefined,
     });
 
+    const {deleteGrade} = useActions({deleteGrade: DeleteGradeCreator});
+
     const getListElements = () => {
         const { selectedCategory } = props;
         const { selectedGrade } = state;
         return selectedCategory && selectedCategory.grades.map((value: Grade) => {
             const element: ListControlElement = {
-                isSelected: value.name === selectedGrade,
+                isSelected: value === selectedGrade,
                 primaryProperty: value.name,
                 secondaryProperty: `${value.grade.toString()} %`,
             };
@@ -80,15 +75,19 @@ const CategoryDetailedPane = (props: Props) => {
     const handleDeleteGrade = () => {
         const { selectedGrade } = state;
         if (selectedGrade && props.selectedCategory) {
-            const grade = props.selectedCategory.grades.find((g: Grade) => g.name === selectedGrade);
-            props.handleDeleteGrade(grade.id);
+            deleteGrade(selectedGrade.id);
         }
     };
 
     const handleSelectGrade = (primaryProperty: string) => {
+        const selectedGradeObject = props.selectedCategory && props.selectedCategory.grades.find(
+            (g: Grade) => {
+                return g.name === primaryProperty;
+            },
+        );
         setState({
-            selectedGrade: primaryProperty,
             ...state,
+            selectedGrade: selectedGradeObject,
         });
     };
 
@@ -97,10 +96,6 @@ const CategoryDetailedPane = (props: Props) => {
             <div className="prop-label">{label}</div>
             <div className="prop-value">{value}</div>
         </div>
-    );
-
-    const selectedGradeObject = props.selectedCategory && props.selectedCategory.grades.find(
-        (g: Grade) => g.name === state.selectedGrade,
     );
 
     return (
@@ -200,10 +195,10 @@ const CategoryDetailedPane = (props: Props) => {
                     isCreating={state.isCreating}
                     gradeCategory={props.selectedCategory}
                     exitModal={handleCancel}
-                    originalGrade={selectedGradeObject}
-                    initialValues={selectedGradeObject && {
-                        name: selectedGradeObject.name,
-                        grade: selectedGradeObject.grade,
+                    originalGrade={state.selectedGrade}
+                    initialValues={state.selectedGrade && {
+                        name: state.selectedGrade.name,
+                        grade: state.selectedGrade.grade,
                     }}
                 />
             </ReactModal>
@@ -212,13 +207,7 @@ const CategoryDetailedPane = (props: Props) => {
 
 };
 
-const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
-    return bindActionCreators({
-        handleDeleteGrade: DeleteGradeCreator,
-    }, dispatch);
-};
-
-const Styled =  styled(CategoryDetailedPane)`
+export default styled(CategoryDetailedPane)`
     display: grid;
     grid-template-rows: repeat(7, 1fr);
     grid-column-gap: 10px;
@@ -261,5 +250,3 @@ const Styled =  styled(CategoryDetailedPane)`
         color: #b00020;
     }
 `;
-
-export default connect(null, mapDispatchToProps)(Styled);

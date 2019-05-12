@@ -1,37 +1,40 @@
 import React, { Fragment, MouseEvent} from "react";
+import { useActions } from "src/state/hooks";
 import styled from "styled-components";
 import { Course } from "../../../models/Course";
+import { SetActiveCourseCreator } from "../../../state/ducks/control/courses";
+import { DeleteCourseCreator } from "../../../state/ducks/data/courses";
 import { leadingZeros } from "../../../util/General";
 import Button from "../../../views/controls/button/Button";
-import Divider from "../../components/Divider";
+import Divider from "../../components/shared/Divider";
 
 interface Props {
     className?: string;
     course: Course;
 
-    onClick: (course?: Course) => void;
     onEditClick: (course?: Course) => void;
-    onDeleteClick: (id: string) => void;
 }
 
 const CourseOverviewButton = (props: Props) => {
 
+    const {handleSelectCourse, handleDeleteCourse} = useActions({
+        handleSelectCourse: SetActiveCourseCreator,
+        handleDeleteCourse: DeleteCourseCreator,
+    });
+
     const handleClick = () => {
-        const { onClick, course } = props;
-        onClick(course);
+        handleSelectCourse(props.course);
     };
 
     const handleEditClick = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
-        const { onEditClick, course } = props;
-        onEditClick(course);
+        props.onEditClick(props.course);
     };
 
     const handleDelete = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         if (confirm("Are you sure you want to delete this course? (This cannot be undone)")) {
-            const { onDeleteClick, course } = props;
-            onDeleteClick(course.id || "");
+            handleDeleteCourse(props.course.id || "");
         }
     };
 

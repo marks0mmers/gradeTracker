@@ -1,79 +1,29 @@
-import { List, Record } from "immutable";
+import { Record } from "immutable";
 import { Course } from "../../../../models/Course";
-import { GradeCategory } from "../../../../models/GradeCategory";
-import { DataGridColumnDefinition } from "../../../../views/controls/data-grid";
-import {
-    defaultFormatter,
-    gradeFormatter,
-    percentageFormatter,
-} from "../../../../views/controls/data-grid";
 import {
     CourseControlActions,
     CourseControlActionTypes as types,
 } from "./";
 
-const detailedColumns: List<DataGridColumnDefinition<GradeCategory>> = List([
-    new DataGridColumnDefinition({
-        formatter: defaultFormatter((category: GradeCategory) => category.title),
-        label: "Category Name",
-        width: 300,
-    }),
-    new DataGridColumnDefinition({
-        formatter: percentageFormatter((category: GradeCategory) => category.percentage),
-        label: "Percentage",
-        width: 100,
-    }),
-new DataGridColumnDefinition({
-        formatter: defaultFormatter((category: GradeCategory) => category.numberOfGrades),
-        label: "Number of Grades",
-        width: 200,
-    }),
-    new DataGridColumnDefinition({
-        formatter: defaultFormatter((category: GradeCategory) => category.remainingGrades),
-        label: "Grades Remaining",
-        width: 180,
-    }),
-    new DataGridColumnDefinition({
-        formatter: gradeFormatter((category: GradeCategory) =>
-            category.currentAverage && category.currentAverage.toPrecision(4)),
-        label: "Current Average",
-        width: 200,
-    }),
-    new DataGridColumnDefinition({
-        formatter: gradeFormatter((category: GradeCategory) =>
-            category.guarenteedAverage && category.guarenteedAverage.toPrecision(4)),
-        label: "Guarenteed Average",
-        width: 200,
-    }),
-    new DataGridColumnDefinition({
-        formatter: gradeFormatter((category: GradeCategory) =>
-            category.potentialAverage && category.potentialAverage.toPrecision(4)),
-        label: "Potential Average",
-        width: 200,
-    }),
-]);
-
 export const CourseControlStateRecord = Record({
     activeCourse: undefined,
-    detailedColumns,
     selectedGradeCategory: undefined,
 });
 
 export class CourseControlState extends CourseControlStateRecord {
     public activeCourse: Course;
-    public detailedColumns: List<DataGridColumnDefinition<GradeCategory>>;
     public selectedGradeCategory: string;
 }
 
 export const CourseControlReducer = (
     state = new CourseControlState(),
     action: CourseControlActions,
-) => {
+): CourseControlState => {
     switch (action.type) {
         case (types.SELECT_GRADE_CATEGORY):
-            return state.set("selectedGradeCategory", action.gradeCategory);
+            return state.set("selectedGradeCategory", action.gradeCategory) as CourseControlState;
         case (types.SET_ACTIVE_COURSE):
-            return state.set("activeCourse", action.course);
+            return state.set("activeCourse", action.course) as CourseControlState;
         default:
             return state;
     }

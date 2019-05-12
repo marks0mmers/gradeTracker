@@ -1,7 +1,6 @@
 import { Formik, FormikProps } from "formik";
 import React from "react";
-import { connect } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
+import { useActions } from "src/state/hooks";
 import styled from "styled-components";
 import * as Yup from "yup";
 import { Grade } from "../../models/Grade";
@@ -10,7 +9,7 @@ import { CreateGradeCreator, EditGradeCreator } from "../../state/ducks/data/gra
 import Input from "../components/styled-inputs/Input";
 import Button from "../controls/button/Button";
 
-interface PassedProps {
+interface Props {
     isCreating?: boolean;
     initialValues?: GradeForm;
     gradeCategory?: GradeCategory;
@@ -19,13 +18,6 @@ interface PassedProps {
     exitModal: () => void;
 }
 
-interface PropsFromDispatch {
-    handleCreateGrade: typeof CreateGradeCreator;
-    handleEditGrade: typeof EditGradeCreator;
-}
-
-type Props = PassedProps & PropsFromDispatch;
-
 interface GradeForm {
     name: string;
     grade: number;
@@ -33,13 +25,18 @@ interface GradeForm {
 
 const GradeFormModal = (componentProps: Props) => {
 
+    const {handleCreateGrade, handleEditGrade} = useActions({
+        handleCreateGrade: CreateGradeCreator,
+        handleEditGrade: EditGradeCreator,
+    });
+
     const handleFormSubmit = (values: GradeForm) => {
         if (componentProps.isCreating && componentProps.gradeCategory) {
             const grade = new Grade({
                 gradeCategoryId: componentProps.gradeCategory.id,
                 ...values,
             });
-            componentProps.handleCreateGrade(grade);
+            handleCreateGrade(grade);
             componentProps.exitModal();
         } else if (componentProps.originalGrade) {
             const grade = new Grade({
@@ -47,34 +44,10 @@ const GradeFormModal = (componentProps: Props) => {
                 gradeCategoryId: componentProps.originalGrade.gradeCategoryId,
                 ...values,
             });
-            componentProps.handleEditGrade(grade);
+            handleEditGrade(grade);
             componentProps.exitModal();
         }
     };
-
-    const renderForm = (props: FormikProps<GradeForm>) => (
-        <form onSubmit={props.handleSubmit}>
-            {buildFormValue(
-                "Grade Name",
-                props.values.name,
-                props,
-                "name",
-                props.errors.name,
-            )}
-            {buildFormValue(
-                "Grade Value",
-                props.values.grade,
-                props,
-                "grade",
-                props.errors.grade,
-            )}
-            <Button
-                type="submit"
-                text="Submit"
-                height={40}
-            />
-        </form>
-    );
 
     const buildFormValue = (
         label: string,
@@ -102,12 +75,37 @@ const GradeFormModal = (componentProps: Props) => {
                 grade: 0,
             }}
             onSubmit={handleFormSubmit}
+            validateOnBlur={false}
+            validateOnChange={false}
             validationSchema={Yup.object().shape({
                 name: Yup.string().required("Name of Grade is Required"),
                 grade: Yup.number().required("Grade is Required"),
             })}
-            render={renderForm}
-        />
+        >
+            {(props: FormikProps<GradeForm>) => (
+                <form onSubmit={props.handleSubmit}>
+                    {buildFormValue(
+                        "Grade Name",
+                        props.values.name,
+                        props,
+                        "name",
+                        props.errors.name,
+                    )}
+                    {buildFormValue(
+                        "Grade Value",
+                        props.values.grade,
+                        props,
+                        "grade",
+                        props.errors.grade,
+                    )}
+                    <Button
+                        type="submit"
+                        text="Submit"
+                        height={40}
+                    />
+                </form>
+            )}
+        </Formik>
     );
 };
 
@@ -120,11 +118,4 @@ const Error = styled.div`
     color: red;
 `;
 
-const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
-    return bindActionCreators({
-        handleCreateGrade: CreateGradeCreator,
-        handleEditGrade: EditGradeCreator,
-    }, dispatch);
-};
-
-export default connect<{}, PropsFromDispatch, PassedProps>(null, mapDispatchToProps)(GradeFormModal);
+export default GradeFormModal;

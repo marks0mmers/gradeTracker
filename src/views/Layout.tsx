@@ -1,67 +1,66 @@
 import { push } from "connected-react-router";
-import React, { Fragment, useEffect } from "react";
-import { connect } from "react-redux";
+import React, { Fragment } from "react";
 import { Route, Switch } from "react-router";
 import { ToastContainer } from "react-toastify";
-import { bindActionCreators, Dispatch } from "redux";
+import { useActions, useSelector } from "src/state/hooks";
+import { CombinedState } from "src/state/store";
 import styled from "styled-components";
-import { Course } from "../models/Course";
-import { User } from "../models/User";
 import { getActiveCourse } from "../state/ducks/control/courses";
 import { getCurrentUser, GetCurrentUserCreator, LogoutCreator } from "../state/ducks/data/users";
 import { getPathName } from "../state/ducks/router/selectors";
-import { RootState } from "../state/rootReducer";
-import Header from "./components/Header";
-import NavBar from "./components/NavBar";
+import { useComponentMount, useComponentUpdate } from "../util/Hooks";
+import Header from "./components/shared/Header";
+import NavBar from "./components/shared/NavBar";
+import { protectRoute } from "./components/shared/ProtectedRoute";
+import AdminViewUsersPage from "./pages/admin/AdminViewUsersPage";
 import AnalysisPage from "./pages/AnalysisPage";
 import CourseDetailedPage from "./pages/CourseDetailedPage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 
-interface PassedProps {
+interface Props {
     className?: string;
 }
 
-interface PropsFromState {
-    detailedCourse: Course;
-    location: string;
-    currentUser: User;
-}
-
-interface PropsFromDispatch {
-    fetchCurrentUser: typeof GetCurrentUserCreator;
-    logout: typeof LogoutCreator;
-    pushRoute: typeof push;
-}
-
-type Props = PropsFromDispatch & PropsFromState & PassedProps;
-
 const Layout = (props: Props) => {
 
-    useEffect(() => {
-        if (!props.currentUser && sessionStorage.getItem("jwtToken")) {
-            props.fetchCurrentUser();
-        }
-    }, []);
+    const {detailedCourse, routerLocation, currentUser} = useSelector((state: CombinedState) => ({
+        detailedCourse: getActiveCourse(state),
+        routerLocation: getPathName(state),
+        currentUser: getCurrentUser(state),
+    }));
 
-    useEffect(() => {
-        if (!props.currentUser) {
-            props.pushRoute("/login");
+    const {fetchCurrentUser, logout, pushRoute} = useActions({
+        pushRoute: push,
+        fetchCurrentUser: GetCurrentUserCreator,
+        logout: LogoutCreator,
+    });
+
+    useComponentMount(() => {
+        if (!currentUser && sessionStorage.getItem("jwtToken")) {
+            fetchCurrentUser();
+        }
+    });
+
+    useComponentUpdate(() => {
+        if (!currentUser && !location.href.includes("/login")) {
+            pushRoute("/login", routerLocation);
         }
     });
 
     return (
         <div id="layout" className={props.className}>
-            { props.currentUser &&
+            { currentUser &&
                 <Fragment>
                     <Header
                         icon="dashboard"
                         title="Gradebook"
-                        currentUser={props.currentUser}
-                        logout={props.logout}
+                        currentUser={currentUser}
+                        logout={logout}
                     />
                     <NavBar
-                        pushRoute={props.pushRoute}
+                        pushRoute={pushRoute}
+                        currentUser={currentUser}
                     />
                 </Fragment>
             }
@@ -77,12 +76,18 @@ const Layout = (props: Props) => {
                 />
                 <Route
                     component={CourseDetailedPage}
-                    path={`/${props.detailedCourse && props.detailedCourse.title}`}
+                    path={`/${detailedCourse && detailedCourse.title}`}
                 />
                 <Route
                     component={AnalysisPage}
                     path="/analysis"
                 />
+                {protectRoute("admin", currentUser)(
+                    <Route
+                        path="/admin"
+                        component={AdminViewUsersPage}
+                    />,
+                )}
                 <Route
                     component={HomePage}
                     path="/*"
@@ -95,25 +100,7 @@ const Layout = (props: Props) => {
     );
 };
 
-const mapStateToProps = (state: RootState) => {
-    return ({
-        detailedCourse: getActiveCourse(state),
-        location: getPathName(state),
-        currentUser: getCurrentUser(state),
-    });
-};
-
-const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
-    return bindActionCreators({
-        pushRoute: push,
-        fetchCurrentUser: GetCurrentUserCreator,
-        logout: LogoutCreator,
-    }, dispatch);
-};
-
-const connected = connect(mapStateToProps, mapDispatchToProps)(Layout);
-
-export default styled(connected)`
+export default styled(Layout)`
     width: 100vw;
     height: 100vh;
     overflow: hidden;

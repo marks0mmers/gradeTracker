@@ -11,15 +11,16 @@
     },
     "rules": {
         "completed-docs": [
-        false
+            false
         ],
         "interface-name": [
-        true,
-        "never-prefix"
+            true,
+            "never-prefix"
         ],
         "jsx-no-multiline-js": false,
         "no-any": true,
         "object-literal-sort-keys": false,
-        "variable-name": false
+        "variable-name": false,
+        "arrow-return-shorthand": true
     }
 }

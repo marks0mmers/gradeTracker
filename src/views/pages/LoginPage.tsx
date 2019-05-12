@@ -1,31 +1,20 @@
 import { push } from "connected-react-router";
 import { Formik, FormikProps } from "formik";
-import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
-import { bindActionCreators, Dispatch } from "redux";
+import React, { useState } from "react";
+import { useActions, useSelector } from "src/state/hooks";
+import { CombinedState } from "src/state/store";
 import styled from "styled-components";
 import * as Yup from "yup";
 import { LoginUser, User } from "../../models/User";
 import { CreateNewUserCreator, getCurrentUser, LoginCreator } from "../../state/ducks/data/users";
-import { RootState } from "../../state/rootReducer";
+import { getPreviousRoute } from "../../state/ducks/router/selectors";
+import { useComponentMount, useComponentUpdate } from "../../util/Hooks";
 import Input from "../components/styled-inputs/Input";
 import Button from "../controls/button/Button";
 
-interface PassedProps {
+interface Props {
     className?: string;
 }
-
-interface PropsFromState {
-    currentUser: User;
-}
-
-interface PropsFromDispatch {
-    createNewUser: typeof CreateNewUserCreator;
-    login: typeof LoginCreator;
-    pushRoute: typeof push;
-}
-
-type Props = PassedProps & PropsFromState & PropsFromDispatch;
 
 interface LoginForm {
     email: string;
@@ -40,13 +29,9 @@ interface NewUserForm {
     repeatPassword: string;
 }
 
-// tslint:disable-next-line:no-any
-const isNewUserForm = (object: any): object is NewUserForm => {
-    return "firstName" in object;
-};
-
 interface State {
     creatingNewUser: boolean;
+    formValues: LoginForm | NewUserForm;
 }
 
 const NewUserValidation = Yup.object().shape({
@@ -59,19 +44,6 @@ const NewUserValidation = Yup.object().shape({
     lastName: Yup.string().required("Last Name is Required"),
 });
 
-const NewUserValues = {
-    email: "",
-    password: "",
-    firstName: "",
-    lastName: "",
-    repeatPassword: "",
-};
-
-const LoginValues = {
-    email: "",
-    password: "",
-};
-
 const LoginValidation = Yup.object().shape({
     email: Yup.string().email().required("Email is Required"),
     password: Yup.string().required("Password is Required"),
@@ -81,11 +53,30 @@ const LoginPage = (componentProps: Props) => {
 
     const [state, setState] = useState<State>({
         creatingNewUser: false,
+        formValues: {
+            email: "",
+            password: "",
+        },
     });
 
-    useEffect(() => {
-        if (componentProps.currentUser) {
-            componentProps.pushRoute("/");
+    const {currentUser, prevRoute} = useSelector((rootState: CombinedState) => ({
+        currentUser: getCurrentUser(rootState),
+        prevRoute: getPreviousRoute(rootState),
+    }));
+
+    const {createNewUser, login, pushRoute} = useActions({
+        createNewUser: CreateNewUserCreator,
+        login: LoginCreator,
+        pushRoute: push,
+    });
+
+    useComponentMount(() => {
+        document.title = "Login to Grade Tracker";
+    });
+
+    useComponentUpdate(() => {
+        if (currentUser) {
+            pushRoute(prevRoute || "/");
         }
     });
 
@@ -107,7 +98,7 @@ const LoginPage = (componentProps: Props) => {
                 "password",
             )}
             <Buttons>
-                {buildButton(30, "Create User", "Switch to Create User", undefined, toggleCreate)}
+                {buildButton(30, "Create User", "Switch to Create User", "reset", toggleCreate)}
                 {buildButton(30, "Login", "Click to Login", "submit")}
             </Buttons>
         </Form>
@@ -153,7 +144,7 @@ const LoginPage = (componentProps: Props) => {
                 "password",
             )}
             <Buttons>
-                {buildButton(30, "Back to Login", "Switch to Login", undefined, toggleCreate)}
+                {buildButton(30, "Back to Login", "Switch to Login", "reset", toggleCreate)}
                 {buildButton(30, "Create User", "Click to Create New User", "submit")}
             </Buttons>
         </Form>
@@ -202,17 +193,29 @@ const LoginPage = (componentProps: Props) => {
     const toggleCreate = () => {
         setState({
             creatingNewUser: !state.creatingNewUser,
+            formValues: !state.creatingNewUser
+            ? {
+                firstName: "",
+                lastName: "",
+                email: "",
+                password: "",
+                repeatPassword: "",
+            }
+            : {
+                email: "",
+                password: "",
+            },
         });
     };
 
     const handleFormSubmit = (values: LoginForm | NewUserForm) => {
-        if (isNewUserForm(values)) {
+        if (state.creatingNewUser) {
             const newUser = new User({
                 ...values,
             });
-            componentProps.createNewUser(newUser);
+            createNewUser(newUser);
         } else {
-            componentProps.login(values as LoginUser);
+            login(values as LoginUser);
         }
     };
 
@@ -223,11 +226,14 @@ const LoginPage = (componentProps: Props) => {
                     <HeaderText>{state.creatingNewUser ? "Create new User" : "Login to Grade Tracker"}</HeaderText>
                 </Header>
                 <Formik
-                    initialValues={state.creatingNewUser ? NewUserValues : LoginValues}
+                    initialValues={state.formValues}
+                    validateOnBlur={false}
+                    validateOnChange={false}
                     onSubmit={handleFormSubmit}
                     validationSchema={state.creatingNewUser ? NewUserValidation : LoginValidation}
-                    render={state.creatingNewUser ? renderNewUserForm : renderLoginForm}
-                />
+                >
+                    {state.creatingNewUser ? renderNewUserForm : renderLoginForm}
+                </Formik>
             </LoginContainer>
         </div>
     );
@@ -271,19 +277,7 @@ const Error = styled.div`
     color: red;
 `;
 
-const mapStateToProps = (state: RootState) => ({
-    currentUser: getCurrentUser(state),
-});
-
-const mapDispatchToProps = (dispatch: Dispatch): PropsFromDispatch => {
-    return bindActionCreators({
-        createNewUser: CreateNewUserCreator,
-        login: LoginCreator,
-        pushRoute: push,
-    }, dispatch);
-};
-
-export default styled(connect(mapStateToProps, mapDispatchToProps)(LoginPage))`
+export default styled(LoginPage)`
     grid-area: content;
     margin: 0 60px 60px 0;
     display: flex;

@@ -6,7 +6,6 @@ import { RootState } from "../../../rootReducer";
 import { getGradeCategories } from "../../data/gradeCategories";
 
 export const getActiveCourse = (state: RootState) => state.control.course.activeCourse;
-export const getDetailedColumns = (state: RootState) => state.control.course.detailedColumns;
 export const getSelectedGradeCategory = (state: RootState) => state.control.course.selectedGradeCategory;
 
 export const getDetailedCourseElements = createSelector(

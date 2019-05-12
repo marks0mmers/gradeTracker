@@ -9,7 +9,6 @@ export const GetCoursesCurrentUserEpic = epicBuilder(
     CourseFailureActionCreator,
     types.GET_COURSES_CURRENT_USER,
     AjaxMethodType.GET,
-    (action: GetCoursesCurrentUser, state: RootState) =>
-        `/api/courses/user/${state.data.user.currentUser && state.data.user.currentUser._id}`,
+    (action: GetCoursesCurrentUser, state: RootState) => "/api/courses",
     generateHeaders(),
 );

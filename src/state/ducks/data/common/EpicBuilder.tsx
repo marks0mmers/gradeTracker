@@ -75,7 +75,9 @@ export const epicBuilder = <
                         break;
                 }
                 return ajaxCall.pipe(
-                    map((res: AjaxResponse) => res.response),
+                    map((res: AjaxResponse) => {
+                        return res.response;
+                    }),
                     mergeMap((data: ResData) => {
                         return Observable.of(endActionCreator(data));
                     }),
