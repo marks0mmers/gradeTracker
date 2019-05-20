@@ -17,7 +17,7 @@ export const getAnalysisGridData = createSelector(
         courses: Map<string, Course>,
         gradeCategories: Map<string, GradeCategory>,
     ) => {
-        let retList: List<DataGridElement<AnalysisCourse>> = List();
+        let retList: List<DataGridElement> = List();
 
         courses.forEach((course: Course) => {
             let currentTotal = 0;
@@ -51,7 +51,7 @@ export const getAnalysisGridData = createSelector(
         let guarenteedTotalGPA = 0;
         let potentialTotalGPA = 0;
         let creditHoursTotal = 0;
-        retList.forEach((value: DataGridElement<AnalysisCourse>) => {
+        retList.forEach((value: DataGridElement) => {
             currentTotalGPA += value.payload.currentGPA * +value.payload.creditHours;
             guarenteedTotalGPA += value.payload.guarenteedGPA * +value.payload.creditHours;
             potentialTotalGPA += value.payload.potentialGPA * +value.payload.creditHours;

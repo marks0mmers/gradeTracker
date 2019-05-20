@@ -12,7 +12,7 @@
     "connected-react-router": "^4.3.0",
     "formik": "^1.5.2",
     "history": "^4.7.2",
-    "immutable": "3.8.2",
+    "immutable": "^4.0.0-rc.12",
     "material-icons": "^0.2.3",
     "react": "^16.8.6",
     "react-dom": "^16.4.1",

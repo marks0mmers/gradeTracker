@@ -7,20 +7,21 @@ import HeaderCell from "../components/HeaderCell";
 import { DataGridColumnDefinition } from "../models/DataGridColumnDefinition";
 import { DataGridElement } from "../models/DataGridElement";
 
-interface Props<T> {
+interface Props {
     className?: string;
     id: string;
     rowHeight?: number;
-    columnDefinitions?: List<DataGridColumnDefinition<T>>;
-    elements?: List<DataGridElement<T>>;
+    columnDefinitions?: List<DataGridColumnDefinition>;
+    elements?: List<DataGridElement>;
     gridArea?: string;
-    onBodyCellClick?: (event: MouseEvent<HTMLDivElement>, payload: T, props: BodyCellProps) => void;
+// tslint:disable-next-line: no-any
+    onBodyCellClick?: (event: MouseEvent<HTMLDivElement>, payload: any, props: BodyCellProps) => void;
 }
 
-const DataGrid = <T extends {}>(props: Props<T>) => {
+const DataGrid = (props: Props) => {
 
     const renderHeaderCells = () => props.columnDefinitions && props.columnDefinitions.map((
-        column: DataGridColumnDefinition<T>,
+        column: DataGridColumnDefinition,
         idx: number,
     ) => {
         return (
@@ -34,7 +35,7 @@ const DataGrid = <T extends {}>(props: Props<T>) => {
         );
     }).toList();
 
-    const renderBodyCells = () => props.elements && props.elements.map((element: DataGridElement<T>, idx: number) => {
+    const renderBodyCells = () => props.elements && props.elements.map((element: DataGridElement, idx: number) => {
         return (
             <ElementRow
                 key={idx}

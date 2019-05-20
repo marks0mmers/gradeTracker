@@ -1,19 +1,21 @@
-import { Record } from "immutable";
+import { Record, RecordOf } from "immutable";
 import { Course } from "../../../../models/Course";
 import {
     CourseControlActions,
     CourseControlActionTypes as types,
 } from "./";
 
-export const CourseControlStateRecord = Record({
+interface ICourseControlState {
+    activeCourse?: Course;
+    selectedGradeCategory?: string;
+}
+
+export const CourseControlState = Record<ICourseControlState>({
     activeCourse: undefined,
     selectedGradeCategory: undefined,
 });
 
-export class CourseControlState extends CourseControlStateRecord {
-    public activeCourse: Course;
-    public selectedGradeCategory: string;
-}
+export type CourseControlState = RecordOf<ICourseControlState>;
 
 export const CourseControlReducer = (
     state = new CourseControlState(),
@@ -21,9 +23,9 @@ export const CourseControlReducer = (
 ): CourseControlState => {
     switch (action.type) {
         case (types.SELECT_GRADE_CATEGORY):
-            return state.set("selectedGradeCategory", action.gradeCategory) as CourseControlState;
+            return state.set("selectedGradeCategory", action.gradeCategory);
         case (types.SET_ACTIVE_COURSE):
-            return state.set("activeCourse", action.course) as CourseControlState;
+            return state.set("activeCourse", action.course);
         default:
             return state;
     }

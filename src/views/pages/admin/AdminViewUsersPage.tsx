@@ -26,7 +26,7 @@ const NewUserValidation = Yup.object().shape({
 
 const AdminViewUsersPage = (props: Props) => {
 
-    const [selectedUser, setSelectedUser] = useState<User | undefined>();
+    const [selectedUser, setSelectedUser] = useState<User>();
 
     const {
         // currentUser,
@@ -71,7 +71,7 @@ const AdminViewUsersPage = (props: Props) => {
     };
 
     const getUserGridData = useCallback(() => {
-        return users.map((user: User) => new DataGridElement<UserGridView>({
+        return users.map((user: User) => new DataGridElement({
             payload: {
                 _id: user._id,
                 firstName: user.firstName,
@@ -80,7 +80,7 @@ const AdminViewUsersPage = (props: Props) => {
             },
             isSelected: selectedUser && user._id === selectedUser._id,
         })).toList();
-    }, [users]);
+    }, [users, selectedUser]);
 
     const handleEditUser = (editedUser: User) => {
 // tslint:disable-next-line: no-console

@@ -63,7 +63,7 @@ const Row = (props: Props) => {
 
     const handleSave = () => {
         const { formValues, initialKey } = state;
-        const primary = formValues.get("primary");
+        const primary = formValues.get("primary", "");
         const secondary = formValues.get("secondary");
         const handler = props.onSave;
         if (handler) {

@@ -69,8 +69,10 @@ const CourseDetailedPage = (props: Props) => {
     });
 
     useComponentMount(() => {
-        document.title = `${course.title} Details`;
-        getGradeCategoriesForCourse(course.id || "");
+        if (course) {
+            document.title = `${course.title} Details`;
+            getGradeCategoriesForCourse(course.id || "");
+        }
         return () => {
             selectGradeCategory(undefined);
         };
@@ -132,6 +134,8 @@ const CourseDetailedPage = (props: Props) => {
         pushRoute("/");
     };
 
+    const selected = categories && categories.get(selectedCategory || "");
+
     return (
         <div id={`${course ? course.title : ""}-detailed`} className={props.className}>
             <span
@@ -190,11 +194,11 @@ const CourseDetailedPage = (props: Props) => {
                         isCreating={state.isCreating}
                         course={course}
                         exitModal={handleCancel}
-                        originalCategory={categories && categories.get(selectedCategory)}
-                        initialValues={categories && categories.get(selectedCategory) && {
-                            title: categories.get(selectedCategory).title,
-                            percentage: categories.get(selectedCategory).percentage,
-                            numberOfGrades: categories.get(selectedCategory).numberOfGrades,
+                        originalCategory={categories && categories.get(selectedCategory || "")}
+                        initialValues={selected && {
+                            title: selected.title,
+                            percentage: selected.percentage,
+                            numberOfGrades: selected.numberOfGrades,
                         }}
                     />
                 </ReactModal>

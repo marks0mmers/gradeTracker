@@ -1,13 +1,16 @@
-import { Record } from "immutable";
+import { Record, RecordOf } from "immutable";
 
-const DataGridElementRecord = Record({
+interface IDataGridElement {
+// tslint:disable-next-line: no-any
+    payload: any;
+    isSelected?: boolean;
+    isBottom?: boolean;
+}
+
+export const DataGridElement = Record<IDataGridElement>({
     isBottom: false,
     isSelected: false,
     payload: {},
 });
 
-export class DataGridElement<T> extends DataGridElementRecord {
-    public payload: T;
-    public isSelected?: boolean;
-    public isBottom?: boolean;
-}
+export type DataGridElement = RecordOf<IDataGridElement>;

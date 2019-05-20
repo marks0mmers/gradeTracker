@@ -1,6 +1,17 @@
-import { Record } from "immutable";
+import { Record, RecordOf } from "immutable";
 
-export const AnalysisCourseRecord = Record({
+interface IAnalysisCourse {
+    title: string;
+    creditHours: number;
+    currentGPA: number;
+    guarenteedGPA: number;
+    potentialGPA: number;
+    currentLetter: string;
+    guarenteedLetter: string;
+    potentialLetter: string;
+}
+
+export const AnalysisCourse = Record<IAnalysisCourse>({
     creditHours: 0,
     currentGPA: 0,
     currentLetter: "F",
@@ -11,13 +22,4 @@ export const AnalysisCourseRecord = Record({
     title: "",
 });
 
-export class AnalysisCourse extends AnalysisCourseRecord {
-    public title: string;
-    public creditHours: number;
-    public currentGPA: number;
-    public guarenteedGPA: number;
-    public potentialGPA: number;
-    public currentLetter: string;
-    public guarenteedLetter: string;
-    public potentialLetter: string;
-}
+export type AnalysisCourse = RecordOf<IAnalysisCourse>;

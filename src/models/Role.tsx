@@ -1,13 +1,15 @@
-import { Record } from "immutable";
+import { Record, RecordOf } from "immutable";
 
-export const RoleRecord = Record({
+interface IRole {
+    role: string;
+    userId: string;
+    id: string;
+}
+
+export const Role = Record<IRole>({
     role: "",
     userId: "",
     id: "",
 });
 
-export class Role extends RoleRecord {
-    public role: string;
-    public userId: string;
-    public id: string;
-}
+export type Role = RecordOf<IRole>;

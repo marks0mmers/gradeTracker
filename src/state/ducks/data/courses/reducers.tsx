@@ -1,17 +1,19 @@
-import { List, Map, Record } from "immutable";
+import { List, Map, Record, RecordOf } from "immutable";
 import { Course } from "../../../../models/Course";
 import {
     CourseDataActions,
     CourseDataActionTypes as types,
 } from "./";
 
-export const CourseDataStateRecord = Record({
+interface ICourseDataState {
+    courses: Map<string, Course>;
+}
+
+export const CourseDataState = Record<ICourseDataState>({
     courses: Map(),
 });
 
-export class CourseDataState extends CourseDataStateRecord {
-    public courses: Map<string, Course>;
-}
+export type CourseDataState = RecordOf<ICourseDataState>;
 
 export const CourseDataReducer = (
     state = new CourseDataState(),
@@ -20,7 +22,7 @@ export const CourseDataReducer = (
     switch (action.type) {
         case (types.CREATE_NEW_COURSE_SUCCESS):
             return action.course.id
-                ? state.setIn(["courses", action.course.id], action.course) as CourseDataState
+                ? state.setIn(["courses", action.course.id], action.course)
                 : state;
         case (types.GET_COURSES_CURRENT_USER_SUCCESS):
             const immutableCourses = action.courses.map((course) => new Course({...course}));
@@ -28,14 +30,14 @@ export const CourseDataReducer = (
                 .reduce((cs: Map<string, Course>, c: Course) => {
                     return c.id ? cs.set(c.id, c) : cs;
                 }, Map<string, Course>());
-            return state.set("courses", courseMap) as CourseDataState;
+            return state.set("courses", courseMap);
         case (types.EDIT_COURSE_SUCCESS):
             return action.newCourse.id
-                ? state.setIn(["courses", action.newCourse.id], action.newCourse) as CourseDataState
+                ? state.setIn(["courses", action.newCourse.id], action.newCourse)
                 : state;
         case (types.DELETE_COURSE_SUCCESS):
             return action.course.id
-                ? state.removeIn(["courses", action.course.id]) as CourseDataState
+                ? state.removeIn(["courses", action.course.id])
                 : state;
         default:
             return state;

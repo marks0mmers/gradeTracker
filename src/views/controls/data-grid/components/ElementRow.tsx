@@ -5,15 +5,16 @@ import { DataGridColumnDefinition } from "../models/DataGridColumnDefinition";
 import { DataGridElement } from "../models/DataGridElement";
 import BodyCell, { BodyCellProps } from "./BodyCell";
 
-interface Props<T> {
+interface Props {
     className?: string;
-    element: DataGridElement<T>;
-    columnDefinitions: List<DataGridColumnDefinition<T>> | undefined;
+    element: DataGridElement;
+    columnDefinitions: List<DataGridColumnDefinition> | undefined;
     height: number;
-    onBodyCellClick?: (event: MouseEvent<HTMLDivElement>, payload: T, props: BodyCellProps) => void;
+// tslint:disable-next-line: no-any
+    onBodyCellClick?: (event: MouseEvent<HTMLDivElement>, payload: any, props: BodyCellProps) => void;
 }
 
-const ElementRow = <T extends {}>(props: Props<T>) => {
+const ElementRow = (props: Props) => {
 
     const handleCellClick = (event: MouseEvent<HTMLDivElement>, bodyProps: BodyCellProps) => {
         const handler = props.onBodyCellClick;
@@ -25,10 +26,10 @@ const ElementRow = <T extends {}>(props: Props<T>) => {
     return (
         <div id="element-row" className={props.className}>
             {props.columnDefinitions && props.columnDefinitions.map((
-                column: DataGridColumnDefinition<T>, idx: number,
+                column: DataGridColumnDefinition, idx: number,
             ) => {
                 const { payload } = props.element;
-                const content = column.formatter && payload && column.formatter(payload);
+                const content = column.field && payload && payload[column.field];
                 return (
                         <BodyCell
                             key={idx}

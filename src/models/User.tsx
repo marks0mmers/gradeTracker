@@ -1,4 +1,4 @@
-import { List, Record } from "immutable";
+import { List, Record, RecordOf } from "immutable";
 import { Role } from "./Role";
 
 export interface LoginUser {
@@ -6,7 +6,17 @@ export interface LoginUser {
     password: string;
 }
 
-export const UserRecord = Record({
+interface IUser {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password?: string;
+    token?: string;
+    _id: string;
+    roles: List<Role>;
+}
+
+export const User = Record<IUser>({
     firstName: "",
     lastName: "",
     email: "",
@@ -16,15 +26,7 @@ export const UserRecord = Record({
     roles: List<Role>(),
 });
 
-export class User extends UserRecord {
-    public firstName: string;
-    public lastName: string;
-    public email: string;
-    public password?: string;
-    public token?: string;
-    public _id: string;
-    public roles: List<Role>;
-}
+export type User = RecordOf<IUser>;
 
 export interface UserGridView {
     firstName: string;

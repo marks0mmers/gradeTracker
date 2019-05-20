@@ -21,10 +21,18 @@ const BodyCell = (props: BodyCellProps) => {
             className={props.className}
             onClick={handleCellClick}
         >
-            {props.content}
+            <StyledSpan>
+                {props.content}
+            </StyledSpan>
         </div>
     );
 };
+
+const StyledSpan = styled.span`
+    width: 100%;
+    text-align: center;
+    line-height: 30px;
+`;
 
 export default styled(BodyCell)`
     display: flex;

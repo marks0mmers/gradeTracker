@@ -1,17 +1,19 @@
-import { List, Map, Record } from "immutable";
+import { List, Map, Record, RecordOf } from "immutable";
 import { User } from "../../../../models/User";
 import { Toast } from "../../../../util/Toast";
 import { UserDataActions, UserDataActionTypes as types } from "./actions";
 
-export const UserDataStateRecord = Record({
+interface IUserDataState {
+    currentUser?: User;
+    users: Map<string, User>;
+}
+
+export const UserDataState = Record<IUserDataState>({
     currentUser: undefined,
     users: Map<string, User>(),
 });
 
-export class UserDataState extends UserDataStateRecord {
-    public currentUser?: User;
-    public users: Map<string, User>;
-}
+export type UserDataState = RecordOf<IUserDataState>;
 
 export const UserDataReducer = (
     state = new UserDataState(),
@@ -22,18 +24,18 @@ export const UserDataReducer = (
             Toast.success("User Successfully Created");
             return state;
         case (types.GET_CURRENT_USER_SUCCESS):
-            return state.set("currentUser", action.user) as UserDataState;
+            return state.set("currentUser", action.user);
         case (types.LOGIN_SUCCESS):
             sessionStorage.setItem("jwtToken", action.user.token || "");
-            return state.set("currentUser", action.user) as UserDataState;
+            return state.set("currentUser", action.user);
         case (types.LOGOUT):
             sessionStorage.removeItem("jwtToken");
-            return state.set("currentUser", undefined) as UserDataState;
+            return state.set("currentUser", undefined);
         case (types.GET_USERS_SUCCESS):
             return state.set("users", List<User>(action.users).reduce(
                 (users: Map<string, User>, user: User) => users.set(user._id, new User(user)),
                 Map(),
-            )) as UserDataState;
+            ));
         default:
             return state;
     }

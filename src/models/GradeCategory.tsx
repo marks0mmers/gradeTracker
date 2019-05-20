@@ -1,7 +1,20 @@
-import { List, Record } from "immutable";
+import { List, Record, RecordOf } from "immutable";
 import { Grade } from "./Grade";
 
-export const GradeCategoryRecord = Record({
+interface IGradeCategory {
+    title: string;
+    percentage: number;
+    numberOfGrades: number;
+    courseId: string;
+    id: string;
+    remainingGrades: number;
+    currentAverage: number;
+    guarenteedAverage: number;
+    potentialAverage: number;
+    grades: List<Grade>;
+}
+
+export const GradeCategory = Record<IGradeCategory>({
     title: "",
     percentage: 0,
     numberOfGrades: 0,
@@ -14,15 +27,4 @@ export const GradeCategoryRecord = Record({
     grades: List(),
 });
 
-export class GradeCategory extends GradeCategoryRecord {
-    public title: string;
-    public percentage: number;
-    public numberOfGrades: number;
-    public courseId: string;
-    public id: string;
-    public remainingGrades: number;
-    public currentAverage: number;
-    public guarenteedAverage: number;
-    public potentialAverage: number;
-    public grades: List<Grade>;
-}
+export type GradeCategory = RecordOf<IGradeCategory>;

@@ -1,6 +1,15 @@
-import { Record } from "immutable";
+import { Record, RecordOf } from "immutable";
 
-export const CourseRecord = Record({
+interface ICourse {
+    title: string;
+    description: string;
+    section: number;
+    creditHours: number;
+    userId: string;
+    id?: string;
+}
+
+export const Course = Record<ICourse>({
     creditHours: 0,
     description: "",
     id: "",
@@ -9,11 +18,4 @@ export const CourseRecord = Record({
     userId: "",
 });
 
-export class Course extends CourseRecord {
-    public title: string;
-    public description: string;
-    public section: number;
-    public creditHours: number;
-    public userId: string;
-    public id?: string;
-}
+export type Course = RecordOf<ICourse>;

@@ -1,14 +1,15 @@
-import { Record } from "immutable";
-import { ReactNode } from "react";
+import { Record, RecordOf } from "immutable";
 
-const DataGridColumnDefinitionRecord = Record({
-    formatter: undefined,
+interface IDataGridColumnDefinition {
+    field?: string;
+    label?: string;
+    width?: number;
+}
+
+export const DataGridColumnDefinition = Record<IDataGridColumnDefinition>({
+    field: undefined,
     label: undefined,
     width: 150,
 });
 
-export class DataGridColumnDefinition<T> extends DataGridColumnDefinitionRecord {
-    public formatter?: (payload: T) => string | ReactNode;
-    public label?: string;
-    public width?: number;
-}
+export type DataGridColumnDefinition = RecordOf<IDataGridColumnDefinition>;

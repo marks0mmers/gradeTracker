@@ -14,11 +14,10 @@ export const getDetailedCourseElements = createSelector(
         gradeCategories: Map<string, GradeCategory>,
         selectedGradeCategory: string,
     ) => {
-        return gradeCategories.map((gradeCategory: GradeCategory) => {
-            return new DataGridElement<GradeCategory>({
-                payload: gradeCategory,
-                isSelected: gradeCategory.id === selectedGradeCategory,
-            });
-        }).toList();
+        return gradeCategories.map((gradeCategory: GradeCategory) => new DataGridElement({
+            payload: gradeCategory,
+            isSelected: gradeCategory.id === selectedGradeCategory,
+        }),
+        ).toList();
     },
 );

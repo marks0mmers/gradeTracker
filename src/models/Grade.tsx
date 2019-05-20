@@ -1,15 +1,17 @@
-import { Record } from "immutable";
+import { Record, RecordOf } from "immutable";
 
-export const GradeRecord = Record({
+interface IGrade {
+    name: string;
+    grade: number;
+    gradeCategoryId: string;
+    id: string;
+}
+
+export const Grade = Record<IGrade>({
     name: "",
     grade: 0,
     gradeCategoryId: "",
     id: "",
 });
 
-export class Grade extends GradeRecord {
-    public name: string;
-    public grade: number;
-    public gradeCategoryId: string;
-    public id: string;
-}
+export type Grade = RecordOf<IGrade>;

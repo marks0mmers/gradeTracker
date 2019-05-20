@@ -3,7 +3,6 @@ import { CourseControlReducer, CourseControlState } from "./ducks/control/course
 import {  CourseDataReducer, CourseDataState } from "./ducks/data/courses";
 import { GradeCategoryDataReducer, GradeCategoryDataState } from "./ducks/data/gradeCategories/reducers";
 import { UserDataReducer, UserDataState } from "./ducks/data/users/reducers";
-import { SessionReducer, SessionState } from "./ducks/session/reducers";
 
 interface ControlState {
     course: CourseControlState;
@@ -18,7 +17,6 @@ interface DataState {
 export interface RootState {
     control: ControlState;
     data: DataState;
-    session: SessionState;
 }
 
 export const rootReducer = combineReducers({
@@ -30,5 +28,4 @@ export const rootReducer = combineReducers({
         gradeCategory: GradeCategoryDataReducer,
         user: UserDataReducer,
     }),
-    session: SessionReducer,
 });
