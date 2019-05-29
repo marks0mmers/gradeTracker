@@ -12,7 +12,6 @@ import ModalHeader from "../../modals/common/ModalHeader";
 import GradeFormModal from "../../modals/GradeFormModal";
 
 interface Props {
-    className?: string;
     selectedCategory?: GradeCategory;
 }
 
@@ -92,14 +91,14 @@ const CategoryDetailedPane = (props: Props) => {
     };
 
     const buildDisplayLabel = (label: string, value: string | number, gridArea: string) => (
-        <div className="label-container" style={{gridArea}}>
-            <div className="prop-label">{label}</div>
-            <div className="prop-value">{value}</div>
-        </div>
+        <LabelContainer gridArea={gridArea}>
+            <PropLabel>{label}</PropLabel>
+            <PropValue>{value}</PropValue>
+        </LabelContainer>
     );
 
     return (
-        <div className={props.className}>
+        <GridContainer>
             {buildDisplayLabel(
                 "Category Name:",
                 props.selectedCategory ? props.selectedCategory.title : "",
@@ -135,7 +134,7 @@ const CategoryDetailedPane = (props: Props) => {
                 props.selectedCategory ? `${props.selectedCategory.potentialAverage.toPrecision(4)}` : "",
                 "potentialAverage",
             )}
-            <div className="grades">
+            <Grades>
                 <ListControl
                     header={true}
                     headerText="Grades"
@@ -172,7 +171,7 @@ const CategoryDetailedPane = (props: Props) => {
                     padding={10}
                     onRowClick={handleSelectGrade}
                 />
-            </div>
+            </Grades>
             <ReactModal
                 style={{
                     overlay: {
@@ -202,12 +201,12 @@ const CategoryDetailedPane = (props: Props) => {
                     }}
                 />
             </ReactModal>
-        </div>
+        </GridContainer>
     );
 
 };
 
-export default styled(CategoryDetailedPane)`
+const GridContainer = styled.div`
     display: grid;
     grid-template-rows: repeat(7, 1fr);
     grid-column-gap: 10px;
@@ -223,30 +222,29 @@ export default styled(CategoryDetailedPane)`
         grid-template-columns: 1fr 1fr;
     }
     margin-bottom: 10px;
-
-    .label-container {
-        padding: 10px;
-        display: grid;
-        grid-template-columns: auto 1fr;
-        grid-template-areas: "label value";
-    }
-
-    .prop-label {
-        grid-area: label;
-    }
-
-    .prop-value {
-        grid-area: value;
-        display: flex;
-        justify-content: flex-end;
-    }
-
-    .grades {
-        grid-area: list;
-        min-height: 0;
-    }
-
-    .error {
-        color: #b00020;
-    }
 `;
+
+const LabelContainer = styled.div<{gridArea: string}>`
+    padding: 10px;
+    display: grid;
+    grid-area: ${(props) => props.gridArea};
+    grid-template-columns: auto 1fr;
+    grid-template-areas: "label value";
+`;
+
+const PropLabel = styled.div`
+    grid-area: label;
+`;
+
+const PropValue = styled.div`
+    grid-area: value;
+    display: flex;
+    justify-content: flex-end;
+`;
+
+const Grades = styled.div`
+    grid-area: list;
+    min-height: 0;
+`;
+
+export default CategoryDetailedPane;

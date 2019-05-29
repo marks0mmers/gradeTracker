@@ -9,7 +9,6 @@ import Button from "../../../views/controls/button/Button";
 import Divider from "../../components/shared/Divider";
 
 interface Props {
-    className?: string;
     course: Course;
 
     onEditClick: (course?: Course) => void;
@@ -39,30 +38,29 @@ const CourseOverviewButton = (props: Props) => {
     };
 
     return (
-        <div
+        <CourseOverviewButtonContainer
             id={`${props.course.title.toLowerCase()}-button`}
-            className={props.className}
             onClick={handleClick}
         >
-            <div className="course-info">
+            <CourseInfo>
                 <h1 className="value">{props.course.description}</h1>
                 <Divider
                     isVertical={false}
                     gridArea="divider1"
                 />
-                <div className="label">
+                <Label>
                     <span className="value">
                         {`Course: ${props.course.title} ${leadingZeros(3, props.course.section)}`}
                     </span>
-                </div>
-                <div className="label">
+                </Label>
+                <Label>
                     <span className="value">{`Credit Hours: ${props.course.creditHours}`}</span>
-                </div>
+                </Label>
                 <Divider
                     isVertical={false}
                     gridArea="divider2"
                 />
-                <div className="buttons">
+                <Buttons>
                     <span className="value">Course Actions: </span>
                     <Fragment>
                         <Button
@@ -83,13 +81,13 @@ const CourseOverviewButton = (props: Props) => {
                             onClick={handleDelete}
                         />
                     </Fragment>
-                </div>
-            </div>
-        </div>
+                </Buttons>
+            </CourseInfo>
+        </CourseOverviewButtonContainer>
     );
 };
 
-export default styled(CourseOverviewButton)`
+const CourseOverviewButtonContainer = styled.div`
     background: #86b3d1;
     min-height: 135px;
     border: none;
@@ -103,31 +101,21 @@ export default styled(CourseOverviewButton)`
         border: solid #8bb9d9 2px;
         cursor: pointer;
     }
+`;
 
-    .course-info {
-        background: white;
-        padding: 5px 10px;
-        grid-area: info;
-        display: grid;
-        grid-template-columns: 1fr auto;
-        grid-template-rows: auto 1px auto 1px auto;
-        grid-row-gap: 5px;
-        grid-template-areas: "description description"
-                             "divider1 divider1"
-                             "title section"
-                             "divider2 divider2"
-                             "buttons buttons";
-    }
-
-    .label {
-        font-weight: bold;
-    }
-
-    .buttons {
-        grid-area: buttons;
-        display: flex;
-        justify-content: flex-end;
-    }
+const CourseInfo = styled.div`
+    background: white;
+    padding: 5px 10px;
+    grid-area: info;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1px auto 1px auto;
+    grid-row-gap: 5px;
+    grid-template-areas: "description description"
+                            "divider1 divider1"
+                            "title section"
+                            "divider2 divider2"
+                            "buttons buttons";
 
     .value {
         font-weight: normal;
@@ -135,3 +123,15 @@ export default styled(CourseOverviewButton)`
         grid-area: description;
     }
 `;
+
+const Label = styled.div`
+    font-weight: bold;
+`;
+
+const Buttons = styled.div`
+    grid-area: buttons;
+    display: flex;
+    justify-content: flex-end;
+`;
+
+export default CourseOverviewButton;
