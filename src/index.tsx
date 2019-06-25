@@ -6,16 +6,14 @@ import { Provider } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 import history from "./state/history";
-import { ReduxProvider, store } from "./state/store";
+import { store } from "./state/store";
 import Layout from "./views/Layout";
 
 ReactDOM.render(
     <Provider store={store}>
-        <ReduxProvider store={store}>
-            <ConnectedRouter history={history}>
-                <Layout />
-            </ConnectedRouter>
-        </ReduxProvider>
+        <ConnectedRouter history={history}>
+            <Layout />
+        </ConnectedRouter>
     </Provider>,
     document.getElementById("root") as HTMLElement,
 );

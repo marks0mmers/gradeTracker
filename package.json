@@ -9,7 +9,7 @@
   "dependencies": {
     "babel-core": "^6.26.3",
     "babel-runtime": "^6.26.0",
-    "connected-react-router": "^4.3.0",
+    "connected-react-router": "^6.4.0",
     "formik": "^1.5.2",
     "history": "^4.7.2",
     "immutable": "^4.0.0-rc.12",
@@ -17,15 +17,15 @@
     "react": "^16.8.6",
     "react-dom": "^16.4.1",
     "react-modal": "^3.8.1",
-    "react-redux": "^5.0.7",
+    "react-redux": "^7.1.0",
     "react-router": "^4.3.1",
-    "react-scripts-ts": "^3.1.0",
+    "react-scripts": "^3.0.1",
     "react-toastify": "^4.5.2",
     "recharts": "^1.2.0",
     "redux": "^4.0.0",
     "redux-devtools-extension": "^2.13.5",
     "redux-observable": "^1.0.0",
-    "reselect": "^3.0.1",
+    "reselect": "^4.0.0",
     "rxjs": "^6.5.1",
     "rxjs-compat": "^6.2.1",
     "styled-components": "^3.3.3",
@@ -37,17 +37,34 @@
     "@types/react": "^16.8.13",
     "@types/react-dom": "^16.8.0",
     "@types/react-modal": "3.1.2",
-    "@types/react-redux": "6.0.3",
+    "@types/react-redux": "^7.1.0",
     "@types/react-router": "4.0.27",
     "@types/react-toastify": "^4.0.1",
     "@types/recharts": "^1.0.23",
     "@types/toastr": "2.1.35",
     "@types/yup": "^0.26.12",
+    "tslint": "^5.18.0",
+    "tslint-react": "^4.0.0",
     "typescript": "3.3.3"
+  },
+  "resolutions": {
+    "hoist-non-react-statics": "^3.3.0"
   },
   "main": "src/index.tsx",
   "scripts": {
-    "start": "react-scripts-ts start",
-    "build": "react-scripts-ts build"
+    "start": "react-scripts start",
+    "build": "react-scripts build"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

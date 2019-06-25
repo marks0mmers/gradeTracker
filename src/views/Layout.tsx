@@ -2,12 +2,11 @@ import { push } from "connected-react-router";
 import React, { Fragment } from "react";
 import { Route, Switch } from "react-router";
 import { ToastContainer } from "react-toastify";
-import { useActions, useSelector } from "src/state/hooks";
-import { CombinedState } from "src/state/store";
 import styled from "styled-components";
 import { getActiveCourse } from "../state/ducks/control/courses";
 import { getCurrentUser, GetCurrentUserCreator, LogoutCreator } from "../state/ducks/data/users";
 import { getPathName } from "../state/ducks/router/selectors";
+import { useMapDispatch, useMapState } from "../state/hooks";
 import { useComponentMount, useComponentUpdate } from "../util/Hooks";
 import Header from "./components/shared/Header";
 import NavBar from "./components/shared/NavBar";
@@ -24,13 +23,13 @@ interface Props {
 
 const Layout = (props: Props) => {
 
-    const {detailedCourse, routerLocation, currentUser} = useSelector((state: CombinedState) => ({
+    const {detailedCourse, routerLocation, currentUser} = useMapState((state) => ({
         detailedCourse: getActiveCourse(state),
         routerLocation: getPathName(state),
         currentUser: getCurrentUser(state),
     }));
 
-    const {fetchCurrentUser, logout, pushRoute} = useActions({
+    const {fetchCurrentUser, logout, pushRoute} = useMapDispatch({
         pushRoute: push,
         fetchCurrentUser: GetCurrentUserCreator,
         logout: LogoutCreator,
@@ -43,7 +42,7 @@ const Layout = (props: Props) => {
     });
 
     useComponentUpdate(() => {
-        if (!currentUser && !location.href.includes("/login")) {
+        if (!currentUser && !window.location.href.includes("/login")) {
             pushRoute("/login", routerLocation);
         }
     });

@@ -1,13 +1,12 @@
 import { push } from "connected-react-router";
 import { Formik, FormikProps } from "formik";
 import React, { useState } from "react";
-import { useActions, useSelector } from "src/state/hooks";
-import { CombinedState } from "src/state/store";
 import styled from "styled-components";
 import * as Yup from "yup";
 import { LoginUser, User } from "../../models/User";
 import { CreateNewUserCreator, getCurrentUser, LoginCreator } from "../../state/ducks/data/users";
 import { getPreviousRoute } from "../../state/ducks/router/selectors";
+import { useMapDispatch, useMapState } from "../../state/hooks";
 import { useComponentMount, useComponentUpdate } from "../../util/Hooks";
 import Input from "../components/styled-inputs/Input";
 import Button from "../controls/button/Button";
@@ -16,12 +15,7 @@ interface Props {
     className?: string;
 }
 
-interface LoginForm {
-    email: string;
-    password: string;
-}
-
-interface NewUserForm {
+interface UserForm {
     firstName: string;
     lastName: string;
     email: string;
@@ -31,7 +25,7 @@ interface NewUserForm {
 
 interface State {
     creatingNewUser: boolean;
-    formValues: LoginForm | NewUserForm;
+    formValues: UserForm;
 }
 
 const NewUserValidation = Yup.object().shape({
@@ -56,15 +50,18 @@ const LoginPage = (componentProps: Props) => {
         formValues: {
             email: "",
             password: "",
+            firstName: "",
+            lastName: "",
+            repeatPassword: "",
         },
     });
 
-    const {currentUser, prevRoute} = useSelector((rootState: CombinedState) => ({
+    const {currentUser, prevRoute} = useMapState((rootState) => ({
         currentUser: getCurrentUser(rootState),
         prevRoute: getPreviousRoute(rootState),
     }));
 
-    const {createNewUser, login, pushRoute} = useActions({
+    const {createNewUser, login, pushRoute} = useMapDispatch({
         createNewUser: CreateNewUserCreator,
         login: LoginCreator,
         pushRoute: push,
@@ -80,7 +77,7 @@ const LoginPage = (componentProps: Props) => {
         }
     });
 
-    const renderLoginForm = (props: FormikProps<LoginForm>) => (
+    const renderLoginForm = (props: FormikProps<UserForm>) => (
         <Form onSubmit={props.handleSubmit}>
             {buildInputField(
                 "Email",
@@ -104,7 +101,7 @@ const LoginPage = (componentProps: Props) => {
         </Form>
     );
 
-    const renderNewUserForm = (props: FormikProps<NewUserForm>) => (
+    const renderNewUserForm = (props: FormikProps<UserForm>) => (
         <Form onSubmit={props.handleSubmit}>
             {buildInputField(
                 "First Name",
@@ -193,22 +190,17 @@ const LoginPage = (componentProps: Props) => {
     const toggleCreate = () => {
         setState({
             creatingNewUser: !state.creatingNewUser,
-            formValues: !state.creatingNewUser
-            ? {
+            formValues: {
                 firstName: "",
                 lastName: "",
                 email: "",
                 password: "",
                 repeatPassword: "",
-            }
-            : {
-                email: "",
-                password: "",
             },
         });
     };
 
-    const handleFormSubmit = (values: LoginForm | NewUserForm) => {
+    const handleFormSubmit = (values: UserForm) => {
         if (state.creatingNewUser) {
             const newUser = new User({
                 ...values,

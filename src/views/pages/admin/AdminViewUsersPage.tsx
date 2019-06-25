@@ -1,16 +1,16 @@
 import { Formik, FormikProps } from "formik";
 import React, { MouseEvent, useCallback, useState } from "react";
-import { useActions, useSelector } from "src/state/hooks";
-import Input from "src/views/components/styled-inputs/Input";
-import Button from "src/views/controls/button/Button";
 import styled from "styled-components";
 import * as Yup from "yup";
 import { adminViewUsersColumns } from "../../../constants/columns/AdminViewUsersColumns";
 import { User, UserGridView } from "../../../models/User";
 import { getCurrentUser, getUsers, GetUsersCreator } from "../../../state/ducks/data/users";
+import { useMapDispatch, useMapState } from "../../../state/hooks";
 import { RootState } from "../../../state/rootReducer";
 import { useComponentMount } from "../../../util/Hooks";
 import Divider from "../../components/shared/Divider";
+import Input from "../../components/styled-inputs/Input";
+import Button from "../../controls/button/Button";
 import DataGrid from "../../controls/data-grid";
 import { DataGridElement } from "../../controls/data-grid/models/DataGridElement";
 
@@ -31,12 +31,12 @@ const AdminViewUsersPage = (props: Props) => {
     const {
         // currentUser,
         users,
-    } = useSelector((state: RootState) => ({
+    } = useMapState((state: RootState) => ({
         currentUser: getCurrentUser(state),
         users: getUsers(state),
     }));
 
-    const {getUsersAction} = useActions({getUsersAction: GetUsersCreator});
+    const {getUsersAction} = useMapDispatch({getUsersAction: GetUsersCreator});
 
     useComponentMount(() => {
         getUsersAction();
@@ -99,7 +99,7 @@ const AdminViewUsersPage = (props: Props) => {
             {!selectedUser && <div>Select a User to Edit</div>}
             {selectedUser &&
                 <Formik
-                    initialValues={{...selectedUser.toObject()}}
+                    initialValues={selectedUser}
                     enableReinitialize={true}
                     validateOnBlur={false}
                     validateOnChange={false}

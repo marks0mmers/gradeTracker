@@ -1,11 +1,9 @@
-import { useEffect, useReducer } from "react";
+import { useEffect } from "react";
 
-// tslint:disable:no-any
+// eslint-disable-next-line react-hooks/exhaustive-deps
 export const useComponentMount = (fn: () => (void | (() => void | undefined))) => useEffect(() => fn(), []);
 export const useComponentUpdate = (
     fn: () => (void | (() => void | undefined)),
-    deps?: any[],
-) => useEffect(() => fn(), deps);
-
-const forcedReducer = (state: {}) => !state;
-export const useForceUpdate = () => useReducer(forcedReducer, false)[1];
+    deps: unknown[] = [],
+// eslint-disable-next-line react-hooks/exhaustive-deps
+) => useEffect(() => fn(), [fn, ...deps]);

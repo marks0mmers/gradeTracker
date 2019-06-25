@@ -1,11 +1,11 @@
 import React from "react";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { useActions, useSelector } from "src/state/hooks";
 import styled from "styled-components";
 import { analysisColumns } from "../../constants/columns/AnalysisColumns";
 import { AnalysisCourse } from "../../models/AnalysisCourse";
 import { getAnalysisGridData } from "../../state/ducks/control/analysis/selectors";
 import { GetGradeCategoriesForCurrentUserCreator } from "../../state/ducks/data/gradeCategories";
+import { useMapDispatch, useMapState } from "../../state/hooks";
 import { RootState } from "../../state/rootReducer";
 import { useComponentMount } from "../../util/Hooks";
 import Divider from "../components/shared/Divider";
@@ -24,11 +24,11 @@ interface Props {
 
 const AnalysisPage = (props: Props) => {
 
-    const {elements} = useSelector((state: RootState) => ({
+    const {elements} = useMapState((state: RootState) => ({
         elements: getAnalysisGridData(state),
     }));
 
-    const {getAllCategories} = useActions({
+    const {getAllCategories} = useMapDispatch({
         getAllCategories: GetGradeCategoriesForCurrentUserCreator,
     });
 

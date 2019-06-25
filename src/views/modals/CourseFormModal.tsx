@@ -1,11 +1,11 @@
 import { Formik, FormikProps } from "formik";
 import React from "react";
-import { useActions, useSelector } from "src/state/hooks";
 import styled from "styled-components";
 import * as Yup from "yup";
 import { Course } from "../../models/Course";
 import { CreateNewCourseCreator, EditCourseCreator } from "../../state/ducks/data/courses";
 import { getCurrentUser } from "../../state/ducks/data/users";
+import { useMapDispatch, useMapState } from "../../state/hooks";
 import { RootState } from "../../state/rootReducer";
 import Input from "../components/styled-inputs/Input";
 import Button from "../controls/button/Button";
@@ -27,9 +27,9 @@ interface CourseForm {
 
 const CourseFormModal = (componentProps: Props) => {
 
-    const {currentUser} = useSelector((state: RootState) => ({currentUser: getCurrentUser(state)}));
+    const {currentUser} = useMapState((state: RootState) => ({currentUser: getCurrentUser(state)}));
 
-    const {handleCreateCourse, handleUpdateCourse} = useActions({
+    const {handleCreateCourse, handleUpdateCourse} = useMapDispatch({
         handleCreateCourse: CreateNewCourseCreator,
         handleUpdateCourse: EditCourseCreator,
     });

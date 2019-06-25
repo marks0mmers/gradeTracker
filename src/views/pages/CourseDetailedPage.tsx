@@ -1,7 +1,6 @@
 import { push } from "connected-react-router";
 import React, { Fragment, MouseEvent, useState } from "react";
 import ReactModal from "react-modal";
-import { useActions, useSelector } from "src/state/hooks";
 import styled from "styled-components";
 import { categoryColumns } from "../../constants/columns/CategoryColumns";
 import { GradeCategory } from "../../models/GradeCategory";
@@ -17,6 +16,7 @@ import {
     getGradeCategories,
     GetGradeCategoryForCourseCreator,
 } from "../../state/ducks/data/gradeCategories";
+import { useMapDispatch, useMapState } from "../../state/hooks";
 import { RootState } from "../../state/rootReducer";
 import { useComponentMount } from "../../util/Hooks";
 import CategoryDetailedPane from "../components/category/CategoryDetailedPane";
@@ -47,7 +47,7 @@ const CourseDetailedPage = (props: Props) => {
         selectedCategory,
         categories,
         course,
-    } = useSelector((rootState: RootState) => ({
+    } = useMapState((rootState: RootState) => ({
         categoryElements: getDetailedCourseElements(rootState),
         selectedCategory: getSelectedGradeCategory(rootState),
         categories: getGradeCategories(rootState),
@@ -60,7 +60,7 @@ const CourseDetailedPage = (props: Props) => {
         setActiveCourse,
         deleteGradeCategory,
         getGradeCategoriesForCourse,
-    } = useActions({
+    } = useMapDispatch({
         pushRoute: push,
         selectGradeCategory: SelectGradeCategoryCreator,
         setActiveCourse: SetActiveCourseCreator,
@@ -69,7 +69,7 @@ const CourseDetailedPage = (props: Props) => {
     });
 
     useComponentMount(() => {
-        if (course) {
+        if (course && categories.size === 0) {
             document.title = `${course.title} Details`;
             getGradeCategoriesForCourse(course.id || "");
         }

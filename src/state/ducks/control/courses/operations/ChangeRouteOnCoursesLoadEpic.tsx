@@ -11,7 +11,7 @@ export const ChangeRouteOnCoursesLoadEpic = (
 ) => action$.pipe(
     ofType(CourseDataActionTypes.GET_COURSES_CURRENT_USER_SUCCESS),
     mergeMap((action: GetCoursesCurrentUserSuccess) => {
-        const courseFromRoute = action.courses.find((c: Course) => location.href.includes(c.title));
+        const courseFromRoute = action.courses.find((c: Course) => window.location.href.includes(c.title));
         if (courseFromRoute) {
             return Observable.of(SetActiveCourseCreator(new Course(courseFromRoute)));
         } else {

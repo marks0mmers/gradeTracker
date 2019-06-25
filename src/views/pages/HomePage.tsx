@@ -1,11 +1,11 @@
 import { push } from "connected-react-router";
 import React, { Fragment, useState } from "react";
 import ReactModal from "react-modal";
-import { useActions, useSelector } from "src/state/hooks";
 import styled from "styled-components";
 import { Course } from "../../models/Course";
 import { getCourses } from "../../state/ducks/data/courses";
 import { getCurrentUser } from "../../state/ducks/data/users";
+import { useMapDispatch, useMapState } from "../../state/hooks";
 import { RootState } from "../../state/rootReducer";
 import { useComponentMount } from "../../util/Hooks";
 import CourseOverviewButton from "../components/course/CourseOverviewButton";
@@ -32,12 +32,12 @@ const HomePage = (props: Props) => {
         editingCourse: undefined,
     });
 
-    const {courses, currentUser} = useSelector((rootState: RootState) => ({
+    const {courses, currentUser} = useMapState((rootState: RootState) => ({
         courses: getCourses(rootState),
         currentUser: getCurrentUser(rootState),
     }));
 
-    const {pushRoute} = useActions({pushRoute: push});
+    const {pushRoute} = useMapDispatch({pushRoute: push});
 
     useComponentMount(() => {
         document.title = "Grade Tracker";

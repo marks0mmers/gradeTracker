@@ -13,7 +13,7 @@ export const FetchCategoriesOnGradeChangeEpic = (
     mergeMap(() => {
         const { activeCourse } = state$.value.control.course;
         return Observable.of(
-            GetGradeCategoryForCourseCreator(activeCourse && activeCourse.id || ""),
+            GetGradeCategoryForCourseCreator((activeCourse && activeCourse.id) || ""),
         );
     }),
 );

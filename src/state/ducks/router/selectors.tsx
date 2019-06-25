@@ -1,4 +1,4 @@
-import { CombinedState } from "src/state/store";
+import { RootState } from "../../../state/rootReducer";
 
-export const getPathName = (state: CombinedState) => state.router.location.pathname;
-export const getPreviousRoute = (state: CombinedState) => state.router.location.state;
+export const getPathName = (state: RootState) => state.router.location.pathname;
+export const getPreviousRoute = (state: RootState) => state.router.location.state;

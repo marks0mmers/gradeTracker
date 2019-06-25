@@ -1,6 +1,4 @@
-import { connectRouter, routerMiddleware, RouterState } from "connected-react-router";
-import { createContext, ReactChild } from "react";
-import React from "react";
+import { routerMiddleware, RouterState } from "connected-react-router";
 import { AnyAction, applyMiddleware, createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { createEpicMiddleware } from "redux-observable";
@@ -23,11 +21,8 @@ const composeEnhancers = composeWithDevTools({
     //
 });
 
-const connectRouterCreator = connectRouter(history);
-export const connectedReducer = connectRouterCreator<RootState>(rootReducer);
-
 export const store = createStore<RootState, AnyAction, {}, {router: RouterState}>(
-    connectedReducer,
+    rootReducer(history),
     composeEnhancers(
         applyMiddleware(
             routerMiddleware(history),
@@ -36,19 +31,4 @@ export const store = createStore<RootState, AnyAction, {}, {router: RouterState}
     ),
 );
 
-export type CombinedState = RootState & {router: RouterState};
-
 epicMiddleware.run(rootEpic);
-
-export const ReduxStoreContext = createContext(store);
-
-interface ReduxProviderProps {
-    store: typeof store;
-    children: ReactChild;
-}
-
-export const ReduxProvider = (props: ReduxProviderProps) => (
-    <ReduxStoreContext.Provider value={store}>
-        {props.children}
-    </ReduxStoreContext.Provider>
-);

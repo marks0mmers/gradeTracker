@@ -1,9 +1,9 @@
 import React, { Fragment, MouseEvent} from "react";
-import { useActions } from "src/state/hooks";
 import styled from "styled-components";
 import { Course } from "../../../models/Course";
 import { SetActiveCourseCreator } from "../../../state/ducks/control/courses";
 import { DeleteCourseCreator } from "../../../state/ducks/data/courses";
+import { useMapDispatch } from "../../../state/hooks";
 import { leadingZeros } from "../../../util/General";
 import Button from "../../../views/controls/button/Button";
 import Divider from "../../components/shared/Divider";
@@ -16,7 +16,7 @@ interface Props {
 
 const CourseOverviewButton = (props: Props) => {
 
-    const {handleSelectCourse, handleDeleteCourse} = useActions({
+    const {handleSelectCourse, handleDeleteCourse} = useMapDispatch({
         handleSelectCourse: SetActiveCourseCreator,
         handleDeleteCourse: DeleteCourseCreator,
     });
@@ -32,7 +32,7 @@ const CourseOverviewButton = (props: Props) => {
 
     const handleDelete = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
-        if (confirm("Are you sure you want to delete this course? (This cannot be undone)")) {
+        if (window.confirm("Are you sure you want to delete this course? (This cannot be undone)")) {
             handleDeleteCourse(props.course.id || "");
         }
     };

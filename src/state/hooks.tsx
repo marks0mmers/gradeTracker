@@ -1,36 +1,15 @@
-import { useContext, useEffect, useRef } from "react";
+import { useMemo } from "react";
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
-import { useForceUpdate } from "src/util/Hooks";
-import { CombinedState, ReduxStoreContext } from "./store";
+import { RootState } from "./rootReducer";
 
-export const useReduxDispatch = () => {
-    const store = useContext(ReduxStoreContext);
-    return store.dispatch;
+export const useMapDispatch = <T extends {}>(mapDispatch: T, deps: unknown[] = []): T => {
+    const dispatch = useDispatch();
+    return useMemo(
+        () => bindActionCreators(mapDispatch, dispatch),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [dispatch, mapDispatch, ...deps],
+    );
 };
 
-export const useActions = <T extends {}>(mapDispatch: T): T => {
-    const dispatch = useReduxDispatch();
-    return bindActionCreators(mapDispatch, dispatch);
-};
-
-export const useReduxState = () => {
-    const forceUpdate = useForceUpdate();
-    const store = useContext(ReduxStoreContext);
-    const state = useRef(store.getState());
-    useEffect(() => {
-        const callback = () => {
-            state.current = store.getState();
-            forceUpdate({});
-        };
-        const unsubscribe = store.subscribe(callback);
-        return unsubscribe;
-    }, []);
-    return state.current;
-};
-
-export const useSelector = <T extends {}>(
-    mapState: (state: CombinedState) => T,
-): T => {
-    const state = useReduxState();
-    return mapState(state);
-};
+export const useMapState: TypedUseSelectorHook<RootState> = useSelector;

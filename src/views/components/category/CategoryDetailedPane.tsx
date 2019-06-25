@@ -1,10 +1,10 @@
 import React, { Fragment, useState } from "react";
 import ReactModal from "react-modal";
-import { useActions } from "src/state/hooks";
 import styled from "styled-components";
 import { Grade } from "../../../models/Grade";
 import { GradeCategory } from "../../../models/GradeCategory";
 import { DeleteGradeCreator } from "../../../state/ducks/data/gradeCategories";
+import { useMapDispatch } from "../../../state/hooks";
 import Button from "../../../views/controls/button/Button";
 import { ListControlElement } from "../../controls/list-control/models/ListControlElement";
 import ListControl from "../../controls/list-control/package/ListControl";
@@ -29,7 +29,7 @@ const CategoryDetailedPane = (props: Props) => {
         selectedGrade: undefined,
     });
 
-    const {deleteGrade} = useActions({deleteGrade: DeleteGradeCreator});
+    const {deleteGrade} = useMapDispatch({deleteGrade: DeleteGradeCreator});
 
     const getListElements = () => {
         const { selectedCategory } = props;

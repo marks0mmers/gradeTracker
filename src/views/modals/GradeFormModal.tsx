@@ -1,11 +1,11 @@
 import { Formik, FormikProps } from "formik";
 import React from "react";
-import { useActions } from "src/state/hooks";
 import styled from "styled-components";
 import * as Yup from "yup";
 import { Grade } from "../../models/Grade";
 import { GradeCategory } from "../../models/GradeCategory";
 import { CreateGradeCreator, EditGradeCreator } from "../../state/ducks/data/gradeCategories";
+import { useMapDispatch } from "../../state/hooks";
 import Input from "../components/styled-inputs/Input";
 import Button from "../controls/button/Button";
 
@@ -25,7 +25,7 @@ interface GradeForm {
 
 const GradeFormModal = (componentProps: Props) => {
 
-    const {handleCreateGrade, handleEditGrade} = useActions({
+    const {handleCreateGrade, handleEditGrade} = useMapDispatch({
         handleCreateGrade: CreateGradeCreator,
         handleEditGrade: EditGradeCreator,
     });
@@ -70,7 +70,7 @@ const GradeFormModal = (componentProps: Props) => {
     );
     return (
         <Formik
-            initialValues={!componentProps.isCreating && componentProps.initialValues || {
+            initialValues={(!componentProps.isCreating && componentProps.initialValues) || {
                 name: "",
                 grade: 0,
             }}

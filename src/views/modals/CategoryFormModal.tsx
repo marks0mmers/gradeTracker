@@ -1,11 +1,11 @@
 import { Formik, FormikProps } from "formik";
 import React from "react";
-import { useActions } from "src/state/hooks";
 import styled from "styled-components";
 import * as Yup from "yup";
 import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
 import { CreateGradeCategoryCreator, EditGradeCategoryCreator } from "../../state/ducks/data/gradeCategories";
+import { useMapDispatch } from "../../state/hooks";
 import Input from "../components/styled-inputs/Input";
 import Button from "../controls/button/Button";
 
@@ -26,7 +26,7 @@ interface CategoryForm {
 
 const CategoryFormModal = (props: Props) => {
 
-    const {handleCreateCategory, handleUpdateCategory} = useActions({
+    const {handleCreateCategory, handleUpdateCategory} = useMapDispatch({
         handleCreateCategory: CreateGradeCategoryCreator,
         handleUpdateCategory: EditGradeCategoryCreator,
     });
@@ -76,7 +76,7 @@ const CategoryFormModal = (props: Props) => {
 
     return (
         <Formik
-            initialValues={!props.isCreating && props.initialValues || {
+            initialValues={(!props.isCreating && props.initialValues) || {
                 title: "",
                 percentage: 1,
                 numberOfGrades: 1,

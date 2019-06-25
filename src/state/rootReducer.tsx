@@ -1,3 +1,5 @@
+import { connectRouter, RouterState } from "connected-react-router";
+import { History } from "history";
 import { combineReducers } from "redux";
 import { CourseControlReducer, CourseControlState } from "./ducks/control/courses";
 import {  CourseDataReducer, CourseDataState } from "./ducks/data/courses";
@@ -17,9 +19,10 @@ interface DataState {
 export interface RootState {
     control: ControlState;
     data: DataState;
+    router: RouterState;
 }
 
-export const rootReducer = combineReducers({
+export const rootReducer = (history: History) => combineReducers({
     control: combineReducers<ControlState>({
         course: CourseControlReducer,
     }),
@@ -28,4 +31,5 @@ export const rootReducer = combineReducers({
         gradeCategory: GradeCategoryDataReducer,
         user: UserDataReducer,
     }),
+    router: connectRouter(history),
 });
