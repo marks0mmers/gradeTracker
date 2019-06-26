@@ -8,45 +8,44 @@ import NavButton from "./NavButton";
 enum Routes {
     COURSE_OVERVIEW = "/",
     ANALYSIS = "/analysis",
+    VIEW_REQUESTS = "/viewRequests",
+    CALENDAR = "/calendar",
     ADMIN = "/admin",
 }
 
 interface Props {
-    className?: string;
     currentUser?: User;
 
     pushRoute: typeof push;
 }
 
-interface State {
-    activeButton: Routes;
-}
-
 const NavBar = (props: Props) => {
 
-    const [state, setState] = useState<State>({
-        activeButton: Routes.COURSE_OVERVIEW,
-    });
+    const [activeButton, setActiveButton] = useState<Routes>(Routes.COURSE_OVERVIEW);
 
     const handleNavClick = (id: string) => {
-        setState({
-            activeButton: id as Routes,
-        });
+        setActiveButton(id as Routes);
         props.pushRoute(id);
     };
 
     return (
-        <div id="nav-bar" className={props.className}>
+        <NavBarContainer id="nav-bar" >
             <NavButton
                 id={Routes.COURSE_OVERVIEW}
                 iconName="view_agenda"
-                activeButton={state.activeButton}
+                activeButton={activeButton}
                 onClick={handleNavClick}
             />
             <NavButton
                 id={Routes.ANALYSIS}
                 iconName="equalizer"
-                activeButton={state.activeButton}
+                activeButton={activeButton}
+                onClick={handleNavClick}
+            />
+            <NavButton
+                id={Routes.VIEW_REQUESTS}
+                iconName="group"
+                activeButton={activeButton}
                 onClick={handleNavClick}
             />
             {
@@ -54,20 +53,22 @@ const NavBar = (props: Props) => {
                 <NavButton
                     id={Routes.ADMIN}
                     iconName="account_box"
-                    activeButton={state.activeButton}
+                    activeButton={activeButton}
                     onClick={handleNavClick}
                 />
             }
-        </div>
+        </NavBarContainer>
     );
 };
 
-export default styled(NavBar)`
+const NavBarContainer = styled.div`
     background: #5f6366;
     grid-area: navbar;
     display: grid;
-    grid-template-rows: 60px 60px 60px;
+    grid-template-rows: 60px 60px 60px 60px;
     @media screen and (max-width: 600px) {
-        grid-template-columns: 60px 60px 60px;
+        grid-template-columns: 60px 60px 60px 60px;
     }
 `;
+
+export default NavBar;

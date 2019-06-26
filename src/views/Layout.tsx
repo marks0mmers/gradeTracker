@@ -16,6 +16,7 @@ import AnalysisPage from "./pages/AnalysisPage";
 import CourseDetailedPage from "./pages/CourseDetailedPage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
+import ViewRequestsPage from "./pages/ViewRequestsPage";
 
 interface Props {
     className?: string;
@@ -52,7 +53,6 @@ const Layout = (props: Props) => {
             { currentUser &&
                 <Fragment>
                     <Header
-                        icon="dashboard"
                         title="Gradebook"
                         currentUser={currentUser}
                         logout={logout}
@@ -76,6 +76,10 @@ const Layout = (props: Props) => {
                 <Route
                     component={CourseDetailedPage}
                     path={`/${detailedCourse && detailedCourse.title}`}
+                />
+                <Route
+                    component={ViewRequestsPage}
+                    path="/viewRequests"
                 />
                 <Route
                     component={AnalysisPage}

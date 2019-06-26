@@ -81,5 +81,6 @@ export default styled(ListControl)`
     max-height: 93%;
     .body {
         overflow-y: scroll;
+        flex: 1;
     }
 `;
