@@ -11,7 +11,7 @@ export const PushRouteOnActiveCourseEpic = (
     return action$.pipe(
         ofType(types.SET_ACTIVE_COURSE),
         mergeMap((action: SetActiveCourse) => {
-            return Observable.of(push(`/${action.course && action.course.title}`));
+            return Observable.of(push(`/course/${action.course && action.course.title}`));
         }),
     );
 };

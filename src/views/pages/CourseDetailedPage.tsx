@@ -1,6 +1,7 @@
 import { push } from "connected-react-router";
 import React, { Fragment, MouseEvent, useState } from "react";
 import ReactModal from "react-modal";
+import { match } from "react-router";
 import styled from "styled-components";
 import { categoryColumns } from "../../constants/columns/CategoryColumns";
 import { GradeCategory } from "../../models/GradeCategory";
@@ -28,6 +29,7 @@ import ModalHeader from "../modals/common/ModalHeader";
 
 interface Props {
     className?: string;
+    match: match<{courseTitle: string}>;
 }
 
 interface State {

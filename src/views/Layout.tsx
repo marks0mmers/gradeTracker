@@ -3,7 +3,6 @@ import React, { Fragment } from "react";
 import { Route, Switch } from "react-router";
 import { ToastContainer } from "react-toastify";
 import styled from "styled-components";
-import { getActiveCourse } from "../state/ducks/control/courses";
 import { getCurrentUser, GetCurrentUserCreator, LogoutCreator } from "../state/ducks/data/users";
 import { getPathName } from "../state/ducks/router/selectors";
 import { useMapDispatch, useMapState } from "../state/hooks";
@@ -24,8 +23,7 @@ interface Props {
 
 const Layout = (props: Props) => {
 
-    const {detailedCourse, routerLocation, currentUser} = useMapState((state) => ({
-        detailedCourse: getActiveCourse(state),
+    const {routerLocation, currentUser} = useMapState((state) => ({
         routerLocation: getPathName(state),
         currentUser: getCurrentUser(state),
     }));
@@ -75,7 +73,7 @@ const Layout = (props: Props) => {
                 />
                 <Route
                     component={CourseDetailedPage}
-                    path={`/${detailedCourse && detailedCourse.title}`}
+                    path={"/course/:courseTitle"}
                 />
                 <Route
                     component={ViewRequestsPage}

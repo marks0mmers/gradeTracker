@@ -23,11 +23,17 @@ export const getAnalysisGridData = createSelector(
         coursesForUser: Map<string, Course>,
         gradeCategoriesForUser: Map<string, GradeCategory>,
     ) => {
-        if (coursesForUser.size > 0 && gradeCategoriesForUser.size > 0) {
-            return generateData(coursesForUser, gradeCategoriesForUser);
-        } else {
-            return generateData(courses, gradeCategories);
-        }
+        return generateData(courses, gradeCategories);
+    },
+);
+
+export const getAnalysisGridDataForUser = createSelector(
+    [getCoursesForUser, getGradeCategoriesForUser],
+    (
+        coursesForUser: Map<string, Course>,
+        gradeCategoriesForUser: Map<string, GradeCategory>,
+    ) => {
+        return generateData(coursesForUser, gradeCategoriesForUser);
     },
 );
 

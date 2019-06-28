@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { analysisColumns } from "../../constants/columns/AnalysisColumns";
 import { AnalysisCourse } from "../../models/AnalysisCourse";
 import { ViewAnalysisForUserCreator } from "../../state/ducks/control/analysis/actions";
-import { getAnalysisGridData } from "../../state/ducks/control/analysis/selectors";
+import { getAnalysisGridData, getAnalysisGridDataForUser } from "../../state/ducks/control/analysis/selectors";
 import { SetCoursesForUserCreator } from "../../state/ducks/data/courses/actions/SetCoursesForUser";
 import { GetGradeCategoriesForCurrentUserCreator } from "../../state/ducks/data/gradeCategories";
 import {
@@ -33,7 +33,7 @@ interface Props {
 const AnalysisPage = (props: Props) => {
 
     const {elements} = useMapState((state: RootState) => ({
-        elements: getAnalysisGridData(state),
+        elements: props.match.params.userId ? getAnalysisGridDataForUser(state) : getAnalysisGridData(state),
     }));
 
     const {
