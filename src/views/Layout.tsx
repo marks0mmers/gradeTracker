@@ -83,6 +83,10 @@ const Layout = (props: Props) => {
                 />
                 <Route
                     component={AnalysisPage}
+                    path="/analysis/:userId"
+                />
+                <Route
+                    component={AnalysisPage}
                     path="/analysis"
                 />
                 {protectRoute("admin", currentUser)(

@@ -1,13 +1,20 @@
+import { Map } from "immutable";
 import React from "react";
+import { match } from "react-router";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import styled from "styled-components";
 import { analysisColumns } from "../../constants/columns/AnalysisColumns";
 import { AnalysisCourse } from "../../models/AnalysisCourse";
+import { ViewAnalysisForUserCreator } from "../../state/ducks/control/analysis/actions";
 import { getAnalysisGridData } from "../../state/ducks/control/analysis/selectors";
+import { SetCoursesForUserCreator } from "../../state/ducks/data/courses/actions/SetCoursesForUser";
 import { GetGradeCategoriesForCurrentUserCreator } from "../../state/ducks/data/gradeCategories";
+import {
+    SetGradeCategoriesForUserCreator,
+} from "../../state/ducks/data/gradeCategories/actions/SetGradeCategoriesForUser";
 import { useMapDispatch, useMapState } from "../../state/hooks";
 import { RootState } from "../../state/rootReducer";
-import { useComponentMount } from "../../util/Hooks";
+import { useComponentMount, useComponentUpdate } from "../../util/Hooks";
 import Divider from "../components/shared/Divider";
 import DataGrid from "../controls/data-grid";
 
@@ -20,6 +27,7 @@ interface GraphData {
 
 interface Props {
     className?: string;
+    match: match<{userId?: string}>;
 }
 
 const AnalysisPage = (props: Props) => {
@@ -28,14 +36,41 @@ const AnalysisPage = (props: Props) => {
         elements: getAnalysisGridData(state),
     }));
 
-    const {getAllCategories} = useMapDispatch({
+    const {
+        getAllCategories,
+        getDataForUser,
+        setCoursesForUser,
+        viewAnalysis,
+        setGradeCategoriesForUser,
+    } = useMapDispatch({
         getAllCategories: GetGradeCategoriesForCurrentUserCreator,
+        getDataForUser: ViewAnalysisForUserCreator,
+        setCoursesForUser: SetCoursesForUserCreator,
+        viewAnalysis: ViewAnalysisForUserCreator,
+        setGradeCategoriesForUser: SetGradeCategoriesForUserCreator,
     });
 
     useComponentMount(() => {
         document.title = "Grades Analysis";
-        getAllCategories();
+        if (props.match.params.userId) {
+            viewAnalysis(props.match.params.userId);
+            getDataForUser(props.match.params.userId);
+        } else {
+            getAllCategories();
+        }
+        return () => {
+            setCoursesForUser(Map());
+            setGradeCategoriesForUser(Map());
+        };
     });
+
+    useComponentUpdate(() => {
+        if (!props.match.params.userId) {
+            setCoursesForUser(Map());
+            setGradeCategoriesForUser(Map());
+            getAllCategories();
+        }
+    }, [props.match.params.userId]);
 
     const getGraphData = () => {
         const analysisCourses = elements && elements.map((value) => value && value.payload).toList();

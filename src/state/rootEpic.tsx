@@ -1,4 +1,5 @@
 import { combineEpics } from "redux-observable";
+import { GetAnalysisInformationForUserEpic } from "./ducks/control/analysis/operations";
 import { CourseControlEpics } from "./ducks/control/courses";
 import { CourseDataEpics } from "./ducks/data/courses/operations";
 import { GradeCategoryDataEpics } from "./ducks/data/gradeCategories";
@@ -11,4 +12,5 @@ export const rootEpic = combineEpics(
     CourseDataEpics,
     GradeCategoryDataEpics,
     ViewRequestEpics,
+    GetAnalysisInformationForUserEpic,
 );

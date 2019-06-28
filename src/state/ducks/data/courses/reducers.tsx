@@ -7,10 +7,12 @@ import {
 
 interface ICourseDataState {
     courses: Map<string, Course>;
+    coursesForUser: Map<string, Course>;
 }
 
 export const CourseDataState = Record<ICourseDataState>({
     courses: Map(),
+    coursesForUser: Map(),
 });
 
 export type CourseDataState = RecordOf<ICourseDataState>;
@@ -39,6 +41,8 @@ export const CourseDataReducer = (
             return action.course.id
                 ? state.removeIn(["courses", action.course.id])
                 : state;
+        case (types.SET_COURSES_FOR_USER):
+            return state.set("coursesForUser", action.courses);
         default:
             return state;
     }

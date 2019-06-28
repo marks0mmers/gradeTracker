@@ -1,3 +1,4 @@
+import { push } from "connected-react-router";
 import { List } from "immutable";
 import React, { useState } from "react";
 import styled from "styled-components";
@@ -27,10 +28,11 @@ const ViewRequestsPage = () => {
         pendingViewRequests: getSentViewRequests(state),
     }));
 
-    const { fetchUsers, fetchSentViewRequests, sendViewRequest } = useMapDispatch({
+    const { fetchUsers, fetchSentViewRequests, sendViewRequest, pushRoute } = useMapDispatch({
         fetchUsers: GetUsersCreator,
         fetchSentViewRequests: GetSentViewRequestsCreator,
         sendViewRequest: SendViewRequestCreator,
+        pushRoute: push,
     });
 
     useComponentMount(() => {
@@ -92,6 +94,12 @@ const ViewRequestsPage = () => {
         }
     };
 
+    const onViewUserClick = () => {
+        if (selectedViewRequest) {
+            pushRoute(`/analysis/${selectedViewRequest.receiver}`);
+        }
+    };
+
     return (
         <Container>
             <ListControl
@@ -125,6 +133,7 @@ const ViewRequestsPage = () => {
                         tooltip="View Courses for User"
                         height={40}
                         width={60}
+                        onClick={onViewUserClick}
                     />
                 )}
             />

@@ -10,6 +10,7 @@ import {
     GetGradeCategoriesForCurrentUserSuccess,
 } from "./GetGradeCategoriesForCurrentUser";
 import { GradeCategoryFailureAction } from "./GradeCategoryFailureAction";
+import { SetGradeCategoriesForUser } from "./SetGradeCategoriesForUser";
 
 export * from "./types";
 export * from "./CreateGradeCategory";
@@ -21,6 +22,7 @@ export * from "./CreateGrade";
 export * from "./EditGrade";
 export * from "./DeleteGrade";
 export * from "./GetGradeCategoriesForCurrentUser";
+export * from "./SetGradeCategoriesForUser";
 
 export type GradeCategoryDataActions =
     GradeCategoryFailureAction |
@@ -36,6 +38,7 @@ export type GradeCategoryDataActions =
     EditGradeSuccess |
     DeleteGrade |
     DeleteGradeSuccess |
+    SetGradeCategoriesForUser |
     GetGradeCategoriesForCurrentUser |
     GetGradeCategoriesForCurrentUserSuccess |
     GetGradeCategoryForCourse |
