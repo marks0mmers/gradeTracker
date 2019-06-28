@@ -71,7 +71,7 @@ const CourseDetailedPage = (props: Props) => {
     });
 
     useComponentMount(() => {
-        if (course && categories.size === 0) {
+        if (course) {
             document.title = `${course.title} Details`;
             getGradeCategoriesForCourse(course.id || "");
         }

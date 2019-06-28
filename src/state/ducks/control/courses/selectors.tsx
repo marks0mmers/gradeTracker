@@ -19,19 +19,21 @@ export const getDetailedCourseElements = createSelector(
             isSelected: gradeCategory.id === selectedGradeCategory,
         }),
         ).toList();
+        let totalPercentage = 0;
         let numberOfGradesTotal = 0;
         let remainingGradesTotal = 0;
         let currentAverageTotal = 0;
         let potentialAverageTotal = 0;
         let guarenteedAverageTotal = 0;
         gradeCategories.forEach((g: GradeCategory) => {
+            totalPercentage += g.percentage;
             numberOfGradesTotal += g.numberOfGrades;
             remainingGradesTotal += g.remainingGrades;
             currentAverageTotal += (g.currentAverage * (g.percentage / 100));
             potentialAverageTotal += (g.potentialAverage * (g.percentage / 100));
             guarenteedAverageTotal += (g.guarenteedAverage * (g.percentage / 100));
         });
-        if (gradeCategories.size > 0) {
+        if (gradeCategories.size > 0 && totalPercentage === 100) {
             categories = categories.push(new DataGridElement({
                 payload: new GradeCategory({
                     id: "",

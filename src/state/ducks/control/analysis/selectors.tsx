@@ -14,14 +14,10 @@ export const getAnalysisGridData = createSelector(
     [
         getCourses,
         getGradeCategories,
-        getCoursesForUser,
-        getGradeCategoriesForUser,
     ],
     (
         courses: Map<string, Course>,
         gradeCategories: Map<string, GradeCategory>,
-        coursesForUser: Map<string, Course>,
-        gradeCategoriesForUser: Map<string, GradeCategory>,
     ) => {
         return generateData(courses, gradeCategories);
     },
