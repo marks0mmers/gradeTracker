@@ -1,4 +1,5 @@
 import { Formik, FormikProps } from "formik";
+import { Map } from "immutable";
 import React from "react";
 import styled from "styled-components";
 import * as Yup from "yup";
@@ -13,6 +14,7 @@ interface Props {
     isCreating: boolean;
     initialValues?: CategoryForm;
     originalCategory?: GradeCategory;
+    categories?: Map<string, GradeCategory>;
     course?: Course;
 
     exitModal: () => void;
@@ -89,7 +91,10 @@ const CategoryFormModal = (props: Props) => {
                     .required("Grade Category is Required"),
                 percentage: Yup.number()
                     .positive("Percentage has to be positive.")
-                    .lessThan(101, "Max percentage is 100")
+                    .lessThan(props.categories ? 101 - props.categories
+                        .map((g) => g.percentage)
+                        .reduce((acc: number, val) => acc += val)
+                    : 101, "Max percentage is 100")
                     .required("Percentage is required"),
                 numberOfGrades: Yup.number()
                     .positive("Number of Grades must be positive")
