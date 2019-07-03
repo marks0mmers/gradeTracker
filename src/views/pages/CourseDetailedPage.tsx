@@ -196,6 +196,7 @@ const CourseDetailedPage = (props: Props) => {
                         isCreating={state.isCreating}
                         course={course}
                         exitModal={handleCancel}
+                        categories={categories}
                         originalCategory={categories && categories.get(selectedCategory || "")}
                         initialValues={selected && {
                             title: selected.title,
