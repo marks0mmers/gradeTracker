@@ -36,6 +36,7 @@ const ElementRow = (props: Props) => {
                             width={column.width || 200}
                             height={props.height}
                             content={content}
+                            type={column.type}
                             onCellClick={handleCellClick}
                         />
                     );

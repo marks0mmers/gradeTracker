@@ -1,19 +1,22 @@
-import React, { MouseEvent, ReactNode } from "react";
+import React, { MouseEvent, useCallback } from "react";
 import styled from "styled-components";
+import ColoredCell from "./ColoredCell";
 
 export interface BodyCellProps {
     className?: string;
     height: number;
     width: number;
-    content?: string | ReactNode;
+    content: string;
+    type?: "normal" | "colored";
     columnIndex?: number;
     onCellClick: (event: MouseEvent<HTMLDivElement>, props: BodyCellProps) => void;
 }
 
 const BodyCell = (props: BodyCellProps) => {
-    const handleCellClick = (event: MouseEvent<HTMLDivElement>) => {
+
+    const handleCellClick = useCallback((event: MouseEvent<HTMLDivElement>) => {
         props.onCellClick(event, props);
-    };
+    }, [props]);
 
     return (
         <div
@@ -21,9 +24,16 @@ const BodyCell = (props: BodyCellProps) => {
             className={props.className}
             onClick={handleCellClick}
         >
-            <StyledSpan>
-                {props.content}
-            </StyledSpan>
+            {
+                props.type === "normal" &&
+                <StyledSpan>
+                    {props.content}
+                </StyledSpan>
+            }
+            {
+                props.type === "colored" && !isNaN(+props.content) &&
+                <ColoredCell grade={+props.content} />
+            }
         </div>
     );
 };

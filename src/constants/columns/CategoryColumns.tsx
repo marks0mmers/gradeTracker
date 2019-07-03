@@ -26,15 +26,18 @@ export const categoryColumns: List<DataGridColumnDefinition> = List([
         field: "currentAverage",
         label: "Current Average",
         width: 200,
+        type: "colored",
     }),
     new DataGridColumnDefinition({
         field: "guarenteedAverage",
         label: "Guarenteed Average",
         width: 200,
+        type: "colored",
     }),
     new DataGridColumnDefinition({
         field: "potentialAverage",
         label: "Potential Average",
         width: 200,
+        type: "colored",
     }),
 ]);
