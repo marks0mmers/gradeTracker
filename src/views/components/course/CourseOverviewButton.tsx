@@ -1,4 +1,4 @@
-import React, { Fragment, MouseEvent} from "react";
+import React, { Fragment, MouseEvent, useCallback} from "react";
 import styled from "styled-components";
 import { Course } from "../../../models/Course";
 import { SetActiveCourseCreator } from "../../../state/ducks/control/courses";
@@ -16,26 +16,28 @@ interface Props {
 
 const CourseOverviewButton = (props: Props) => {
 
+    const { onEditClick } = props;
+
     const {handleSelectCourse, handleDeleteCourse} = useMapDispatch({
         handleSelectCourse: SetActiveCourseCreator,
         handleDeleteCourse: DeleteCourseCreator,
     });
 
-    const handleClick = () => {
+    const handleClick = useCallback(() => {
         handleSelectCourse(props.course);
-    };
+    }, [handleSelectCourse, props.course]);
 
-    const handleEditClick = (event: MouseEvent<HTMLButtonElement>) => {
+    const handleEditClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
-        props.onEditClick(props.course);
-    };
+        onEditClick(props.course);
+    }, [onEditClick, props.course]);
 
-    const handleDelete = (event: MouseEvent<HTMLButtonElement>) => {
+    const handleDelete = useCallback((event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         if (window.confirm("Are you sure you want to delete this course? (This cannot be undone)")) {
             handleDeleteCourse(props.course.id || "");
         }
-    };
+    }, [handleDeleteCourse, props.course]);
 
     return (
         <CourseOverviewButtonContainer

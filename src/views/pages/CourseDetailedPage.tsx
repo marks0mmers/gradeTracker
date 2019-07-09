@@ -1,5 +1,6 @@
 import { push } from "connected-react-router";
-import React, { Fragment, MouseEvent, useState } from "react";
+import { useMemo } from "react";
+import React, { Fragment, MouseEvent, useCallback, useState } from "react";
 import ReactModal from "react-modal";
 import { match } from "react-router";
 import styled from "styled-components";
@@ -94,49 +95,52 @@ const CourseDetailedPage = (props: Props) => {
             grid-template-rows: auto 21px minmax(0, 1fr);
         `;
 
-    const handleBodyCellClick = (event: MouseEvent<HTMLDivElement>, payload: GradeCategory) => {
+    const handleBodyCellClick = useCallback((event: MouseEvent<HTMLDivElement>, payload: GradeCategory) => {
         const category = categories && categories.find((value: GradeCategory) => value.id === payload.id);
         if (category && payload.title !== "Total") {
             selectGradeCategory(category.id);
         }
-    };
+    }, [categories, selectGradeCategory]);
 
-    const handleCreate = () => {
+    const handleCreate = useCallback(() => {
         setState({
             isCreating: true,
             isEditing: false,
         });
-    };
+    }, []);
 
-    const handleEdit = () => {
+    const handleEdit = useCallback(() => {
         if (selectedCategory) {
             setState({
                 isCreating: false,
                 isEditing: true,
             });
         }
-    };
+    }, [selectedCategory]);
 
-    const handleDelete = () => {
+    const handleDelete = useCallback(() => {
         if (selectedCategory) {
             deleteGradeCategory(selectedCategory);
             selectGradeCategory(undefined);
         }
-    };
+    }, [deleteGradeCategory, selectGradeCategory, selectedCategory]);
 
-    const handleCancel = () => {
+    const handleCancel = useCallback(() => {
         setState({
             isCreating: false,
             isEditing: false,
         });
-    };
+    }, []);
 
-    const handleRootClick = () => {
+    const handleRootClick = useCallback(() => {
         setActiveCourse();
         pushRoute("/");
-    };
+    }, [pushRoute, setActiveCourse]);
 
-    const selected = categories && categories.get(selectedCategory || "");
+    const selected = useMemo(
+        () => categories && categories.get(selectedCategory || ""),
+        [categories, selectedCategory],
+    );
 
     return (
         <div id={`${course ? course.title : ""}-detailed`} className={props.className}>

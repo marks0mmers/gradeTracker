@@ -1,6 +1,6 @@
 import { Formik, FormikProps } from "formik";
 import { Map } from "immutable";
-import React from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import * as Yup from "yup";
 import { Course } from "../../models/Course";
@@ -28,12 +28,14 @@ interface CategoryForm {
 
 const CategoryFormModal = (props: Props) => {
 
+    const { exitModal } = props;
+
     const {handleCreateCategory, handleUpdateCategory} = useMapDispatch({
         handleCreateCategory: CreateGradeCategoryCreator,
         handleUpdateCategory: EditGradeCategoryCreator,
     });
 
-    const handleFormSubmit = (values: CategoryForm) => {
+    const handleFormSubmit = useCallback((values: CategoryForm) => {
         if (props.isCreating && props.course) {
             const category = new GradeCategory({
                 courseId: props.course.id,
@@ -42,7 +44,7 @@ const CategoryFormModal = (props: Props) => {
                 numberOfGrades: +values.numberOfGrades,
             });
             handleCreateCategory(category, props.course.id || "");
-            props.exitModal();
+            exitModal();
         } else if (props.originalCategory) {
             const category = new GradeCategory({
                 id: props.originalCategory.id,
@@ -52,11 +54,11 @@ const CategoryFormModal = (props: Props) => {
                 numberOfGrades: +values.numberOfGrades,
             });
             handleUpdateCategory(category);
-            props.exitModal();
+            exitModal();
         }
-    };
+    }, [exitModal, handleCreateCategory, handleUpdateCategory, props.course, props.isCreating, props.originalCategory]);
 
-    const buildFormValue = (
+    const buildFormValue = useCallback((
         label: string,
         value: string | number,
         formProps: FormikProps<CategoryForm>,
@@ -74,7 +76,7 @@ const CategoryFormModal = (props: Props) => {
             />
             {error && <Error>{error}</Error>}
         </LabelInput>
-    );
+    ), []);
 
     return (
         <Formik

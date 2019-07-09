@@ -1,7 +1,6 @@
 import styled, { css } from "styled-components";
 
 interface Props {
-    className?: string;
     isVertical?: boolean;
     top?: number;
     right?: number;

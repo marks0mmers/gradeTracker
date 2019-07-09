@@ -1,5 +1,5 @@
 import { Map } from "immutable";
-import React, { ChangeEvent, Fragment, useState } from "react";
+import React, { ChangeEvent, Fragment, useCallback, useState } from "react";
 import styled from "styled-components";
 import { useComponentUpdate } from "../../../../util/Hooks";
 import Input from "../../../components/styled-inputs/Input";
@@ -42,7 +42,7 @@ const Row = (props: Props) => {
         });
     }, [props.isEditing]);
 
-    const handleClick = () => {
+    const handleClick = useCallback(() => {
         const handler = props.onClick;
         if (handler && props.primaryProperty) {
             handler(
@@ -50,37 +50,35 @@ const Row = (props: Props) => {
                 props.secondaryProperty,
             );
         }
-    };
+    }, [props.onClick, props.primaryProperty, props.secondaryProperty]);
 
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { formValues } = state;
+    const handleInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
         setState({
-            formValues: formValues.set(name, value),
             ...state,
+            formValues: state.formValues.set(name, value),
         });
-    };
+    }, [state]);
 
-    const handleSave = () => {
-        const { formValues, initialKey } = state;
-        const primary = formValues.get("primary", "");
-        const secondary = formValues.get("secondary");
+    const handleSave = useCallback(() => {
+        const primary = state.formValues.get("primary", "");
+        const secondary = state.formValues.get("secondary");
         const handler = props.onSave;
         if (handler) {
-            handler(primary, secondary, initialKey);
+            handler(primary, secondary, state.initialKey);
         }
-    };
+    }, [props.onSave, state.formValues, state.initialKey]);
 
-    const handleClear = () => {
+    const handleClear = useCallback(() => {
         setState({
-            formValues: Map(),
             ...state,
+            formValues: Map(),
         });
         const handler = props.onClear;
         if (handler) {
             handler();
         }
-    };
+    }, [props.onClear, state]);
 
     return (
         <div

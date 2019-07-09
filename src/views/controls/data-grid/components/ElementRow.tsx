@@ -1,5 +1,5 @@
 import { List } from "immutable";
-import React, { MouseEvent } from "react";
+import React, { MouseEvent, useCallback } from "react";
 import styled from "styled-components";
 import { DataGridColumnDefinition } from "../models/DataGridColumnDefinition";
 import { DataGridElement } from "../models/DataGridElement";
@@ -16,12 +16,14 @@ interface Props {
 
 const ElementRow = (props: Props) => {
 
-    const handleCellClick = (event: MouseEvent<HTMLDivElement>, bodyProps: BodyCellProps) => {
-        const handler = props.onBodyCellClick;
+    const { onBodyCellClick } = props;
+
+    const handleCellClick = useCallback((event: MouseEvent<HTMLDivElement>, bodyProps: BodyCellProps) => {
+        const handler = onBodyCellClick;
         if (handler) {
             handler(event, props.element.payload, bodyProps);
         }
-    };
+    }, [onBodyCellClick, props.element]);
 
     return (
         <div id="element-row" className={props.className}>

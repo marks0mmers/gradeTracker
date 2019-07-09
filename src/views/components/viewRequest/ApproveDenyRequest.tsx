@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import { User } from "../../../models/User";
 
@@ -12,13 +12,18 @@ interface Props {
 
 const ApproveDenyRequest = (props: Props) => {
 
-    const handleApprove = () => {
-        props.onApprove(props.requestId);
-    };
+    const {
+        onApprove,
+        onDeny,
+    } = props;
 
-    const handleDeny = () => {
-        props.onDeny(props.requestId);
-    };
+    const handleApprove = useCallback(() => {
+        onApprove(props.requestId);
+    }, [onApprove, props.requestId]);
+
+    const handleDeny = useCallback(() => {
+        onDeny(props.requestId);
+    }, [onDeny, props.requestId]);
 
     return (
         <Container status={props.status}>

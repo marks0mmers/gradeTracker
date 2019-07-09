@@ -1,6 +1,6 @@
 import { push } from "connected-react-router";
 import { Formik, FormikProps } from "formik";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import * as Yup from "yup";
 import { LoginUser, User } from "../../models/User";
@@ -77,7 +77,60 @@ const LoginPage = (componentProps: Props) => {
         }
     });
 
-    const renderLoginForm = (props: FormikProps<UserForm>) => (
+    const toggleCreate = useCallback(() => {
+        setState({
+            creatingNewUser: !state.creatingNewUser,
+            formValues: {
+                firstName: "",
+                lastName: "",
+                email: "",
+                password: "",
+                repeatPassword: "",
+            },
+        });
+    }, [state.creatingNewUser]);
+
+    const buildInputField = useCallback((
+        label: string,
+        value: string,
+        props: FormikProps<UserForm>,
+        name: string,
+        error?: string,
+        type?: string,
+    ) => {
+        return (
+            <LabelInput>
+                {label}
+                <Input
+                    type={type || "text"}
+                    onChange={props.handleChange}
+                    onBlur={props.handleBlur}
+                    value={value}
+                    name={name}
+                />
+                {error && <Error>{error}</Error>}
+            </LabelInput>
+        );
+    }, []);
+
+    const buildButton = useCallback((
+        height: number,
+        text: string,
+        tooltip: string,
+        type?: "button" | "submit" | "reset",
+        onClick?: () => void,
+    ) => (
+        <Button
+            width={200}
+            height={height}
+            text={text}
+            type={type}
+            tooltip={tooltip}
+            onClick={onClick}
+        />
+    ), []);
+
+    const renderLoginForm = useCallback((props: FormikProps<UserForm>) => (
         <Form onSubmit={props.handleSubmit}>
             {buildInputField(
                 "Email",
@@ -99,9 +152,9 @@ const LoginPage = (componentProps: Props) => {
                 {buildButton(30, "Login", "Click to Login", "submit")}
             </Buttons>
         </Form>
-    );
+    ), [buildButton, buildInputField, toggleCreate]);
 
-    const renderNewUserForm = (props: FormikProps<UserForm>) => (
+    const renderNewUserForm = useCallback((props: FormikProps<UserForm>) => (
         <Form onSubmit={props.handleSubmit}>
             {buildInputField(
                 "First Name",
@@ -145,62 +198,9 @@ const LoginPage = (componentProps: Props) => {
                 {buildButton(30, "Create User", "Click to Create New User", "submit")}
             </Buttons>
         </Form>
-    );
+    ), [buildButton, buildInputField, toggleCreate]);
 
-    const buildInputField = <T extends {}>(
-        label: string,
-        value: string,
-        props: FormikProps<T>,
-        name: string,
-        error?: string,
-        type?: string,
-    ) => {
-        return (
-            <LabelInput>
-                {label}
-                <Input
-                    type={type || "text"}
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={value}
-                    name={name}
-                />
-                {error && <Error>{error}</Error>}
-            </LabelInput>
-        );
-    };
-
-    const buildButton = (
-        height: number,
-        text: string,
-        tooltip: string,
-        type?: "button" | "submit" | "reset",
-        onClick?: () => void,
-    ) => (
-        <Button
-            width={200}
-            height={height}
-            text={text}
-            type={type}
-            tooltip={tooltip}
-            onClick={onClick}
-        />
-    );
-
-    const toggleCreate = () => {
-        setState({
-            creatingNewUser: !state.creatingNewUser,
-            formValues: {
-                firstName: "",
-                lastName: "",
-                email: "",
-                password: "",
-                repeatPassword: "",
-            },
-        });
-    };
-
-    const handleFormSubmit = (values: UserForm) => {
+    const handleFormSubmit = useCallback((values: UserForm) => {
         if (state.creatingNewUser) {
             const newUser = new User({
                 ...values,
@@ -209,7 +209,7 @@ const LoginPage = (componentProps: Props) => {
         } else {
             login(values as LoginUser);
         }
-    };
+    }, [createNewUser, login, state.creatingNewUser]);
 
     return (
         <div id="login-content" className={componentProps.className}>

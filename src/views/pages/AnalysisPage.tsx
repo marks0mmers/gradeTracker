@@ -1,5 +1,5 @@
 import { Map } from "immutable";
-import React from "react";
+import React, { useCallback } from "react";
 import { match } from "react-router";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import styled from "styled-components";
@@ -72,7 +72,7 @@ const AnalysisPage = (props: Props) => {
         }
     }, [props.match.params.userId]);
 
-    const getGraphData = () => {
+    const getGraphData = useCallback(() => {
         const analysisCourses = elements && elements.map((value) => value && value.payload).toList();
         return analysisCourses && analysisCourses.map((value: AnalysisCourse) => {
             return {
@@ -82,7 +82,7 @@ const AnalysisPage = (props: Props) => {
                 name: value.title,
             } as GraphData;
         }).toArray();
-    };
+    }, [elements]);
 
     return (
         <div className={props.className}>

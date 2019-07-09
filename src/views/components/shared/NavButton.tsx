@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import Icon from "./Icon";
 
@@ -13,11 +13,13 @@ interface Props {
 
 const NavButton = (props: Props) => {
 
-    const handleClick = () => {
+    const { onClick } = props;
+
+    const handleClick = useCallback(() => {
         if (props.id) {
-            props.onClick(props.id);
+            onClick(props.id);
         }
-    };
+    }, [onClick, props.id]);
 
     return (
         <div id={props.id} className={props.className} onClick={handleClick}>

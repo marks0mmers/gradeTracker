@@ -14,9 +14,11 @@ export interface BodyCellProps {
 
 const BodyCell = (props: BodyCellProps) => {
 
+    const { onCellClick } = props;
+
     const handleCellClick = useCallback((event: MouseEvent<HTMLDivElement>) => {
-        props.onCellClick(event, props);
-    }, [props]);
+        onCellClick(event, props);
+    }, [onCellClick, props]);
 
     return (
         <div

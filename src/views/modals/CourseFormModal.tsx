@@ -1,5 +1,5 @@
 import { Formik, FormikProps } from "formik";
-import React from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import * as Yup from "yup";
 import { Course } from "../../models/Course";
@@ -27,6 +27,8 @@ interface CourseForm {
 
 const CourseFormModal = (componentProps: Props) => {
 
+    const { exitModal } = componentProps;
+
     const {currentUser} = useMapState((state: RootState) => ({currentUser: getCurrentUser(state)}));
 
     const {handleCreateCourse, handleUpdateCourse} = useMapDispatch({
@@ -34,7 +36,7 @@ const CourseFormModal = (componentProps: Props) => {
         handleUpdateCourse: EditCourseCreator,
     });
 
-    const buildFormValue = (
+    const buildFormValue = useCallback((
         label: string,
         value: string | number,
         props: FormikProps<CourseForm>,
@@ -52,9 +54,9 @@ const CourseFormModal = (componentProps: Props) => {
             />
             {error && <Error>{error}</Error>}
         </LabelInput>
-    );
+    ), []);
 
-    const handleFormSubmit = (values: CourseForm) => {
+    const handleFormSubmit = useCallback((values: CourseForm) => {
         if (currentUser) {
             if (componentProps.isCreating) {
                 const course = new Course({
@@ -62,7 +64,7 @@ const CourseFormModal = (componentProps: Props) => {
                     ...values,
                 });
                 handleCreateCourse(course);
-                componentProps.exitModal();
+                exitModal();
             } else if (componentProps.originalCourse) {
                 const course = new Course({
                     ...componentProps.originalCourse.toObject(),
@@ -72,10 +74,17 @@ const CourseFormModal = (componentProps: Props) => {
                     section: values.section,
                 });
                 handleUpdateCourse(course);
-                componentProps.exitModal();
+                exitModal();
             }
         }
-    };
+    }, [
+        componentProps.isCreating,
+        componentProps.originalCourse,
+        currentUser,
+        exitModal,
+        handleCreateCourse,
+        handleUpdateCourse,
+    ]);
 
     return (
         <Formik

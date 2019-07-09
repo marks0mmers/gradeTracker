@@ -1,5 +1,5 @@
 import { Formik, FormikProps } from "formik";
-import React from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import * as Yup from "yup";
 import { Grade } from "../../models/Grade";
@@ -25,19 +25,21 @@ interface GradeForm {
 
 const GradeFormModal = (componentProps: Props) => {
 
+    const { exitModal } = componentProps;
+
     const {handleCreateGrade, handleEditGrade} = useMapDispatch({
         handleCreateGrade: CreateGradeCreator,
         handleEditGrade: EditGradeCreator,
     });
 
-    const handleFormSubmit = (values: GradeForm) => {
+    const handleFormSubmit = useCallback((values: GradeForm) => {
         if (componentProps.isCreating && componentProps.gradeCategory) {
             const grade = new Grade({
                 gradeCategoryId: componentProps.gradeCategory.id,
                 ...values,
             });
             handleCreateGrade(grade);
-            componentProps.exitModal();
+            exitModal();
         } else if (componentProps.originalGrade) {
             const grade = new Grade({
                 id: componentProps.originalGrade.id,
@@ -45,11 +47,18 @@ const GradeFormModal = (componentProps: Props) => {
                 ...values,
             });
             handleEditGrade(grade);
-            componentProps.exitModal();
+            exitModal();
         }
-    };
+    }, [
+        componentProps.gradeCategory,
+        componentProps.isCreating,
+        componentProps.originalGrade,
+        exitModal,
+        handleCreateGrade,
+        handleEditGrade,
+    ]);
 
-    const buildFormValue = (
+    const buildFormValue = useCallback((
         label: string,
         value: string | number,
         props: FormikProps<GradeForm>,
@@ -67,7 +76,8 @@ const GradeFormModal = (componentProps: Props) => {
             />
             {error && <Error>{error}</Error>}
         </LabelInput>
-    );
+    ), []);
+
     return (
         <Formik
             initialValues={(!componentProps.isCreating && componentProps.initialValues) || {

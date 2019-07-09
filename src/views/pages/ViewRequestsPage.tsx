@@ -1,6 +1,6 @@
 import { push } from "connected-react-router";
 import { List } from "immutable";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { User } from "../../models/User";
 import { ViewRequestStatus } from "../../models/ViewRequest";
@@ -40,14 +40,14 @@ const ViewRequestsPage = () => {
         fetchSentViewRequests();
     });
 
-    const handleRowClick = (primary: string, secondary?: string) => {
+    const handleRowClick = useCallback((primary: string, secondary?: string) => {
         const selected = users.find((user) => user.email === secondary);
         if (selected) {
             setSelectedUser(selected);
         }
-    };
+    }, [users]);
 
-    const handleViewRequestClick = (primary: string, secondary?: string) => {
+    const handleViewRequestClick = useCallback((primary: string, secondary?: string) => {
         const receiverName = primary.split(": ")[1];
         const receiver = users.find((user) => `${user.firstName} ${user.lastName}` === receiverName);
         const request = pendingViewRequests.find((req) =>
@@ -61,9 +61,9 @@ const ViewRequestsPage = () => {
         } else {
             setSelectedViewRequest(undefined);
         }
-    };
+    }, [currentUser, pendingViewRequests, users]);
 
-    const getSendViewRequestsListData = (): List<ListControlElement> => {
+    const getSendViewRequestsListData = useCallback((): List<ListControlElement> => {
         return users
             .filter((user) => currentUser && user._id !== currentUser._id)
             .filter((user) => !pendingViewRequests.some((req) => req.receiver === user._id))
@@ -73,9 +73,9 @@ const ViewRequestsPage = () => {
                 isSelected: user === selectedUser,
             }))
             .toList();
-    };
+    }, [currentUser, pendingViewRequests, selectedUser, users]);
 
-    const getSentRequestsListData = (): List<ListControlElement> => {
+    const getSentRequestsListData = useCallback((): List<ListControlElement> => {
         return pendingViewRequests
             .map((request) => {
                 const receiver = users.find((user) => user._id === request.receiver);
@@ -86,19 +86,19 @@ const ViewRequestsPage = () => {
                 };
             })
             .toList();
-    };
+    }, [pendingViewRequests, selectedViewRequest, users]);
 
-    const onSendClick = () => {
+    const onSendClick = useCallback(() => {
         if (selectedUser) {
             sendViewRequest(selectedUser._id);
         }
-    };
+    }, [selectedUser, sendViewRequest]);
 
-    const onViewUserClick = () => {
+    const onViewUserClick = useCallback(() => {
         if (selectedViewRequest) {
             pushRoute(`/analysis/${selectedViewRequest.receiver}`);
         }
-    };
+    }, [pushRoute, selectedViewRequest]);
 
     return (
         <Container>

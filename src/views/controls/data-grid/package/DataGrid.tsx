@@ -1,5 +1,5 @@
 import { List } from "immutable";
-import React, { MouseEvent } from "react";
+import React, { MouseEvent, useCallback } from "react";
 import styled from "styled-components";
 import { BodyCellProps } from "../components/BodyCell";
 import ElementRow from "../components/ElementRow";
@@ -20,7 +20,7 @@ interface Props {
 
 const DataGrid = (props: Props) => {
 
-    const renderHeaderCells = () => props.columnDefinitions && props.columnDefinitions.map((
+    const renderHeaderCells = useCallback(() => props.columnDefinitions && props.columnDefinitions.map((
         column: DataGridColumnDefinition,
         idx: number,
     ) => {
@@ -33,10 +33,10 @@ const DataGrid = (props: Props) => {
                 columnIndex={idx}
             />
         );
-    }).toList();
+    }).toList(), [props.columnDefinitions, props.rowHeight]);
 
-    const renderBodyCells = () => props.elements && props.elements.map((element: DataGridElement, idx: number) => {
-        return (
+    const renderBodyCells = useCallback(
+        () => props.elements && props.elements.map((element: DataGridElement, idx: number) => (
             <ElementRow
                 key={idx}
                 element={element}
@@ -44,8 +44,9 @@ const DataGrid = (props: Props) => {
                 height={props.rowHeight || 30}
                 onBodyCellClick={props.onBodyCellClick}
             />
-        );
-    });
+        )),
+        [props.columnDefinitions, props.elements, props.onBodyCellClick, props.rowHeight],
+    );
 
     return (
         <div className={props.className}>

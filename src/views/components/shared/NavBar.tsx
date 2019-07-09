@@ -1,5 +1,5 @@
 import { push } from "connected-react-router";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { Role } from "../../../models/Role";
 import { User } from "../../../models/User";
@@ -21,12 +21,14 @@ interface Props {
 
 const NavBar = (props: Props) => {
 
+    const { pushRoute } = props;
+
     const [activeButton, setActiveButton] = useState<Routes>(Routes.COURSE_OVERVIEW);
 
-    const handleNavClick = (id: string) => {
+    const handleNavClick = useCallback((id: string) => {
         setActiveButton(id as Routes);
-        props.pushRoute(id);
-    };
+        pushRoute(id);
+    }, [pushRoute]);
 
     return (
         <NavBarContainer id="nav-bar" >

@@ -1,5 +1,5 @@
 import { push } from "connected-react-router";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useCallback, useState } from "react";
 import ReactModal from "react-modal";
 import styled from "styled-components";
 import { Course } from "../../models/Course";
@@ -46,7 +46,29 @@ const HomePage = (props: Props) => {
         }
     });
 
-    const getCourseButtons = () => {
+    const handleEditClick = useCallback((course?: Course) => {
+        setState({
+            isCreating: false,
+            isEditing: true,
+            editingCourse: course,
+        });
+    }, []);
+
+    const handleNewCourseClick = useCallback(() => {
+        setState({
+            isCreating: true,
+            isEditing: false,
+        });
+    }, []);
+
+    const handleCancel = useCallback(() => {
+        setState({
+            isCreating: false,
+            isEditing: false,
+        });
+    }, []);
+
+    const getCourseButtons = useCallback(() => {
         return courses && courses.map((course: Course, key: string) => {
             return (
                 <CourseOverviewButton
@@ -56,29 +78,7 @@ const HomePage = (props: Props) => {
                 />
             );
         }).toList();
-    };
-
-    const handleEditClick = (course?: Course) => {
-        setState({
-            isCreating: false,
-            isEditing: true,
-            editingCourse: course,
-        });
-    };
-
-    const handleNewCourseClick = () => {
-        setState({
-            isCreating: true,
-            isEditing: false,
-        });
-    };
-
-    const handleCancel = () => {
-        setState({
-            isCreating: false,
-            isEditing: false,
-        });
-    };
+    }, [courses, handleEditClick]);
 
     return (
         <div id="home-content" className={props.className}>

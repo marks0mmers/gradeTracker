@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { User } from "../../../models/User";
 import { LogoutCreator } from "../../../state/ducks/data/users";
@@ -50,19 +50,19 @@ const Header = (props: Props) => {
         fetchMyViewRequests();
     });
 
-    const togglePopup = () => {
+    const togglePopup = useCallback(() => {
         setShowPopup(!showPopup);
-    };
+    }, [showPopup]);
 
-    const handleApprove = (requestId: string) => {
+    const handleApprove = useCallback((requestId: string) => {
         approveViewRequest(requestId);
-    };
+    }, [approveViewRequest]);
 
-    const handleDeny = (requestId: string) => {
+    const handleDeny = useCallback((requestId: string) => {
         denyViewRequest(requestId);
-    };
+    }, [denyViewRequest]);
 
-    const getAllRequests = () => {
+    const getAllRequests = useCallback(() => {
         const requests = myViewRequests
             .map((request) => (
                 <ApproveDenyRequest
@@ -75,7 +75,7 @@ const Header = (props: Props) => {
                 />
             )).toList();
         return requests.size > 0 ? requests : (<span>No View Requests</span>);
-    };
+    }, [handleApprove, handleDeny, myViewRequests, users]);
 
     return (
         <Container id="header">

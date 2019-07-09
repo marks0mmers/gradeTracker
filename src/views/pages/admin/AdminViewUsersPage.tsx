@@ -42,15 +42,15 @@ const AdminViewUsersPage = (props: Props) => {
         getUsersAction();
     });
 
-    const handleSelectUser = (event: MouseEvent<HTMLDivElement>, payload: UserGridView) => {
+    const handleSelectUser = useCallback((event: MouseEvent<HTMLDivElement>, payload: UserGridView) => {
         const newSelectedUser = users.find((user: User) => user._id === payload._id);
         setSelectedUser(newSelectedUser);
-    };
+    }, [users]);
 
-    const buildInputField = <T extends {}>(
+    const buildInputField = useCallback((
         label: string,
         value: string,
-        formProps: FormikProps<T>,
+        formProps: FormikProps<User>,
         name: string,
         error?: string,
         type?: string,
@@ -68,7 +68,7 @@ const AdminViewUsersPage = (props: Props) => {
                 {error && <Error>{error}</Error>}
             </LabelInput>
         );
-    };
+    }, []);
 
     const getUserGridData = useCallback(() => {
         return users.map((user: User) => new DataGridElement({
@@ -82,10 +82,9 @@ const AdminViewUsersPage = (props: Props) => {
         })).toList();
     }, [users, selectedUser]);
 
-    const handleEditUser = (editedUser: User) => {
-// tslint:disable-next-line: no-console
-        console.log(editedUser);
-    };
+    const handleEditUser = useCallback((editedUser: User) => {
+        alert(editedUser);
+    }, []);
 
     return (
         <div id="admin-view-users-page" className={props.className}>
