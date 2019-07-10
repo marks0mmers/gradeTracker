@@ -1,7 +1,7 @@
 import { List } from "immutable";
 import { AnalysisCourse } from "../../models/AnalysisCourse";
 import { DataGridColumnDefinition } from "../../views/controls/data-grid/models/DataGridColumnDefinition";
-import { defaultFormatter } from "../../views/controls/data-grid/models/Formatters";
+import { defaultFormatter, gpaFormatter } from "../../views/controls/data-grid/models/Formatters";
 
 export const analysisColumns = List([
     new DataGridColumnDefinition<AnalysisCourse>(
@@ -15,17 +15,17 @@ export const analysisColumns = List([
         150,
     ),
     new DataGridColumnDefinition<AnalysisCourse>(
-        defaultFormatter((c) => c.currentGPA),
+        gpaFormatter((c) => c.currentGPA),
         "Curr. GPA",
         100,
     ),
     new DataGridColumnDefinition<AnalysisCourse>(
-        defaultFormatter((c) => c.guarenteedGPA),
+        gpaFormatter((c) => c.guarenteedGPA),
         "Guar. GPA",
         100,
     ),
     new DataGridColumnDefinition<AnalysisCourse>(
-        defaultFormatter((c) => c.potentialGPA),
+        gpaFormatter((c) => c.potentialGPA),
         "Potn. GPA",
         100,
     ),

@@ -13,6 +13,11 @@ export const defaultFormatter = <T extends {}>(getter: (data: T) => string | num
     return (<StyledSpan>{element}</StyledSpan>);
 };
 
+export const gpaFormatter = <T extends {}>(getter: (data: T) => number ) => (payload: T) => {
+    const element = getter(payload);
+    return (<StyledSpan>{element.toPrecision(3)}</StyledSpan>);
+};
+
 export const gradeFormatter = <T extends {}>(getter: (data: T) => number) => (payload: T) => {
     const element = getter(payload);
     return (<ColoredCell grade={element} />);
