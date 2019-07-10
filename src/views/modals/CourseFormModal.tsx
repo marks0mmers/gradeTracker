@@ -1,6 +1,7 @@
 import { Formik, FormikProps } from "formik";
 import React, { useCallback } from "react";
 import styled from "styled-components";
+import Required from "views/components/shared/Required";
 import * as Yup from "yup";
 import { Course } from "../../models/Course";
 import { CreateNewCourseCreator, EditCourseCreator } from "../../state/ducks/data/courses";
@@ -46,10 +47,12 @@ const CourseFormModal = (componentProps: Props) => {
         value: string | number,
         props: FormikProps<CourseForm>,
         name: string,
+        required: boolean,
         error?: string,
     ) => (
         <LabelInput>
             {label}
+            {required && <Required />}
             <Input
                 type="text"
                 onChange={props.handleChange}
@@ -120,6 +123,7 @@ const CourseFormModal = (componentProps: Props) => {
                         props.values.title,
                         props,
                         "title",
+                        true,
                         props.errors.title,
                     )}
                     {buildFormValue(
@@ -127,6 +131,7 @@ const CourseFormModal = (componentProps: Props) => {
                         props.values.description,
                         props,
                         "description",
+                        true,
                         props.errors.description,
                     )}
                     {buildFormValue(
@@ -134,6 +139,7 @@ const CourseFormModal = (componentProps: Props) => {
                         props.values.section,
                         props,
                         "section",
+                        true,
                         props.errors.section,
                     )}
                     {buildFormValue(
@@ -141,6 +147,7 @@ const CourseFormModal = (componentProps: Props) => {
                         props.values.creditHours,
                         props,
                         "creditHours",
+                        true,
                         props.errors.creditHours,
                     )}
                     <Button

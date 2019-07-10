@@ -1,6 +1,7 @@
 import { Formik, FormikProps } from "formik";
 import React, { useCallback } from "react";
 import styled from "styled-components";
+import Required from "views/components/shared/Required";
 import * as Yup from "yup";
 import { Grade } from "../../models/Grade";
 import { GradeCategory } from "../../models/GradeCategory";
@@ -70,10 +71,12 @@ const GradeFormModal = (componentProps: Props) => {
         value: string | number,
         props: FormikProps<GradeForm>,
         name: string,
+        required: boolean,
         error?: string,
     ) => (
         <LabelInput>
             {label}
+            {required && <Required />}
             <Input
                 type="text"
                 onChange={props.handleChange}
@@ -108,6 +111,7 @@ const GradeFormModal = (componentProps: Props) => {
                         props.values.name,
                         props,
                         "name",
+                        true,
                         props.errors.name,
                     )}
                     {buildFormValue(
@@ -115,6 +119,7 @@ const GradeFormModal = (componentProps: Props) => {
                         props.values.grade,
                         props,
                         "grade",
+                        true,
                         props.errors.grade,
                     )}
                     <Button

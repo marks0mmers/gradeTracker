@@ -2,6 +2,7 @@ import { push } from "connected-react-router";
 import { Formik, FormikProps } from "formik";
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
+import Required from "views/components/shared/Required";
 import * as Yup from "yup";
 import { LoginUser, User } from "../../models/User";
 import { CreateNewUserCreator, getCurrentUser, LoginCreator } from "../../state/ducks/data/users";
@@ -119,12 +120,14 @@ const LoginPage = () => {
         value: string,
         props: FormikProps<UserForm>,
         name: string,
+        required,
         error?: string,
         type?: string,
     ) => {
         return (
             <LabelInput>
                 {label}
+                {required && <Required />}
                 <Input
                     type={type || "text"}
                     onChange={props.handleChange}
@@ -161,6 +164,7 @@ const LoginPage = () => {
                 props.values.email,
                 props,
                 "email",
+                true,
                 props.errors.email,
             )}
             {buildInputField(
@@ -168,6 +172,7 @@ const LoginPage = () => {
                 props.values.password,
                 props,
                 "password",
+                true,
                 props.errors.password,
                 "password",
             )}
@@ -185,6 +190,7 @@ const LoginPage = () => {
                 props.values.firstName,
                 props,
                 "firstName",
+                true,
                 props.errors.firstName,
             )}
             {buildInputField(
@@ -192,6 +198,7 @@ const LoginPage = () => {
                 props.values.lastName,
                 props,
                 "lastName",
+                true,
                 props.errors.lastName,
             )}
             {buildInputField(
@@ -199,6 +206,7 @@ const LoginPage = () => {
                 props.values.email,
                 props,
                 "email",
+                true,
                 props.errors.email,
             )}
             {buildInputField(
@@ -206,6 +214,7 @@ const LoginPage = () => {
                 props.values.password,
                 props,
                 "password",
+                true,
                 props.errors.password,
                 "password",
             )}
@@ -214,6 +223,7 @@ const LoginPage = () => {
                 props.values.repeatPassword,
                 props,
                 "repeatPassword",
+                true,
                 props.errors.repeatPassword,
                 "password",
             )}

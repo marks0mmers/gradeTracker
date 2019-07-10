@@ -2,6 +2,7 @@ import { Formik, FormikProps } from "formik";
 import { Map } from "immutable";
 import React, { useCallback } from "react";
 import styled from "styled-components";
+import Required from "views/components/shared/Required";
 import * as Yup from "yup";
 import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
@@ -70,10 +71,12 @@ const CategoryFormModal = (props: Props) => {
         value: string | number,
         formProps: FormikProps<CategoryForm>,
         name: string,
+        required: boolean,
         error?: string,
     ) => (
         <LabelInput>
             {label}
+            {required && <Required />}
             <Input
                 type="text"
                 onChange={formProps.handleChange}
@@ -119,6 +122,7 @@ const CategoryFormModal = (props: Props) => {
                         formProps.values.title,
                         formProps,
                         "title",
+                        true,
                         formProps.errors.title,
                     )}
                     {buildFormValue(
@@ -126,6 +130,7 @@ const CategoryFormModal = (props: Props) => {
                         formProps.values.percentage,
                         formProps,
                         "percentage",
+                        true,
                         formProps.errors.percentage,
                     )}
                     {buildFormValue(
@@ -133,6 +138,7 @@ const CategoryFormModal = (props: Props) => {
                         formProps.values.numberOfGrades,
                         formProps,
                         "numberOfGrades",
+                        true,
                         formProps.errors.numberOfGrades,
                     )}
                     <Button
