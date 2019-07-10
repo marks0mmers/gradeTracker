@@ -13,11 +13,10 @@ interface Props<T> {
     columnDefinitions?: List<DataGridColumnDefinition<T>>;
     elements?: List<DataGridElement<T>>;
     gridArea?: string;
-// tslint:disable-next-line: no-any
     onBodyCellClick?: (event: MouseEvent<HTMLDivElement>, payload: T, props: BodyCellProps) => void;
 }
 
-const DataGrid = <T extends {}>(props: Props<T>) => {
+function DataGrid<T>(props: Props<T>) {
 
     //#region Display Methods
     const renderHeaderCells = useCallback(() => props.columnDefinitions && props.columnDefinitions.map((
@@ -58,7 +57,7 @@ const DataGrid = <T extends {}>(props: Props<T>) => {
         </Container>
     );
     //#endregion
-};
+}
 
 //#region Styles
 const HeaderCells = styled.div`

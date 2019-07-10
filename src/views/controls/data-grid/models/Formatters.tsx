@@ -8,17 +8,23 @@ const StyledSpan = styled.span`
     line-height: 30px;
 `;
 
-export const defaultFormatter = <T extends {}>(getter: (data: T) => string | number | undefined) => (payload: T) => {
-    const element = getter(payload);
-    return (<StyledSpan>{element}</StyledSpan>);
-};
+export function defaultFormatter<T>(getter: (data: T) => string | number | undefined) {
+    return (payload: T) => {
+        const element = getter(payload);
+        return (<StyledSpan>{element}</StyledSpan>);
+    };
+}
 
-export const gpaFormatter = <T extends {}>(getter: (data: T) => number ) => (payload: T) => {
-    const element = getter(payload);
-    return (<StyledSpan>{element.toPrecision(3)}</StyledSpan>);
-};
+export function gpaFormatter<T>(getter: (data: T) => number ) {
+    return (payload: T) => {
+        const element = getter(payload);
+        return (<StyledSpan>{element.toPrecision(3)}</StyledSpan>);
+    };
+}
 
-export const gradeFormatter = <T extends {}>(getter: (data: T) => number) => (payload: T) => {
-    const element = getter(payload);
-    return (<ColoredCell grade={element} />);
-};
+export function gradeFormatter<T>(getter: (data: T) => number) {
+    return (payload: T) => {
+        const element = getter(payload);
+        return (<ColoredCell grade={element} />);
+    };
+}

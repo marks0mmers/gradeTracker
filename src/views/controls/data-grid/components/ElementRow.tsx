@@ -12,10 +12,10 @@ interface Props<T> {
     onBodyCellClick?: (event: MouseEvent<HTMLDivElement>, payload: T, props: BodyCellProps) => void;
 }
 
-const ElementRow = <T extends {}>(props: Props<T>) => {
+function ElementRow<T>(props: Props<T>) {
 
     //#region Prop Destructure
-    const { onBodyCellClick } = props;
+    const {onBodyCellClick} = props;
     //#endregion
 
     //#region Private Methods
@@ -49,10 +49,10 @@ const ElementRow = <T extends {}>(props: Props<T>) => {
         </Container>
     );
     //#endregion
-};
+}
 
 //#region Styles
-const Container = styled.div<{element: {isSelected?: boolean, isBottom?: boolean}}>`
+const Container = styled.div<{element: {isSelected ?: boolean,  isBottom?: boolean}}>`
     display: flex;
     flex-direction: row;
     background: ${(props) => props.element.isSelected ? "#79c8ec" : "#eeeeee"};
