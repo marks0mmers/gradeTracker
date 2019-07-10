@@ -28,13 +28,18 @@ interface CategoryForm {
 
 const CategoryFormModal = (props: Props) => {
 
+    //#region Prop Destructure
     const { exitModal } = props;
+    //#endregion
 
+    //#region Redux State
     const {handleCreateCategory, handleUpdateCategory} = useMapDispatch({
         handleCreateCategory: CreateGradeCategoryCreator,
         handleUpdateCategory: EditGradeCategoryCreator,
     });
+    //#endregion
 
+    //#region Private Methods
     const handleFormSubmit = useCallback((values: CategoryForm) => {
         if (props.isCreating && props.course) {
             const category = new GradeCategory({
@@ -57,7 +62,9 @@ const CategoryFormModal = (props: Props) => {
             exitModal();
         }
     }, [exitModal, handleCreateCategory, handleUpdateCategory, props.course, props.isCreating, props.originalCategory]);
+    //#endregion
 
+    //#region Display Methods
     const buildFormValue = useCallback((
         label: string,
         value: string | number,
@@ -77,7 +84,9 @@ const CategoryFormModal = (props: Props) => {
             {error && <Error>{error}</Error>}
         </LabelInput>
     ), []);
+    //#endregion
 
+    //#region Render Method
     return (
         <Formik
             initialValues={(!props.isCreating && props.initialValues) || {
@@ -135,8 +144,10 @@ const CategoryFormModal = (props: Props) => {
             )}
         </Formik>
     );
+    //#endregion
 };
 
+//#region Styles
 const LabelInput = styled.div`
     margin-bottom: 10px;
     font-weight: bold;
@@ -145,5 +156,6 @@ const LabelInput = styled.div`
 const Error = styled.div`
     color: red;
 `;
+//#endregion
 
 export default CategoryFormModal;

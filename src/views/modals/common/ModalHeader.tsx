@@ -4,14 +4,13 @@ import Divider from "../../components/shared/Divider";
 import Button from "../../controls/button/Button";
 
 interface Props {
-    className?: string;
     title: string;
     exitModal: () => void;
 }
 
 const ModalHeader = (props: Props) => (
-    <div className={props.className}>
-        <div className="header">
+    <div id="container">
+        <Header id="header">
             <h2>{props.title}</h2>
             <Button
                 icon="clear"
@@ -19,7 +18,7 @@ const ModalHeader = (props: Props) => (
                 height={30}
                 onClick={props.exitModal}
             />
-        </div>
+        </Header>
         <Divider
             top={10}
             bottom={10}
@@ -27,10 +26,10 @@ const ModalHeader = (props: Props) => (
     </div>
 );
 
-export default styled(ModalHeader)`
-    .header {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-    }
+const Header = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 `;
+
+export default ModalHeader;

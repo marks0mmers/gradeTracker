@@ -3,7 +3,6 @@ import styled from "styled-components";
 import Icon from "../../components/shared/Icon";
 
 interface Props {
-    className?: string;
     id?: string;
     text?: string;
     tooltip?: string;
@@ -18,19 +17,15 @@ interface Props {
 }
 
 const Button = (props: Props) => (
-    <button
-        id={props.id}
-        className={props.className}
-        onClick={props.onClick}
-        title={props.tooltip}
-        type={props.type}
+    <StyledButton
+        {...props}
     >
         {props.icon && <Icon iconName={props.icon} margin={5}/>}
         {props.text}
-    </button>
+    </StyledButton>
 );
 
-export default styled(Button)`
+const StyledButton = styled.button<Props>`
     background: lightgray;
     height: ${(props) => props.height}px;
     width: ${(props) => props.width ? `${props.width}px` : "100%"};
@@ -41,3 +36,5 @@ export default styled(Button)`
         background: #eeeeee;
     }
 `;
+
+export default Button;

@@ -25,13 +25,18 @@ interface GradeForm {
 
 const GradeFormModal = (componentProps: Props) => {
 
+    //#region Prop Destructure
     const { exitModal } = componentProps;
+    //#endregion
 
+    //#region Redux State
     const {handleCreateGrade, handleEditGrade} = useMapDispatch({
         handleCreateGrade: CreateGradeCreator,
         handleEditGrade: EditGradeCreator,
     });
+    //#endregion
 
+    //#region Private Methods
     const handleFormSubmit = useCallback((values: GradeForm) => {
         if (componentProps.isCreating && componentProps.gradeCategory) {
             const grade = new Grade({
@@ -57,7 +62,9 @@ const GradeFormModal = (componentProps: Props) => {
         handleCreateGrade,
         handleEditGrade,
     ]);
+    //#endregion
 
+    //#region Display Methods
     const buildFormValue = useCallback((
         label: string,
         value: string | number,
@@ -77,7 +84,9 @@ const GradeFormModal = (componentProps: Props) => {
             {error && <Error>{error}</Error>}
         </LabelInput>
     ), []);
+    //#endregion
 
+    //#region Render Method
     return (
         <Formik
             initialValues={(!componentProps.isCreating && componentProps.initialValues) || {
@@ -117,8 +126,10 @@ const GradeFormModal = (componentProps: Props) => {
             )}
         </Formik>
     );
+    //#endregion
 };
 
+//#region Styles
 const LabelInput = styled.div`
     margin-bottom: 10px;
     font-weight: bold;
@@ -127,5 +138,6 @@ const LabelInput = styled.div`
 const Error = styled.div`
     color: red;
 `;
+//#endregion
 
 export default GradeFormModal;

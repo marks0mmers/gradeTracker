@@ -4,7 +4,6 @@ import Icon from "./Icon";
 
 interface Props {
     id?: string;
-    className?: string;
     iconName: string;
     activeButton?: string;
 
@@ -22,17 +21,17 @@ const NavButton = (props: Props) => {
     }, [onClick, props.id]);
 
     return (
-        <div id={props.id} className={props.className} onClick={handleClick}>
+        <Container id={props.id} onClick={handleClick} activeButton={props.activeButton}>
             <Icon
                 iconName={props.iconName}
                 size={50}
                 margin={5}
             />
-        </div>
+        </Container>
     );
 };
 
-export default styled(NavButton)`
+const Container = styled.div<Partial<Props>>`
     color: #333333;
     background: ${(props) => props.id === props.activeButton ? "#4c4f52" : "#5f6366"};
     :hover {
@@ -40,3 +39,5 @@ export default styled(NavButton)`
         cursor: pointer;
     }
 `;
+
+export default NavButton;

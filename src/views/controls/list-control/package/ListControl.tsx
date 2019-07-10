@@ -7,7 +7,6 @@ import Row from "../components/Row";
 import { ListControlElement } from "../models/ListControlElement";
 
 interface Props {
-    className?: string;
     elements?: List<ListControlElement>;
     header?: boolean;
     headerText?: string;
@@ -25,14 +24,15 @@ interface Props {
 }
 
 const ListControl = (props: Props) => (
-    <div className={props.className}>
+    //#region Render Method
+    <Container id="list-control" {...props}>
         {
             props.header &&
             <ListHeader
                 headerText={props.headerText}
             />
         }
-        <div className="body">
+        <Body id="body">
             {
                 props.showInputRow &&
                 <Row
@@ -61,17 +61,23 @@ const ListControl = (props: Props) => (
                     );
                 }).toArray()
             }
-        </div>
+        </Body>
         {
             props.footer &&
-            <ListFooter
-                content={props.footerContent}
-            />
+            <ListFooter>
+                {props.footerContent}
+            </ListFooter>
         }
-    </div>
+    </Container>
+    //#endregion
 );
 
-export default styled(ListControl)`
+const Body = styled.div`
+    overflow-y: scroll;
+    flex: 1;
+`;
+
+const Container = styled.div<Props>`
     grid-area: ${(props) => props.gridArea};
     overflow-y: auto;
     padding: ${(props) => props.padding}px;
@@ -79,8 +85,6 @@ export default styled(ListControl)`
     flex-direction: column;
     border: solid black 1px;
     max-height: 93%;
-    .body {
-        overflow-y: scroll;
-        flex: 1;
-    }
 `;
+
+export default ListControl;

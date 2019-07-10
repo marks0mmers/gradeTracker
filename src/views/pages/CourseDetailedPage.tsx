@@ -2,7 +2,6 @@ import { push } from "connected-react-router";
 import { useMemo } from "react";
 import React, { Fragment, MouseEvent, useCallback, useState } from "react";
 import ReactModal from "react-modal";
-import { match } from "react-router";
 import styled from "styled-components";
 import { categoryColumns } from "../../constants/columns/CategoryColumns";
 import { GradeCategory } from "../../models/GradeCategory";
@@ -28,23 +27,14 @@ import DataGrid from "../controls/data-grid";
 import CategoryFormModal from "../modals/CategoryFormModal";
 import ModalHeader from "../modals/common/ModalHeader";
 
-interface Props {
-    className?: string;
-    match: match<{courseTitle: string}>;
-}
+const CourseDetailedPage = () => {
 
-interface State {
-    isCreating: boolean;
-    isEditing: boolean;
-}
+    //#region Component State
+    const [isCreating, setIsCreating] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    //#endregion
 
-const CourseDetailedPage = (props: Props) => {
-
-    const [state, setState] = useState<State>({
-        isCreating: false,
-        isEditing: false,
-    });
-
+    //#region Redux State
     const {
         categoryElements,
         selectedCategory,
@@ -70,7 +60,9 @@ const CourseDetailedPage = (props: Props) => {
         deleteGradeCategory: DeleteGradeCategoryCreator,
         getGradeCategoriesForCourse: GetGradeCategoryForCourseCreator,
     });
+    //#endregion
 
+    //#region Lifecycle Methods
     useComponentMount(() => {
         if (course) {
             document.title = `${course.title} Details`;
@@ -80,21 +72,9 @@ const CourseDetailedPage = (props: Props) => {
             selectGradeCategory(undefined);
         };
     });
+    //#endregion
 
-    const Content = state.isCreating || state.isEditing
-        ? styled.div`
-            grid-area: content;
-            display: grid;
-            grid-template-columns: minmax(0, 1fr);
-            grid-template-rows: auto auto 21px minmax(0, 1fr);
-        `
-        : styled.div`
-            grid-area: content;
-            display: grid;
-            grid-template-columns: minmax(0, 1fr);
-            grid-template-rows: auto 21px minmax(0, 1fr);
-        `;
-
+    //#region Private Methods
     const handleBodyCellClick = useCallback((event: MouseEvent<HTMLDivElement>, payload: GradeCategory) => {
         const category = categories && categories.find((value: GradeCategory) => value.id === payload.id);
         if (category && payload.title !== "Total") {
@@ -103,18 +83,14 @@ const CourseDetailedPage = (props: Props) => {
     }, [categories, selectGradeCategory]);
 
     const handleCreate = useCallback(() => {
-        setState({
-            isCreating: true,
-            isEditing: false,
-        });
+        setIsCreating(true);
+        setIsEditing(false);
     }, []);
 
     const handleEdit = useCallback(() => {
         if (selectedCategory) {
-            setState({
-                isCreating: false,
-                isEditing: true,
-            });
+            setIsCreating(false);
+            setIsEditing(true);
         }
     }, [selectedCategory]);
 
@@ -126,10 +102,8 @@ const CourseDetailedPage = (props: Props) => {
     }, [deleteGradeCategory, selectGradeCategory, selectedCategory]);
 
     const handleCancel = useCallback(() => {
-        setState({
-            isCreating: false,
-            isEditing: false,
-        });
+        setIsCreating(false);
+        setIsEditing(false);
     }, []);
 
     const handleRootClick = useCallback(() => {
@@ -141,17 +115,19 @@ const CourseDetailedPage = (props: Props) => {
         () => categories && categories.get(selectedCategory || ""),
         [categories, selectedCategory],
     );
+    //#endregion
 
+    //#region Render Method
     return (
-        <div id={`${course ? course.title : ""}-detailed`} className={props.className}>
-            <span
-                className="click-route"
+        <Container id={`${course ? course.title : ""}-detailed`}>
+            <ClickRoute
+                id="click-route"
                 onClick={handleRootClick}
             >
                 {"< Back to Courses"}
-            </span>
-            <div className="buttons">
-                <span className="button-label">Grade Category Actions:</span>
+            </ClickRoute>
+            <Buttons id="buttons">
+                <ButtonLabel id="button-label">Grade Category Actions:</ButtonLabel>
                 <Button
                     tooltip="Create New Category"
                     icon="add"
@@ -176,8 +152,8 @@ const CourseDetailedPage = (props: Props) => {
                     marginLeftRight={5}
                     onClick={handleDelete}
                 />
-            </div>
-            <Content>
+            </Buttons>
+            <Content id="main-content">
                 <ReactModal
                     style={{
                         overlay: {
@@ -189,7 +165,7 @@ const CourseDetailedPage = (props: Props) => {
                             left: "30%",
                         },
                     }}
-                    isOpen={state.isCreating || state.isEditing}
+                    isOpen={isCreating || isEditing}
                     onRequestClose={handleCancel}
                 >
                     <ModalHeader
@@ -197,7 +173,7 @@ const CourseDetailedPage = (props: Props) => {
                         exitModal={handleCancel}
                     />
                     <CategoryFormModal
-                        isCreating={state.isCreating}
+                        isCreating={isCreating}
                         course={course}
                         exitModal={handleCancel}
                         categories={categories}
@@ -229,38 +205,49 @@ const CourseDetailedPage = (props: Props) => {
                     </Fragment>
                 }
             </Content>
-        </div>
+        </Container>
     );
-
+    //#endregion
 };
 
-export default styled(CourseDetailedPage)`
+//#region Styles
+const Content = styled.div`
+    grid-area: content;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 21px minmax(0, 1fr);
+`;
+
+const ClickRoute = styled.span`
+    padding: 10px 0;
+    grid-area: course;
+    font-size: 24px;
+    cursor: pointer;
+    &:hover {
+        color: #222;
+    }
+`;
+
+const Buttons = styled.div`
+    margin: 10px 0;
+    display: flex;
+    justify-content: flex-end;
+    grid-area: buttons;
+`;
+
+const ButtonLabel = styled.span`
+    font-size: 14px;
+    margin: auto 0;
+`;
+
+const Container = styled.div`
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
     grid-template-columns: auto auto 1fr;
-    grid-template-areas: "course buttons buttons"
-                         "content content content";
     padding: 0 10px;
-
-    .click-route {
-        padding: 10px 0;
-        grid-area: course;
-        font-size: 24px;
-        cursor: pointer;
-        &:hover {
-            color: #222;
-        }
-    }
-
-    .buttons {
-        margin: 10px 0;
-        display: flex;
-        justify-content: flex-end;
-        grid-area: buttons;
-    }
-
-    .button-label {
-        font-size: 14px;
-        margin: auto 0;
-    }
+    grid-template-areas: "course buttons buttons"
+                        "content content content";
 `;
+//#endregion
+
+export default CourseDetailedPage;

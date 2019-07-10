@@ -17,12 +17,9 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import ViewRequestsPage from "./pages/ViewRequestsPage";
 
-interface Props {
-    className?: string;
-}
+const Layout = () => {
 
-const Layout = (props: Props) => {
-
+    //#region Redux State
     const {routerLocation, currentUser} = useMapState((state) => ({
         routerLocation: getPathName(state),
         currentUser: getCurrentUser(state),
@@ -33,7 +30,9 @@ const Layout = (props: Props) => {
         fetchCurrentUser: GetCurrentUserCreator,
         logout: LogoutCreator,
     });
+    //#endregion
 
+    //#region Lifecycle Methods
     useComponentMount(() => {
         if (!currentUser && sessionStorage.getItem("jwtToken")) {
             fetchCurrentUser();
@@ -45,9 +44,11 @@ const Layout = (props: Props) => {
             pushRoute("/login", routerLocation);
         }
     });
+    //#endregion
 
+    //#region Render Method
     return (
-        <div id="layout" className={props.className}>
+        <Container id="layout">
             { currentUser &&
                 <Fragment>
                     <Header
@@ -101,11 +102,12 @@ const Layout = (props: Props) => {
             <ToastContainer
                 autoClose={3000}
             />
-        </div>
+        </Container>
     );
+    //#endregion
 };
 
-export default styled(Layout)`
+const Container = styled.div`
     width: 100vw;
     height: 100vh;
     overflow: hidden;
@@ -113,12 +115,14 @@ export default styled(Layout)`
     grid-template-columns: 60px calc(100vw - 60px);
     grid-template-rows: 60px calc(100vh - 60px);
     grid-template-areas: "header header"
-                         "navbar content";
+                        "navbar content";
     @media screen and (max-width: 600px) {
         grid-template-columns: 100vh;
         grid-template-rows: 60px 60px calc(100vh - 120px);
         grid-template-areas: "header"
-                             "navbar"
-                             "content";
+                            "navbar"
+                            "content";
     }
 `;
+
+export default Layout;

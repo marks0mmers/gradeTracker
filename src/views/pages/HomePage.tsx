@@ -14,60 +14,51 @@ import Button from "../controls/button/Button";
 import ModalHeader from "../modals/common/ModalHeader";
 import CourseFormModal from "../modals/CourseFormModal";
 
-interface Props {
-    className?: string;
-}
+const HomePage = () => {
 
-interface State {
-    isCreating: boolean;
-    isEditing: boolean;
-    editingCourse?: Course;
-}
+    //#region Component State
+    const [isCreating, setIsCreating] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editingCourse, setEditingCourse] = useState<Course | undefined>(undefined);
+    //#endregion
 
-const HomePage = (props: Props) => {
-
-    const [state, setState] = useState<State>({
-        isCreating: false,
-        isEditing: false,
-        editingCourse: undefined,
-    });
-
+    //#region Redux State
     const {courses, currentUser} = useMapState((rootState: RootState) => ({
         courses: getCourses(rootState),
         currentUser: getCurrentUser(rootState),
     }));
 
     const {pushRoute} = useMapDispatch({pushRoute: push});
+    //#endregion
 
+    //#region Lifecycle Methods
     useComponentMount(() => {
         document.title = "Grade Tracker";
         if (!currentUser) {
             pushRoute("/login");
         }
     });
+    //#endregion
 
+    //#region Private Methods
     const handleEditClick = useCallback((course?: Course) => {
-        setState({
-            isCreating: false,
-            isEditing: true,
-            editingCourse: course,
-        });
+        setIsCreating(false);
+        setIsEditing(true);
+        setEditingCourse(course);
     }, []);
 
     const handleNewCourseClick = useCallback(() => {
-        setState({
-            isCreating: true,
-            isEditing: false,
-        });
+        setIsCreating(true);
+        setIsEditing(false);
     }, []);
 
     const handleCancel = useCallback(() => {
-        setState({
-            isCreating: false,
-            isEditing: false,
-        });
+        setIsCreating(false);
+        setIsEditing(false);
     }, []);
+    //#endregion
 
+    //#region Display Methods
     const getCourseButtons = useCallback(() => {
         return courses && courses.map((course: Course, key: string) => {
             return (
@@ -79,15 +70,17 @@ const HomePage = (props: Props) => {
             );
         }).toList();
     }, [courses, handleEditClick]);
+    //#endregion
 
+    //#region Render Method
     return (
-        <div id="home-content" className={props.className}>
-            <h2 className="route">Courses</h2>
+        <Container id="home-page">
+            <Route id="route">Courses</Route>
             <ButtonWrapper id="button-wrapper">
                 {
-                    !state.isCreating &&
+                    !isCreating &&
                     <Fragment>
-                        <span className="button-label">Create New Course:</span>
+                        <ButtonLabel id="button-label">Create New Course:</ButtonLabel>
                         <Button
                             id="create-new-course"
                             tooltip="Create New Course"
@@ -101,7 +94,7 @@ const HomePage = (props: Props) => {
                 }
             </ButtonWrapper>
             <Divider isVertical={false} gridArea="divider"/>
-            <div className="content">
+            <Content id="content">
                 <ReactModal
                     style={{
                         overlay: {
@@ -113,7 +106,7 @@ const HomePage = (props: Props) => {
                             left: "30%",
                         },
                     }}
-                    isOpen={state.isCreating || state.isEditing}
+                    isOpen={isCreating || isEditing}
                     onRequestClose={handleCancel}
                 >
                     <ModalHeader
@@ -121,56 +114,54 @@ const HomePage = (props: Props) => {
                         exitModal={handleCancel}
                     />
                     <CourseFormModal
-                        isCreating={state.isCreating}
+                        isCreating={isCreating}
                         exitModal={handleCancel}
-                        originalCourse={state.editingCourse}
-                        initialValues={state.editingCourse && {
-                            title: state.editingCourse.title,
-                            description: state.editingCourse.description,
-                            creditHours: state.editingCourse.creditHours,
-                            section: state.editingCourse.section,
+                        originalCourse={editingCourse}
+                        initialValues={editingCourse && {
+                            title: editingCourse.title,
+                            description: editingCourse.description,
+                            creditHours: editingCourse.creditHours,
+                            section: editingCourse.section,
                         }}
                     />
                 </ReactModal>
                 {getCourseButtons()}
-            </div>
-        </div >
+            </Content>
+        </Container>
     );
-
+    //#endregion
 };
 
+//#region Styles
 const ButtonWrapper = styled.div`
     display: flex;
     margin: auto 0;
     justify-content: flex-end;
 `;
 
-export default styled(HomePage)`
+const Route = styled.h2`
+    padding: 10px;
+    margin-left: 10px;
+    cursor: default;
+`;
+
+const Content = styled.div`
+    grid-area: content;
+`;
+
+const ButtonLabel = styled.span`
+    margin: auto 0;
+`;
+
+const Container = styled.div`
     display: grid;
     grid-template-columns: 1fr auto;
     grid-template-rows: auto auto 1fr;
     grid-template-areas: "subheader buttons"
-                         "divider divider"
-                         "content content";
+                        "divider divider"
+                        "content content";
     overflow-y: scroll;
-
-    .route {
-        padding: 10px;
-        margin-left: 10px;
-        cursor: default;
-    }
-
-    .content {
-        grid-area: content;
-    }
-
-    .sub-header {
-        display: flex;
-        justify-content: space-between;
-        min-height: fit-content;
-    }
-
-    .button-label {
-        margin: auto 0;
-    }
 `;
+//#endregion
+
+export default HomePage;

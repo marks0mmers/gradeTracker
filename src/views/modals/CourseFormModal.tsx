@@ -27,15 +27,20 @@ interface CourseForm {
 
 const CourseFormModal = (componentProps: Props) => {
 
+    //#region Prop Destructure
     const { exitModal } = componentProps;
+    //#endregion
 
+    //#region Redux State
     const {currentUser} = useMapState((state: RootState) => ({currentUser: getCurrentUser(state)}));
 
     const {handleCreateCourse, handleUpdateCourse} = useMapDispatch({
         handleCreateCourse: CreateNewCourseCreator,
         handleUpdateCourse: EditCourseCreator,
     });
+    //#endregion
 
+    //#region Display Methods
     const buildFormValue = useCallback((
         label: string,
         value: string | number,
@@ -55,7 +60,9 @@ const CourseFormModal = (componentProps: Props) => {
             {error && <Error>{error}</Error>}
         </LabelInput>
     ), []);
+    //#endregion
 
+    //#region Private Methods
     const handleFormSubmit = useCallback((values: CourseForm) => {
         if (currentUser) {
             if (componentProps.isCreating) {
@@ -85,7 +92,9 @@ const CourseFormModal = (componentProps: Props) => {
         handleCreateCourse,
         handleUpdateCourse,
     ]);
+    //#endregion
 
+    //#region Render Method
     return (
         <Formik
             initialValues={componentProps.initialValues || {
@@ -143,8 +152,10 @@ const CourseFormModal = (componentProps: Props) => {
             )}
         </Formik>
     );
+    //#endregion
 };
 
+//#region Styles
 const LabelInput = styled.div`
     margin-bottom: 10px;
     font-weight: bold;
@@ -153,5 +164,6 @@ const LabelInput = styled.div`
 const Error = styled.div`
     color: red;
 `;
+//#endregion
 
 export default CourseFormModal;

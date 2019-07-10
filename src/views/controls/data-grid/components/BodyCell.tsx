@@ -3,7 +3,6 @@ import styled from "styled-components";
 import ColoredCell from "./ColoredCell";
 
 export interface BodyCellProps {
-    className?: string;
     height: number;
     width: number;
     content: string;
@@ -14,16 +13,20 @@ export interface BodyCellProps {
 
 const BodyCell = (props: BodyCellProps) => {
 
+    //#region Prop Destructure
     const { onCellClick } = props;
+    //#endregion
 
+    //#region Private Methods
     const handleCellClick = useCallback((event: MouseEvent<HTMLDivElement>) => {
         onCellClick(event, props);
     }, [onCellClick, props]);
+    //#endregion
 
+    //#region Render Method
     return (
-        <div
+        <Container
             id="body-cell"
-            className={props.className}
             onClick={handleCellClick}
         >
             {
@@ -36,19 +39,24 @@ const BodyCell = (props: BodyCellProps) => {
                 props.type === "colored" && !isNaN(+props.content) &&
                 <ColoredCell grade={+props.content} />
             }
-        </div>
+        </Container>
     );
+    //#endregion
 };
 
+//#region Styles
 const StyledSpan = styled.span`
     width: 100%;
     text-align: center;
     line-height: 30px;
 `;
 
-export default styled(BodyCell)`
+const Container = styled.div<Partial<BodyCellProps>>`
     display: flex;
     flex: 1;
     width: ${(props) => props.width}px;
     height: ${(props) => props.height}px;
 `;
+//#endregion
+
+export default BodyCell;

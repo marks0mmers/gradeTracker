@@ -8,7 +8,6 @@ import { DataGridColumnDefinition } from "../models/DataGridColumnDefinition";
 import { DataGridElement } from "../models/DataGridElement";
 
 interface Props {
-    className?: string;
     id: string;
     rowHeight?: number;
     columnDefinitions?: List<DataGridColumnDefinition>;
@@ -20,6 +19,7 @@ interface Props {
 
 const DataGrid = (props: Props) => {
 
+    //#region Display Methods
     const renderHeaderCells = useCallback(() => props.columnDefinitions && props.columnDefinitions.map((
         column: DataGridColumnDefinition,
         idx: number,
@@ -30,7 +30,6 @@ const DataGrid = (props: Props) => {
                 height={props.rowHeight || 30}
                 width={column.width || 200}
                 content={column.label || ""}
-                columnIndex={idx}
             />
         );
     }).toList(), [props.columnDefinitions, props.rowHeight]);
@@ -47,25 +46,31 @@ const DataGrid = (props: Props) => {
         )),
         [props.columnDefinitions, props.elements, props.onBodyCellClick, props.rowHeight],
     );
+    //#endregion
 
+    //#region Render Method
     return (
-        <div className={props.className}>
-            <div className="header-cells">
+        <Container id="data-grid" gridArea={props.gridArea}>
+            <HeaderCells id="header-cells">
                 {renderHeaderCells()}
-            </div>
+            </HeaderCells>
             {renderBodyCells()}
-        </div>
+        </Container>
     );
+    //#endregion
 };
 
-export default styled(DataGrid)`
+//#region Styles
+const HeaderCells = styled.div`
+    display: flex;
+    flex-direction: row;
+`;
+
+const Container = styled.div<{gridArea?: string}>`
     grid-area: ${(props) => props.gridArea ? props.gridArea : ""};
     display: flex;
     flex-direction: column;
-
-    .header-cells {
-        display: flex;
-        flex-direction: row;
-    }
-
 `;
+//#endregion
+
+export default DataGrid;

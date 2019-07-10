@@ -16,13 +16,18 @@ interface Props {
 
 const CourseOverviewButton = (props: Props) => {
 
+    //#region Prop Destructure
     const { onEditClick } = props;
+    //#endregion
 
+    //#region Redux State
     const {handleSelectCourse, handleDeleteCourse} = useMapDispatch({
         handleSelectCourse: SetActiveCourseCreator,
         handleDeleteCourse: DeleteCourseCreator,
     });
+    //#endregion
 
+    //#region Private Methods
     const handleClick = useCallback(() => {
         handleSelectCourse(props.course);
     }, [handleSelectCourse, props.course]);
@@ -38,7 +43,9 @@ const CourseOverviewButton = (props: Props) => {
             handleDeleteCourse(props.course.id || "");
         }
     }, [handleDeleteCourse, props.course]);
+    //#endregion
 
+    //#region Render Method
     return (
         <CourseOverviewButtonContainer
             id={`${props.course.title.toLowerCase()}-button`}
@@ -87,8 +94,10 @@ const CourseOverviewButton = (props: Props) => {
             </CourseInfo>
         </CourseOverviewButtonContainer>
     );
+    //#endregion
 };
 
+//#region Styles
 const CourseOverviewButtonContainer = styled.div`
     background: #86b3d1;
     min-height: 135px;
@@ -135,5 +144,6 @@ const Buttons = styled.div`
     display: flex;
     justify-content: flex-end;
 `;
+//#endregion
 
 export default CourseOverviewButton;

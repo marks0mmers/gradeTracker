@@ -19,9 +19,12 @@ import ListControl from "../controls/list-control/package/ListControl";
 
 const ViewRequestsPage = () => {
 
+    //#region Component State
     const [selectedUser, setSelectedUser] = useState<User>();
     const [selectedViewRequest, setSelectedViewRequest] = useState<ViewRequest>();
+    //#endregion
 
+    //#region Redux State
     const { users, currentUser, pendingViewRequests } = useMapState((state: RootState) => ({
         currentUser: getCurrentUser(state),
         users: getUsers(state),
@@ -34,12 +37,16 @@ const ViewRequestsPage = () => {
         sendViewRequest: SendViewRequestCreator,
         pushRoute: push,
     });
+    //#endregion
 
+    //#region Lifecycle Methods
     useComponentMount(() => {
         fetchUsers();
         fetchSentViewRequests();
     });
+    //#endregion
 
+    //#region Private Methods
     const handleRowClick = useCallback((primary: string, secondary?: string) => {
         const selected = users.find((user) => user.email === secondary);
         if (selected) {
@@ -99,7 +106,9 @@ const ViewRequestsPage = () => {
             pushRoute(`/analysis/${selectedViewRequest.receiver}`);
         }
     }, [pushRoute, selectedViewRequest]);
+    //#endregion
 
+    //#region Render Method
     return (
         <Container>
             <ListControl
@@ -139,13 +148,15 @@ const ViewRequestsPage = () => {
             />
         </Container>
     );
-
+    //#endregion
 };
 
+//#region Styles
 const Container = styled.div`
     margin: 10px;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
 `;
+//#endregion
 
 export default ViewRequestsPage;

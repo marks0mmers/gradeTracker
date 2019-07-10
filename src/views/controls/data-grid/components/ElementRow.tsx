@@ -6,7 +6,6 @@ import { DataGridElement } from "../models/DataGridElement";
 import BodyCell, { BodyCellProps } from "./BodyCell";
 
 interface Props {
-    className?: string;
     element: DataGridElement;
     columnDefinitions: List<DataGridColumnDefinition> | undefined;
     height: number;
@@ -16,17 +15,22 @@ interface Props {
 
 const ElementRow = (props: Props) => {
 
+    //#region Prop Destructure
     const { onBodyCellClick } = props;
+    //#endregion
 
+    //#region Private Methods
     const handleCellClick = useCallback((event: MouseEvent<HTMLDivElement>, bodyProps: BodyCellProps) => {
         const handler = onBodyCellClick;
         if (handler) {
             handler(event, props.element.payload, bodyProps);
         }
     }, [onBodyCellClick, props.element]);
+    //#endregion
 
+    //#region Render Method
     return (
-        <div id="element-row" className={props.className}>
+        <Container id="element-row" {...props}>
             {props.columnDefinitions && props.columnDefinitions.map((
                 column: DataGridColumnDefinition, idx: number,
             ) => {
@@ -44,13 +48,18 @@ const ElementRow = (props: Props) => {
                     );
                 })
             }
-        </div>
+        </Container>
     );
+    //#endregion
 };
 
-export default styled(ElementRow)`
+//#region Styles
+const Container = styled.div<Props>`
     display: flex;
     flex-direction: row;
     background: ${(props) => props.element.isSelected ? "#79c8ec" : "#eeeeee"};
     border-top: ${(props) => props.element.isBottom ? "solid black 1px" : "none"};
 `;
+//#endregion
+
+export default ElementRow;

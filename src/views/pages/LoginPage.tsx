@@ -11,10 +11,7 @@ import { useComponentMount, useComponentUpdate } from "../../util/Hooks";
 import Input from "../components/styled-inputs/Input";
 import Button from "../controls/button/Button";
 
-interface Props {
-    className?: string;
-}
-
+//#region Form / Validation
 interface UserForm {
     firstName: string;
     lastName: string;
@@ -23,39 +20,51 @@ interface UserForm {
     repeatPassword: string;
 }
 
-interface State {
-    creatingNewUser: boolean;
-    formValues: UserForm;
-}
-
 const NewUserValidation = Yup.object().shape({
-    email: Yup.string().email().required("Email is Required"),
-    password: Yup.string().required("Password is Required"),
-    repeatPassword: Yup.string()
+    email: Yup
+        .string()
+        .email()
+        .required("Email is Required"),
+    password: Yup
+        .string()
+        .required("Password is Required"),
+    repeatPassword: Yup
+        .string()
         .oneOf([Yup.ref("password"), null])
         .required("Password confirm is required"),
-    firstName: Yup.string().required("First Name is Required"),
-    lastName: Yup.string().required("Last Name is Required"),
+    firstName: Yup
+        .string()
+        .required("First Name is Required"),
+    lastName: Yup
+        .string()
+        .required("Last Name is Required"),
 });
 
 const LoginValidation = Yup.object().shape({
-    email: Yup.string().email().required("Email is Required"),
-    password: Yup.string().required("Password is Required"),
+    email: Yup
+        .string()
+        .email()
+        .required("Email is Required"),
+    password: Yup
+        .string()
+        .required("Password is Required"),
 });
+//#endregion
 
-const LoginPage = (componentProps: Props) => {
+const LoginPage = () => {
 
-    const [state, setState] = useState<State>({
-        creatingNewUser: false,
-        formValues: {
-            email: "",
-            password: "",
-            firstName: "",
-            lastName: "",
-            repeatPassword: "",
-        },
+    //#region Component State
+    const [creatingNewUser, setCreatingNewUser] = useState(false);
+    const [formValues, setFormValues] = useState<UserForm>({
+        email: "",
+        password: "",
+        firstName: "",
+        lastName: "",
+        repeatPassword: "",
     });
+    //#endregion
 
+    //#region Redux State
     const {currentUser, prevRoute} = useMapState((rootState) => ({
         currentUser: getCurrentUser(rootState),
         prevRoute: getPreviousRoute(rootState),
@@ -66,7 +75,9 @@ const LoginPage = (componentProps: Props) => {
         login: LoginCreator,
         pushRoute: push,
     });
+    //#endregion
 
+    //#region Lifecycle Methods
     useComponentMount(() => {
         document.title = "Login to Grade Tracker";
     });
@@ -76,20 +87,33 @@ const LoginPage = (componentProps: Props) => {
             pushRoute(prevRoute || "/");
         }
     });
+    //#endregion
 
+    //#region Private Methods
     const toggleCreate = useCallback(() => {
-        setState({
-            creatingNewUser: !state.creatingNewUser,
-            formValues: {
-                firstName: "",
-                lastName: "",
-                email: "",
-                password: "",
-                repeatPassword: "",
-            },
+        setCreatingNewUser(!creatingNewUser);
+        setFormValues({
+            firstName: "",
+            lastName: "",
+            email: "",
+            password: "",
+            repeatPassword: "",
         });
-    }, [state.creatingNewUser]);
+    }, [creatingNewUser]);
 
+    const handleFormSubmit = useCallback((values: UserForm) => {
+        if (creatingNewUser) {
+            const newUser = new User({
+                ...values,
+            });
+            createNewUser(newUser);
+        } else {
+            login(values as LoginUser);
+        }
+    }, [createNewUser, creatingNewUser, login]);
+    //#endregion
+
+    //#region Display Methods
     const buildInputField = useCallback((
         label: string,
         value: string,
@@ -199,39 +223,31 @@ const LoginPage = (componentProps: Props) => {
             </Buttons>
         </Form>
     ), [buildButton, buildInputField, toggleCreate]);
+    //#endregion
 
-    const handleFormSubmit = useCallback((values: UserForm) => {
-        if (state.creatingNewUser) {
-            const newUser = new User({
-                ...values,
-            });
-            createNewUser(newUser);
-        } else {
-            login(values as LoginUser);
-        }
-    }, [createNewUser, login, state.creatingNewUser]);
-
+    //#region Render Method
     return (
-        <div id="login-content" className={componentProps.className}>
+        <Container id="login-page">
             <LoginContainer id="login-container">
                 <Header>
-                    <HeaderText>{state.creatingNewUser ? "Create new User" : "Login to Grade Tracker"}</HeaderText>
+                    <HeaderText>{creatingNewUser ? "Create new User" : "Login to Grade Tracker"}</HeaderText>
                 </Header>
                 <Formik
-                    initialValues={state.formValues}
+                    initialValues={formValues}
                     validateOnBlur={false}
                     validateOnChange={false}
                     onSubmit={handleFormSubmit}
-                    validationSchema={state.creatingNewUser ? NewUserValidation : LoginValidation}
+                    validationSchema={creatingNewUser ? NewUserValidation : LoginValidation}
                 >
-                    {state.creatingNewUser ? renderNewUserForm : renderLoginForm}
+                    {creatingNewUser ? renderNewUserForm : renderLoginForm}
                 </Formik>
             </LoginContainer>
-        </div>
+        </Container>
     );
-
+    //#endregion
 };
 
+//#region Styles
 const Form = styled.form`
     margin: 10px;
 `;
@@ -269,9 +285,12 @@ const Error = styled.div`
     color: red;
 `;
 
-export default styled(LoginPage)`
+const Container = styled.div`
     grid-area: content;
     margin: 0 60px 60px 0;
     display: flex;
     justify-content: center;
 `;
+//#endregion
+
+export default LoginPage;

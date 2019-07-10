@@ -21,81 +21,74 @@ interface Props {
     onClear?: () => void;
 }
 
-interface State {
-    formValues: Map<string, string>;
-    initialKey: string;
-}
-
 const Row = (props: Props) => {
 
-    const [state, setState] = useState<State>({
-        formValues: Map<string, string>(),
-        initialKey: "",
-    });
+    //#region Prop Destructure
+    const {onClick, onSave, onClear} = props;
+    //#endregion
 
+    //#region Component State
+    const [formValues, setFormValues] = useState(Map<string, string>());
+    const [initialKey, setInitialKey] = useState("");
+    //#endregion
+
+    //#region Lifecycle Methods
     useComponentUpdate(() => {
-        setState({
-            formValues: Map<string, string>()
-                .set("primary", props.primaryProperty || "")
-                .set("secondary", props.secondaryProperty ? props.secondaryProperty.split("%")[0] : ""),
-            initialKey: props.primaryProperty ? props.primaryProperty : "",
-        });
+        setFormValues(Map<string, string>()
+            .set("primary", props.primaryProperty || "")
+            .set("secondary", props.secondaryProperty ? props.secondaryProperty.split("%")[0] : ""));
+        setInitialKey(props.primaryProperty ? props.primaryProperty : "");
     }, [props.isEditing]);
+    //#endregion
 
+    //#region Private Methods
     const handleClick = useCallback(() => {
-        const handler = props.onClick;
-        if (handler && props.primaryProperty) {
-            handler(
+        if (onClick && props.primaryProperty) {
+            onClick(
                 props.primaryProperty,
                 props.secondaryProperty,
             );
         }
-    }, [props.onClick, props.primaryProperty, props.secondaryProperty]);
+    }, [onClick, props.primaryProperty, props.secondaryProperty]);
 
     const handleInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
-        setState({
-            ...state,
-            formValues: state.formValues.set(name, value),
-        });
-    }, [state]);
+        setFormValues(formValues.set(name, value));
+    }, [formValues]);
 
     const handleSave = useCallback(() => {
-        const primary = state.formValues.get("primary", "");
-        const secondary = state.formValues.get("secondary");
-        const handler = props.onSave;
-        if (handler) {
-            handler(primary, secondary, state.initialKey);
+        const primary = formValues.get("primary", "");
+        const secondary = formValues.get("secondary");
+        if (onSave) {
+            onSave(primary, secondary, initialKey);
         }
-    }, [props.onSave, state.formValues, state.initialKey]);
+    }, [formValues, initialKey, onSave]);
 
     const handleClear = useCallback(() => {
-        setState({
-            ...state,
-            formValues: Map(),
-        });
-        const handler = props.onClear;
-        if (handler) {
-            handler();
+        setFormValues(Map());
+        if (onClear) {
+            onClear();
         }
-    }, [props.onClear, state]);
+    }, [onClear]);
+    //#endregion
 
+    //#region Render Method
     return (
-        <div
-            className={props.className}
-            key={props.key}
+        <Container
+            id="list-control-row"
+            {...props}
             onClick={handleClick}
         >
             {
                 !props.isCreating && !props.isEditing
                 ? <Fragment>
-                    <span className="primary">{props.primaryProperty}</span>
-                    {props.secondaryProperty && <span className="secondary"><i>{props.secondaryProperty}</i></span>}
+                    <Primary id="primary">{props.primaryProperty}</Primary>
+                    {props.secondaryProperty && <Secondary id="secondary"><i>{props.secondaryProperty}</i></Secondary>}
                 </Fragment>
                 : <Fragment>
                     <Input
                         name="primary"
-                        value={state.formValues.get("primary")}
+                        value={formValues.get("primary")}
                         height={20}
                         gridArea="primary"
                         onChange={handleInputChange}
@@ -103,7 +96,7 @@ const Row = (props: Props) => {
                     />
                     <Input
                         name="secondary"
-                        value={state.formValues.get("secondary")}
+                        value={formValues.get("secondary")}
                         height={20}
                         gridArea="secondary"
                         onChange={handleInputChange}
@@ -129,11 +122,22 @@ const Row = (props: Props) => {
                     />
                 </Fragment>
             }
-        </div>
+        </Container>
     );
+    //#endregion
 };
 
-export default styled(Row)`
+const Primary = styled.span`
+    grid-area: primary;
+    font-size: 20px;
+`;
+
+const Secondary = styled.span`
+    grid-area: secondary;
+    opacity: 60%;
+`;
+
+const Container = styled.div<Props>`
     display: grid;
     grid-template-rows: auto auto;
     grid-template-columns: ${(props) => props.isCreating || props.isEditing
@@ -156,24 +160,6 @@ export default styled(Row)`
     :hover {
         background: ${(props) => props.isCreating || props.isEditing ? "white" : "eee"};
     }
-
-    .primary {
-        grid-area: primary;
-        font-size: 20px;
-    }
-
-    .secondary {
-        grid-area: secondary;
-        opacity: 60%;
-    }
-
-    .primary-input {
-        grid-area: primary;
-        margin-right: 15px;
-    }
-
-    .secondary-input {
-        grid-area: secondary;
-        margin-right: 15px;
-    }
 `;
+
+export default Row;

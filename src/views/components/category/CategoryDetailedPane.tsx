@@ -15,83 +15,72 @@ interface Props {
     selectedCategory?: GradeCategory;
 }
 
-interface State {
-    selectedGrade?: Grade;
-    isCreating: boolean;
-    isEditing: boolean;
-}
-
 const CategoryDetailedPane = (props: Props) => {
 
-    const [state, setState] = useState<State>({
-        isCreating: false,
-        isEditing: false,
-        selectedGrade: undefined,
-    });
+    //#region Component State
+    const [selectedGrade, setSelectedGrade] = useState<Grade | undefined>(undefined);
+    const [isCreating, setIsCreating] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    //#endregion
 
+    //#region Redux State
     const {deleteGrade} = useMapDispatch({deleteGrade: DeleteGradeCreator});
+    //#endregion
 
+    //#region Private Methods
     const getListElements = useCallback(() => {
         return props.selectedCategory && props.selectedCategory.grades.map((value: Grade) => {
             const element: ListControlElement = {
-                isSelected: value === state.selectedGrade,
+                isSelected: value === selectedGrade,
                 primaryProperty: value.name,
                 secondaryProperty: `${value.grade.toString()} %`,
             };
             return element;
         }).toList();
-    }, [props.selectedCategory, state.selectedGrade]);
+    }, [props.selectedCategory, selectedGrade]);
 
     const handleCancel = useCallback(() => {
-        setState({
-            isCreating: false,
-            isEditing: false,
-        });
+        setIsCreating(false);
+        setIsEditing(false);
     }, []);
 
     const handleNewGrade = useCallback(() => {
         if (props.selectedCategory && props.selectedCategory.numberOfGrades >= props.selectedCategory.grades.size + 1) {
-            setState({
-                isCreating: true,
-                isEditing: false,
-            });
+            setIsCreating(true);
+            setIsEditing(false);
         }
     }, [props.selectedCategory]);
 
     const handleEditGrade = useCallback(() => {
-        if (state.selectedGrade) {
-            setState({
-                isEditing: true,
-                isCreating: false,
-            });
+        if (selectedGrade) {
+            setIsCreating(false);
+            setIsEditing(false);
         }
-    }, [state.selectedGrade]);
+    }, [selectedGrade]);
 
     const handleDeleteGrade = useCallback(() => {
-        if (state.selectedGrade && props.selectedCategory) {
-            deleteGrade(state.selectedGrade.id);
+        if (selectedGrade && props.selectedCategory) {
+            deleteGrade(selectedGrade.id);
         }
-    }, [deleteGrade, props.selectedCategory, state.selectedGrade]);
+    }, [deleteGrade, props.selectedCategory, selectedGrade]);
 
     const handleSelectGrade = useCallback((primaryProperty: string) => {
-        const selectedGradeObject = props.selectedCategory && props.selectedCategory.grades.find(
-            (g: Grade) => {
-                return g.name === primaryProperty;
-            },
-        );
-        setState({
-            ...state,
-            selectedGrade: selectedGradeObject,
-        });
-    }, [props.selectedCategory, state]);
+        const selectedGradeObject = props.selectedCategory &&
+            props.selectedCategory.grades.find((g: Grade) => g.name === primaryProperty);
+        setSelectedGrade(selectedGradeObject);
+    }, [props.selectedCategory]);
+    //#endregion
 
+    //#region Display Methods
     const buildDisplayLabel = useCallback((label: string, value: string | number, gridArea: string) => (
         <LabelContainer gridArea={gridArea}>
             <PropLabel>{label}</PropLabel>
             <PropValue>{value}</PropValue>
         </LabelContainer>
     ), []);
+    //#endregion
 
+    //#region Render Method
     return (
         <GridContainer>
             {buildDisplayLabel(
@@ -178,7 +167,7 @@ const CategoryDetailedPane = (props: Props) => {
                         left: "30%",
                     },
                 }}
-                isOpen={state.isCreating || state.isEditing}
+                isOpen={isCreating || isEditing}
                 onRequestClose={handleCancel}
             >
                 <ModalHeader
@@ -186,21 +175,23 @@ const CategoryDetailedPane = (props: Props) => {
                     exitModal={handleCancel}
                 />
                 <GradeFormModal
-                    isCreating={state.isCreating}
+                    isCreating={isCreating}
                     gradeCategory={props.selectedCategory}
                     exitModal={handleCancel}
-                    originalGrade={state.selectedGrade}
-                    initialValues={state.selectedGrade && {
-                        name: state.selectedGrade.name,
-                        grade: state.selectedGrade.grade,
+                    originalGrade={selectedGrade}
+                    initialValues={selectedGrade && {
+                        name: selectedGrade.name,
+                        grade: selectedGrade.grade,
                     }}
                 />
             </ReactModal>
         </GridContainer>
     );
+    //#endregion
 
 };
 
+//#region Styles
 const GridContainer = styled.div`
     display: grid;
     grid-template-rows: repeat(7, 1fr);
@@ -241,5 +232,6 @@ const Grades = styled.div`
     grid-area: list;
     min-height: 0;
 `;
+//#endregion
 
 export default CategoryDetailedPane;

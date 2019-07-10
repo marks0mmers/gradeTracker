@@ -32,6 +32,7 @@ interface Props {
 
 const AnalysisPage = (props: Props) => {
 
+    //#region Redux State
     const {elements} = useMapState((state: RootState) => ({
         elements: props.match.params.userId ? getAnalysisGridDataForUser(state) : getAnalysisGridData(state),
     }));
@@ -49,7 +50,9 @@ const AnalysisPage = (props: Props) => {
         viewAnalysis: ViewAnalysisForUserCreator,
         setGradeCategoriesForUser: SetGradeCategoriesForUserCreator,
     });
+    //#endregion
 
+    //#region Lifecycle Methods
     useComponentMount(() => {
         document.title = "Grades Analysis";
         if (props.match.params.userId) {
@@ -71,7 +74,9 @@ const AnalysisPage = (props: Props) => {
             getAllCategories();
         }
     }, [props.match.params.userId]);
+    //#endregion
 
+    //#region Display Methods
     const getGraphData = useCallback(() => {
         const analysisCourses = elements && elements.map((value) => value && value.payload).toList();
         return analysisCourses && analysisCourses.map((value: AnalysisCourse) => {
@@ -83,14 +88,14 @@ const AnalysisPage = (props: Props) => {
             } as GraphData;
         }).toArray();
     }, [elements]);
+    //#endregion
 
+    //#region Render Method
     return (
-        <div className={props.className}>
-            <h2
-                className="route"
-            >
+        <Container id="analysis-page">
+            <Route id="route">
                 Analysis
-            </h2>
+            </Route>
             <Divider isVertical={false} gridArea="divider"/>
             <DataGrid
                 id="analysis-grid"
@@ -119,22 +124,27 @@ const AnalysisPage = (props: Props) => {
                     <Bar dataKey="Potential" fill="#82ca9d" />
                 </BarChart>
             </ResponsiveContainer>
-        </div>
+        </Container>
     );
+    //#endregion
 };
 
-export default styled(AnalysisPage)`
+//#region Styles
+const Route = styled.h2`
+    padding: 10px;
+    margin-left: 10px;
+    cursor: default;
+`;
+
+const Container = styled.div`
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto auto 1fr 1fr;
     grid-template-areas: "subheader"
-                         "divider"
-                         "grid"
-                         "graph";
-
-    .route {
-        padding: 10px;
-        margin-left: 10px;
-        cursor: default;
-    }
+                        "divider"
+                        "grid"
+                        "graph";
 `;
+//#endregion
+
+export default AnalysisPage;

@@ -12,11 +12,14 @@ interface Props {
 
 const ApproveDenyRequest = (props: Props) => {
 
+    //#region Prop Destructure
     const {
         onApprove,
         onDeny,
     } = props;
+    //#endregion
 
+    //#region Private Methods
     const handleApprove = useCallback(() => {
         onApprove(props.requestId);
     }, [onApprove, props.requestId]);
@@ -24,7 +27,9 @@ const ApproveDenyRequest = (props: Props) => {
     const handleDeny = useCallback(() => {
         onDeny(props.requestId);
     }, [onDeny, props.requestId]);
+    //#endregion
 
+    //#region Render Method
     return (
         <Container status={props.status}>
             <Label>{`Request from ${props.userFromRequest.firstName} ${props.userFromRequest.lastName}`}</Label>
@@ -44,8 +49,10 @@ const ApproveDenyRequest = (props: Props) => {
             </Icon>
         </Container>
     );
+    //#endregion
 };
 
+//#region Styles
 const Container = styled.div<{status: number}>`
     display: flex;
     padding: 10px;
@@ -74,5 +81,6 @@ const Icon = styled.i<{color: string}>`
         background: lightgray;
     }
 `;
+//#endregion
 
 export default ApproveDenyRequest;

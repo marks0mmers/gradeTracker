@@ -21,15 +21,22 @@ interface Props {
 
 const NavBar = (props: Props) => {
 
+    //#region Prop Destructure
     const { pushRoute } = props;
+    //#endregion
 
+    //#region Component State
     const [activeButton, setActiveButton] = useState<Routes>(Routes.COURSE_OVERVIEW);
+    //#endregion
 
+    //#region Private Methods
     const handleNavClick = useCallback((id: string) => {
         setActiveButton(id as Routes);
         pushRoute(id);
     }, [pushRoute]);
+    //#endregion
 
+    //#region Render Method
     return (
         <NavBarContainer id="nav-bar" >
             <NavButton
@@ -61,8 +68,10 @@ const NavBar = (props: Props) => {
             }
         </NavBarContainer>
     );
+    //#endregion
 };
 
+//#region Styles
 const NavBarContainer = styled.div`
     background: #5f6366;
     grid-area: navbar;
@@ -72,5 +81,6 @@ const NavBarContainer = styled.div`
         grid-template-columns: 60px 60px 60px 60px;
     }
 `;
+//#endregion
 
 export default NavBar;

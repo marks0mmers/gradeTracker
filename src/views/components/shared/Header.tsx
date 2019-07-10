@@ -26,8 +26,11 @@ interface Props {
 
 const Header = (props: Props) => {
 
+    //#region Component State
     const [showPopup, setShowPopup] = useState(false);
+    //#endregion
 
+    //#region Redux State
     const { myViewRequests, users } = useMapState((state: RootState) => ({
         myViewRequests: getMyViewRequests(state),
         users: getUsers(state),
@@ -44,12 +47,16 @@ const Header = (props: Props) => {
         denyViewRequest: DenyViewRequestCreator,
         fetchUsers: GetUsersCreator,
     });
+    //#endregion
 
+    //#region Lifecycle Methods
     useComponentMount(() => {
         fetchUsers();
         fetchMyViewRequests();
     });
+    //#endregion
 
+    //#region Private Methods
     const togglePopup = useCallback(() => {
         setShowPopup(!showPopup);
     }, [showPopup]);
@@ -61,7 +68,9 @@ const Header = (props: Props) => {
     const handleDeny = useCallback((requestId: string) => {
         denyViewRequest(requestId);
     }, [denyViewRequest]);
+    //#endregion
 
+    //#region Display Methods
     const getAllRequests = useCallback(() => {
         const requests = myViewRequests
             .map((request) => (
@@ -76,7 +85,9 @@ const Header = (props: Props) => {
             )).toList();
         return requests.size > 0 ? requests : (<span>No View Requests</span>);
     }, [handleApprove, handleDeny, myViewRequests, users]);
+    //#endregion
 
+    //#region Render Methods
     return (
         <Container id="header">
             {props.title && <Title>{props.title}</Title>}
@@ -113,8 +124,10 @@ const Header = (props: Props) => {
             />
         </Container>
     );
+    //#endregion
 };
 
+//#region Styles
 const Popover = styled.div`
     position: absolute;
     background: white;
@@ -145,5 +158,6 @@ const Title = styled.span`
     margin: auto 8px;
     font-size: 1.5em;
 `;
+//#endregion
 
 export default Header;
