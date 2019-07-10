@@ -5,15 +5,14 @@ import { DataGridColumnDefinition } from "../models/DataGridColumnDefinition";
 import { DataGridElement } from "../models/DataGridElement";
 import BodyCell, { BodyCellProps } from "./BodyCell";
 
-interface Props {
-    element: DataGridElement;
-    columnDefinitions: List<DataGridColumnDefinition> | undefined;
+interface Props<T> {
+    element: DataGridElement<T>;
+    columnDefinitions: List<DataGridColumnDefinition<T>> | undefined;
     height: number;
-// tslint:disable-next-line: no-any
-    onBodyCellClick?: (event: MouseEvent<HTMLDivElement>, payload: any, props: BodyCellProps) => void;
+    onBodyCellClick?: (event: MouseEvent<HTMLDivElement>, payload: T, props: BodyCellProps) => void;
 }
 
-const ElementRow = (props: Props) => {
+const ElementRow = <T extends {}>(props: Props<T>) => {
 
     //#region Prop Destructure
     const { onBodyCellClick } = props;
@@ -32,17 +31,16 @@ const ElementRow = (props: Props) => {
     return (
         <Container id="element-row" {...props}>
             {props.columnDefinitions && props.columnDefinitions.map((
-                column: DataGridColumnDefinition, idx: number,
+                column: DataGridColumnDefinition<T>, idx: number,
             ) => {
                 const { payload } = props.element;
-                const content = column.field && payload && payload[column.field];
+                const content = column.formatter && column.formatter(payload);
                 return (
                         <BodyCell
                             key={idx}
                             width={column.width || 200}
                             height={props.height}
                             content={content}
-                            type={column.type}
                             onCellClick={handleCellClick}
                         />
                     );
@@ -54,7 +52,7 @@ const ElementRow = (props: Props) => {
 };
 
 //#region Styles
-const Container = styled.div<Props>`
+const Container = styled.div<{element: {isSelected?: boolean, isBottom?: boolean}}>`
     display: flex;
     flex-direction: row;
     background: ${(props) => props.element.isSelected ? "#79c8ec" : "#eeeeee"};

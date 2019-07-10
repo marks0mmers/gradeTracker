@@ -1,20 +1,22 @@
 import { List } from "immutable";
+import { User } from "models/User";
 import { DataGridColumnDefinition } from "../../views/controls/data-grid/models/DataGridColumnDefinition";
+import { defaultFormatter } from "../../views/controls/data-grid/models/Formatters";
 
-export const adminViewUsersColumns = List<DataGridColumnDefinition>([
-    new DataGridColumnDefinition({
-        field: "firstName",
-        label: "First Name",
-        width: 100,
-    }),
-    new DataGridColumnDefinition({
-        field: "lastName",
-        label: "Last Name",
-        width: 100,
-    }),
-    new DataGridColumnDefinition({
-        field: "email",
-        label: "Email",
-        width: 100,
-    }),
+export const adminViewUsersColumns = List<DataGridColumnDefinition<User>>([
+    new DataGridColumnDefinition<User>(
+        defaultFormatter((u) => u.firstName),
+        "First Name",
+        100,
+    ),
+    new DataGridColumnDefinition<User>(
+        defaultFormatter((u) => u.lastName),
+        "Last Name",
+        100,
+    ),
+    new DataGridColumnDefinition<User>(
+        defaultFormatter((u) => u.email),
+        "Email",
+        100,
+    ),
 ]);

@@ -1,30 +1,32 @@
 import { List } from "immutable";
+import { AnalysisCourse } from "../../models/AnalysisCourse";
 import { DataGridColumnDefinition } from "../../views/controls/data-grid/models/DataGridColumnDefinition";
+import { defaultFormatter } from "../../views/controls/data-grid/models/Formatters";
 
-export const analysisColumns: List<DataGridColumnDefinition> = List([
-    new DataGridColumnDefinition({
-        field: "title",
-        label: "Course Title",
-        width: 300,
-    }),
-    new DataGridColumnDefinition({
-        field: "creditHours",
-        label: "Credit Hours",
-        width: 150,
-    }),
-    new DataGridColumnDefinition({
-        field: "currentLetter",
-        label: "Curr. GPA",
-        width: 100,
-    }),
-    new DataGridColumnDefinition({
-        field: "guarenteedLetter",
-        label: "Guar. GPA",
-        width: 100,
-    }),
-    new DataGridColumnDefinition({
-        field: "potentialLetter",
-        label: "Potn. GPA",
-        width: 100,
-    }),
+export const analysisColumns = List([
+    new DataGridColumnDefinition<AnalysisCourse>(
+        defaultFormatter((c) => c.title),
+        "Course Title",
+        300,
+    ),
+    new DataGridColumnDefinition<AnalysisCourse>(
+        defaultFormatter((c) => c.creditHours),
+        "Credit Hours",
+        150,
+    ),
+    new DataGridColumnDefinition<AnalysisCourse>(
+        defaultFormatter((c) => c.currentGPA),
+        "Curr. GPA",
+        100,
+    ),
+    new DataGridColumnDefinition<AnalysisCourse>(
+        defaultFormatter((c) => c.guarenteedGPA),
+        "Guar. GPA",
+        100,
+    ),
+    new DataGridColumnDefinition<AnalysisCourse>(
+        defaultFormatter((c) => c.potentialGPA),
+        "Potn. GPA",
+        100,
+    ),
 ]);

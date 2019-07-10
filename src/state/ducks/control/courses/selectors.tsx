@@ -14,10 +14,10 @@ export const getDetailedCourseElements = createSelector(
         gradeCategories: Map<string, GradeCategory>,
         selectedGradeCategory?: string,
     ) => {
-        let categories = gradeCategories.map((gradeCategory: GradeCategory) => new DataGridElement({
-            payload: gradeCategory,
-            isSelected: gradeCategory.id === selectedGradeCategory,
-        }),
+        let categories = gradeCategories.map((gradeCategory: GradeCategory) => new DataGridElement<GradeCategory>(
+            gradeCategory,
+            gradeCategory.id === selectedGradeCategory,
+        ),
         ).toList();
         let totalPercentage = 0;
         let numberOfGradesTotal = 0;
@@ -34,8 +34,8 @@ export const getDetailedCourseElements = createSelector(
             guarenteedAverageTotal += (g.guarenteedAverage * (g.percentage / 100));
         });
         if (gradeCategories.size > 0 && totalPercentage === 100) {
-            categories = categories.push(new DataGridElement({
-                payload: new GradeCategory({
+            categories = categories.push(new DataGridElement<GradeCategory>(
+                new GradeCategory({
                     id: "",
                     title: "Total",
                     percentage: 100,
@@ -46,8 +46,9 @@ export const getDetailedCourseElements = createSelector(
                     guarenteedAverage: guarenteedAverageTotal,
                     courseId: "",
                 }),
-                isBottom: true,
-            }));
+                undefined,
+                true,
+            ));
         }
         return categories;
     },

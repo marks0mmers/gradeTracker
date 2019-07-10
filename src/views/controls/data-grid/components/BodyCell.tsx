@@ -1,12 +1,10 @@
-import React, { MouseEvent, useCallback } from "react";
+import React, { MouseEvent, ReactNode, useCallback } from "react";
 import styled from "styled-components";
-import ColoredCell from "./ColoredCell";
 
 export interface BodyCellProps {
     height: number;
     width: number;
-    content: string;
-    type?: "normal" | "colored";
+    content: ReactNode;
     columnIndex?: number;
     onCellClick: (event: MouseEvent<HTMLDivElement>, props: BodyCellProps) => void;
 }
@@ -29,28 +27,13 @@ const BodyCell = (props: BodyCellProps) => {
             id="body-cell"
             onClick={handleCellClick}
         >
-            {
-                props.type === "normal" &&
-                <StyledSpan>
-                    {props.content}
-                </StyledSpan>
-            }
-            {
-                props.type === "colored" && !isNaN(+props.content) &&
-                <ColoredCell grade={+props.content} />
-            }
+            {props.content}
         </Container>
     );
     //#endregion
 };
 
 //#region Styles
-const StyledSpan = styled.span`
-    width: 100%;
-    text-align: center;
-    line-height: 30px;
-`;
-
 const Container = styled.div<Partial<BodyCellProps>>`
     display: flex;
     flex: 1;

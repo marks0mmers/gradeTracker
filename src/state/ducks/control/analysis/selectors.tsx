@@ -34,7 +34,7 @@ export const getAnalysisGridDataForUser = createSelector(
 );
 
 const generateData = (courses: Map<string, Course>, gradeCategories: Map<string, GradeCategory>) => {
-    let retList: List<DataGridElement> = List();
+    let retList: List<DataGridElement<AnalysisCourse>> = List();
 
     courses.forEach((course: Course) => {
         let currentTotal = 0;
@@ -51,8 +51,8 @@ const generateData = (courses: Map<string, Course>, gradeCategories: Map<string,
             guarenteedTotal /= 100;
             potentialTotal /= 100;
         }
-        retList = retList.push(new DataGridElement({
-            payload: new AnalysisCourse({
+        retList = retList.push(new DataGridElement<AnalysisCourse>(
+            new AnalysisCourse({
                 creditHours: +course.creditHours,
                 currentGPA: getGPAFromLetter(getLetterGrade(currentTotal)),
                 currentLetter: getLetterGrade(currentTotal),
@@ -62,13 +62,13 @@ const generateData = (courses: Map<string, Course>, gradeCategories: Map<string,
                 potentialLetter: getLetterGrade(potentialTotal),
                 title: course.title,
             }),
-        }));
+        ));
     });
     let currentTotalGPA = 0;
     let guarenteedTotalGPA = 0;
     let potentialTotalGPA = 0;
     let creditHoursTotal = 0;
-    retList.forEach((value: DataGridElement) => {
+    retList.forEach((value: DataGridElement<AnalysisCourse>) => {
         currentTotalGPA += value.payload.currentGPA * +value.payload.creditHours;
         guarenteedTotalGPA += value.payload.guarenteedGPA * +value.payload.creditHours;
         potentialTotalGPA += value.payload.potentialGPA * +value.payload.creditHours;
@@ -77,9 +77,8 @@ const generateData = (courses: Map<string, Course>, gradeCategories: Map<string,
     currentTotalGPA /= creditHoursTotal;
     guarenteedTotalGPA /= creditHoursTotal;
     potentialTotalGPA /= creditHoursTotal;
-    retList = retList.push(new DataGridElement({
-        isBottom: true,
-        payload: new AnalysisCourse({
+    retList = retList.push(new DataGridElement<AnalysisCourse>(
+        new AnalysisCourse({
             creditHours: creditHoursTotal,
             currentGPA: currentTotalGPA,
             currentLetter: getLetterFromGPA(currentTotalGPA),
@@ -89,6 +88,8 @@ const generateData = (courses: Map<string, Course>, gradeCategories: Map<string,
             potentialLetter: getLetterFromGPA(potentialTotalGPA),
             title: "Totals",
         }),
-    }));
+        undefined,
+        true,
+    ));
     return retList;
 };

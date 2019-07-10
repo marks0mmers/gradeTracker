@@ -51,15 +51,15 @@ const AdminViewUsersPage = () => {
     }, [users]);
 
     const getUserGridData = useCallback(() => {
-        return users.map((user: User) => new DataGridElement({
-            payload: {
+        return users.map((user: User) => new DataGridElement<User>(
+            new User({
                 _id: user._id,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
-            },
-            isSelected: selectedUser && user._id === selectedUser._id,
-        })).toList();
+            }),
+            selectedUser && user._id === selectedUser._id,
+        )).toList();
     }, [users, selectedUser]);
 
     const handleEditUser = useCallback((editedUser: User) => {
