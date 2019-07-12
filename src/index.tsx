@@ -9,12 +9,12 @@ import history from "./state/history";
 import { store } from "./state/store";
 import Layout from "./views/Layout";
 
-ReactDOM.render(
+ReactDOM.render((
     <Provider store={store}>
         <ConnectedRouter history={history}>
             <Layout />
         </ConnectedRouter>
-    </Provider>,
-    document.getElementById("root") as HTMLElement,
+    </Provider>
+    ), document.getElementById("root") as HTMLElement,
 );
 ReactModal.setAppElement("body");
