@@ -123,6 +123,7 @@ const LoginPage = () => {
         required,
         error?: string,
         type?: string,
+        autoComplete?: string,
     ) => {
         return (
             <LabelInput>
@@ -133,6 +134,7 @@ const LoginPage = () => {
                     onChange={props.handleChange}
                     onBlur={props.handleBlur}
                     value={value}
+                    autoComplete={autoComplete}
                     name={name}
                 />
                 {error && <Error>{error}</Error>}
@@ -166,6 +168,8 @@ const LoginPage = () => {
                 "email",
                 true,
                 props.errors.email,
+                undefined,
+                "username",
             )}
             {buildInputField(
                 "Password",
@@ -175,6 +179,7 @@ const LoginPage = () => {
                 true,
                 props.errors.password,
                 "password",
+                "current-password",
             )}
             <Buttons>
                 {buildButton(30, "Create User", "Switch to Create User", "reset", toggleCreate)}

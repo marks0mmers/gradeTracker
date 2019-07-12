@@ -8,6 +8,6 @@ const RedirectComp = () => (
 );
 
 // HOC to protect a route based on if the current user has a role
-export const protectRoute = (role: string, currentUser?: User) => (route: ReactNode) => {
-    return currentUser && currentUser.roles.some((r: Role) => r.role === role) ? route : RedirectComp;
+export const protectRoute = (role: string, currentUser?: User) => (route: ReactNode): ReactNode => {
+    return currentUser && currentUser.roles.some((r: Role) => r.role === role) ? route : (<RedirectComp />);
 };
