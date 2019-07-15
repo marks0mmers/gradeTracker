@@ -8,9 +8,9 @@ import { getCurrentUser, getUsers, GetUsersCreator } from "../../../state/ducks/
 import { useMapDispatch, useMapState } from "../../../state/hooks";
 import { RootState } from "../../../state/rootReducer";
 import { useComponentMount } from "../../../util/Hooks";
+import Button from "../../components/shared/Button";
 import Divider from "../../components/shared/Divider";
 import Input from "../../components/styled-inputs/Input";
-import Button from "../../controls/button/Button";
 import DataGrid from "../../controls/data-grid";
 import { DataGridElement } from "../../controls/data-grid/models/DataGridElement";
 

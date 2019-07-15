@@ -9,8 +9,8 @@ import { useMapDispatch, useMapState } from "../../state/hooks";
 import { RootState } from "../../state/rootReducer";
 import { useComponentMount } from "../../util/Hooks";
 import CourseOverviewButton from "../components/course/CourseOverviewButton";
+import Button from "../components/shared/Button";
 import Divider from "../components/shared/Divider";
-import Button from "../controls/button/Button";
 import ModalHeader from "../modals/common/ModalHeader";
 import CourseFormModal from "../modals/CourseFormModal";
 

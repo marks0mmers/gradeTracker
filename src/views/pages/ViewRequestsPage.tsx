@@ -12,8 +12,8 @@ import { getSentViewRequests } from "../../state/ducks/data/viewRequests/selecto
 import { useMapDispatch, useMapState } from "../../state/hooks";
 import { RootState } from "../../state/rootReducer";
 import { useComponentMount } from "../../util/Hooks";
+import Button from "../components/shared/Button";
 import Divider from "../components/shared/Divider";
-import Button from "../controls/button/Button";
 import { ListControlElement } from "../controls/list-control/models/ListControlElement";
 import ListControl from "../controls/list-control/package/ListControl";
 

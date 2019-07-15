@@ -5,7 +5,7 @@ import { Grade } from "../../../models/Grade";
 import { GradeCategory } from "../../../models/GradeCategory";
 import { DeleteGradeCreator } from "../../../state/ducks/data/gradeCategories";
 import { useMapDispatch } from "../../../state/hooks";
-import Button from "../../../views/controls/button/Button";
+import Button from "../../../views/components/shared/Button";
 import { ListControlElement } from "../../controls/list-control/models/ListControlElement";
 import ListControl from "../../controls/list-control/package/ListControl";
 import ModalHeader from "../../modals/common/ModalHeader";

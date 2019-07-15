@@ -9,8 +9,8 @@ import { CreateNewUserCreator, getCurrentUser, LoginCreator } from "../../state/
 import { getPreviousRoute } from "../../state/ducks/router/selectors";
 import { useMapDispatch, useMapState } from "../../state/hooks";
 import { useComponentMount, useComponentUpdate } from "../../util/Hooks";
+import Button from "../components/shared/Button";
 import Input from "../components/styled-inputs/Input";
-import Button from "../controls/button/Button";
 
 //#region Form / Validation
 interface UserForm {

@@ -2,8 +2,8 @@ import { Map } from "immutable";
 import React, { ChangeEvent, Fragment, useCallback, useState } from "react";
 import styled from "styled-components";
 import { useComponentUpdate } from "../../../../util/Hooks";
+import Button from "../../../components/shared/Button";
 import Input from "../../../components/styled-inputs/Input";
-import Button from "../../button/Button";
 
 interface Props {
     className?: string;

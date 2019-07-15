@@ -8,8 +8,8 @@ import { CreateNewCourseCreator, EditCourseCreator } from "../../state/ducks/dat
 import { getCurrentUser } from "../../state/ducks/data/users";
 import { useMapDispatch, useMapState } from "../../state/hooks";
 import { RootState } from "../../state/rootReducer";
+import Button from "../components/shared/Button";
 import Input from "../components/styled-inputs/Input";
-import Button from "../controls/button/Button";
 
 interface Props {
     isCreating: boolean;

@@ -5,7 +5,7 @@ import { SetActiveCourseCreator } from "../../../state/ducks/control/courses";
 import { DeleteCourseCreator } from "../../../state/ducks/data/courses";
 import { useMapDispatch } from "../../../state/hooks";
 import { leadingZeros } from "../../../util/General";
-import Button from "../../../views/controls/button/Button";
+import Button from "../../../views/components/shared/Button";
 import Divider from "../../components/shared/Divider";
 
 interface Props {

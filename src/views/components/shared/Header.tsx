@@ -13,8 +13,8 @@ import { getMyViewRequests } from "../../../state/ducks/data/viewRequests/select
 import { useMapDispatch, useMapState } from "../../../state/hooks";
 import { RootState } from "../../../state/rootReducer";
 import { useComponentMount } from "../../../util/Hooks";
-import Button from "../../controls/button/Button";
 import ApproveDenyRequest from "../viewRequest/ApproveDenyRequest";
+import Button from "./Button";
 import Divider from "./Divider";
 
 interface Props {

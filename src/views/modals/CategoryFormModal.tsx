@@ -8,8 +8,8 @@ import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
 import { CreateGradeCategoryCreator, EditGradeCategoryCreator } from "../../state/ducks/data/gradeCategories";
 import { useMapDispatch } from "../../state/hooks";
+import Button from "../components/shared/Button";
 import Input from "../components/styled-inputs/Input";
-import Button from "../controls/button/Button";
 
 interface Props {
     isCreating: boolean;
