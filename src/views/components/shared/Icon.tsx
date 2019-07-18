@@ -1,4 +1,4 @@
-import React, {  } from "react";
+import React from "react";
 import styled from "styled-components";
 
 interface Props {
@@ -12,8 +12,8 @@ const Icon = (props: Props) => (
 );
 
 const StyledIcon = styled.i<Partial<Props>>`
-    margin: auto ${(props) => props.margin ? `${props.margin}px` : `auto`};
-    font-size: ${(props) => props.size || 20}px;
+    margin: auto ${props => props.margin ? `${props.margin}px` : `auto`};
+    font-size: ${props => props.size || 20}px;
 `;
 
 export default Icon;

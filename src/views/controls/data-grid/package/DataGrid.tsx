@@ -66,7 +66,7 @@ const HeaderCells = styled.div`
 `;
 
 const Container = styled.div<{gridArea?: string}>`
-    grid-area: ${(props) => props.gridArea ? props.gridArea : ""};
+    grid-area: ${props => props.gridArea ? props.gridArea : ""};
     display: flex;
     flex-direction: column;
 `;

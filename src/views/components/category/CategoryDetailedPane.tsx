@@ -28,16 +28,16 @@ const CategoryDetailedPane = (props: Props) => {
     //#endregion
 
     //#region Private Methods
-    const getListElements = useCallback(() => {
-        return props.selectedCategory && props.selectedCategory.grades.map((value: Grade) => {
+    const getListElements = useCallback(() => props.selectedCategory && props.selectedCategory.grades.map(
+        (value: Grade) => {
             const element: ListControlElement = {
                 isSelected: value === selectedGrade,
                 primaryProperty: value.name,
                 secondaryProperty: `${value.grade.toString()} %`,
             };
             return element;
-        }).toList();
-    }, [props.selectedCategory, selectedGrade]);
+        },
+    ).toList(), [props.selectedCategory, selectedGrade]);
 
     const handleCancel = useCallback(() => {
         setIsCreating(false);
@@ -213,7 +213,7 @@ const GridContainer = styled.div`
 const LabelContainer = styled.div<{gridArea: string}>`
     padding: 10px;
     display: grid;
-    grid-area: ${(props) => props.gridArea};
+    grid-area: ${props => props.gridArea};
     grid-template-columns: auto 1fr;
     grid-template-areas: "label value";
 `;

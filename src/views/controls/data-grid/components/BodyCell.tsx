@@ -37,8 +37,8 @@ const BodyCell = (props: BodyCellProps) => {
 const Container = styled.div<Partial<BodyCellProps>>`
     display: flex;
     flex: 1;
-    width: ${(props) => props.width}px;
-    height: ${(props) => props.height}px;
+    width: ${props => props.width}px;
+    height: ${props => props.height}px;
 `;
 //#endregion
 

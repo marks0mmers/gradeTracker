@@ -78,9 +78,9 @@ const Body = styled.div`
 `;
 
 const Container = styled.div<Props>`
-    grid-area: ${(props) => props.gridArea};
+    grid-area: ${props => props.gridArea};
     overflow-y: auto;
-    padding: ${(props) => props.padding}px;
+    padding: ${props => props.padding}px;
     display: flex;
     flex-direction: column;
     border: solid black 1px;

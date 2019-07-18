@@ -56,7 +56,7 @@ const ApproveDenyRequest = (props: Props) => {
 const Container = styled.div<{status: number}>`
     display: flex;
     padding: 10px;
-    background-color: ${(props) => {
+    background-color: ${props => {
         switch (props.status) {
             case 2: return "#59f75c";
             case 3: return "#f75959";
@@ -73,7 +73,7 @@ const Label = styled.span`
 
 const Icon = styled.i<{color: string}>`
     font-size: 12px;
-    color: ${(props) => props.color};
+    color: ${props => props.color};
     margin-left: 5px;
     opacity: 1;
 

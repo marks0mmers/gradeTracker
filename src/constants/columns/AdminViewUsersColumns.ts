@@ -5,17 +5,17 @@ import { defaultFormatter } from "../../views/controls/data-grid/models/Formatte
 
 export const adminViewUsersColumns = List<DataGridColumnDefinition<User>>([
     new DataGridColumnDefinition<User>(
-        defaultFormatter((u) => u.firstName),
+        defaultFormatter(u => u.firstName),
         "First Name",
         100,
     ),
     new DataGridColumnDefinition<User>(
-        defaultFormatter((u) => u.lastName),
+        defaultFormatter(u => u.lastName),
         "Last Name",
         100,
     ),
     new DataGridColumnDefinition<User>(
-        defaultFormatter((u) => u.email),
+        defaultFormatter(u => u.email),
         "Email",
         100,
     ),

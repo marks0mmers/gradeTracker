@@ -16,7 +16,7 @@ const Container = styled.span<Props>`
     line-height: 30px;
     text-align: center;
     color: black;
-    background: ${(props) => {
+    background: ${props => {
         const grade = props.grade || 0;
         if (grade >= 90) {
             return "#409C40";

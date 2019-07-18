@@ -16,7 +16,7 @@ const HeaderCell = (props: Props) => (
 //#region Styles
 const HeaderLabel = styled.span<{height: number}>`
     margin: auto;
-    line-height: ${(props) => props.height}px;
+    line-height: ${props => props.height}px;
     font-size: 1.1vw;
 `;
 
@@ -24,8 +24,8 @@ const Container = styled.div<Props>`
     display: flex;
     flex: 1;
     background: "#99ced3";
-    width: ${(props) => props.width}px;
-    height: ${(props) => props.height}px;
+    width: ${props => props.width}px;
+    height: ${props => props.height}px;
     border-bottom: solid black 1px;
 `;
 //#endregion

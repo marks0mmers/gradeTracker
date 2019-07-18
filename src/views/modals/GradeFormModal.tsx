@@ -100,8 +100,14 @@ const GradeFormModal = (componentProps: Props) => {
             validateOnBlur={false}
             validateOnChange={false}
             validationSchema={Yup.object().shape({
-                name: Yup.string().required("Name of Grade is Required"),
-                grade: Yup.number().required("Grade is Required"),
+                name: Yup
+                    .string()
+                    .required("Name of Grade is Required"),
+                grade: Yup
+                    .number()
+                    .min(0, "Grade must be at least 0")
+                    .max(150, "Grade must be at most 150")
+                    .required("Grade is Required"),
             })}
         >
             {(props: FormikProps<GradeForm>) => (

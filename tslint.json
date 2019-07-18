@@ -18,6 +18,7 @@
         "no-any": true,
         "object-literal-sort-keys": false,
         "variable-name": false,
+        "arrow-parens": false,
         "arrow-return-shorthand": true
     }
 }

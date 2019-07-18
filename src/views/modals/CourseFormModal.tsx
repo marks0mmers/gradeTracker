@@ -110,10 +110,22 @@ const CourseFormModal = (componentProps: Props) => {
             validateOnBlur={false}
             validateOnChange={false}
             validationSchema={Yup.object().shape({
-                title: Yup.string().max(8, "Course can only be up to 8 Characters").required(),
-                description: Yup.string().required(),
-                section: Yup.number().moreThan(0).required(),
-                creditHours: Yup.number().moreThan(0).lessThan(5).required(),
+                title: Yup
+                    .string()
+                    .max(8, "Course can only be up to 8 Characters")
+                    .required(),
+                description: Yup
+                    .string()
+                    .required(),
+                section: Yup
+                    .number()
+                    .moreThan(0)
+                    .required(),
+                creditHours: Yup
+                    .number()
+                    .moreThan(0)
+                    .lessThan(5)
+                    .required(),
             })}
         >
             {(props: FormikProps<CourseForm>) => (

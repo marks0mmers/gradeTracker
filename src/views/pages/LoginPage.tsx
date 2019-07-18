@@ -24,14 +24,14 @@ interface UserForm {
 const NewUserValidation = Yup.object().shape({
     email: Yup
         .string()
-        .email()
+        .email("Must be in valid email format")
         .required("Email is Required"),
     password: Yup
         .string()
         .required("Password is Required"),
     repeatPassword: Yup
         .string()
-        .oneOf([Yup.ref("password"), null])
+        .oneOf([Yup.ref("password"), null], "Passwords must match")
         .required("Password confirm is required"),
     firstName: Yup
         .string()
@@ -44,7 +44,7 @@ const NewUserValidation = Yup.object().shape({
 const LoginValidation = Yup.object().shape({
     email: Yup
         .string()
-        .email()
+        .email("Must be in valid email format")
         .required("Email is Required"),
     password: Yup
         .string()

@@ -140,11 +140,11 @@ const Secondary = styled.span`
 const Container = styled.div<Props>`
     display: grid;
     grid-template-rows: auto auto;
-    grid-template-columns: ${(props) => props.isCreating || props.isEditing
+    grid-template-columns: ${props => props.isCreating || props.isEditing
         ? "15px 1fr 50px 50px 15px"
         :  "15px 1fr 15px"
     };
-    grid-template-areas: ${(props) => props.isCreating || props.isEditing
+    grid-template-areas: ${props => props.isCreating || props.isEditing
         ?
             `". primary cancel save ."
              ". secondary cancel save ."`
@@ -153,12 +153,12 @@ const Container = styled.div<Props>`
              ". secondary ."`
     };
     grid-row-gap: 5px;
-    background: ${(props) => props.isSelected && !props.isEditing ? "#79c8ec" : "white"};
+    background: ${props => props.isSelected && !props.isEditing ? "#79c8ec" : "white"};
     padding: 5px 0;
     border-bottom: solid #898989 1px;
 
     :hover {
-        background: ${(props) => props.isCreating || props.isEditing ? "white" : "eee"};
+        background: ${props => props.isCreating || props.isEditing ? "white" : "eee"};
     }
 `;
 

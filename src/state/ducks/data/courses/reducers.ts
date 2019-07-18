@@ -27,7 +27,7 @@ export const CourseDataReducer = (
                 ? state.setIn(["courses", action.course.id], action.course)
                 : state;
         case (types.GET_COURSES_CURRENT_USER_SUCCESS):
-            const immutableCourses = action.courses.map((course) => new Course({...course}));
+            const immutableCourses = action.courses.map(course => new Course({...course}));
             const courseMap: Map<string, Course> = List(immutableCourses)
                 .reduce((cs: Map<string, Course>, c: Course) => {
                     return c.id ? cs.set(c.id, c) : cs;

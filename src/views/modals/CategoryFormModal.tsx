@@ -101,16 +101,19 @@ const CategoryFormModal = (props: Props) => {
             validateOnBlur={false}
             validateOnChange={false}
             validationSchema={Yup.object().shape({
-                title: Yup.string()
+                title: Yup
+                    .string()
                     .required("Grade Category is Required"),
-                percentage: Yup.number()
+                percentage: Yup
+                    .number()
                     .positive("Percentage has to be positive.")
                     .lessThan(props.categories ? 101 - props.categories
                         .map((g) => g.percentage)
                         .reduce((acc: number, val) => acc += val)
                     : 101, "Max percentage is 100")
                     .required("Percentage is required"),
-                numberOfGrades: Yup.number()
+                numberOfGrades: Yup
+                    .number()
                     .positive("Number of Grades must be positive")
                     .required("Number of Grades is Required"),
             })}

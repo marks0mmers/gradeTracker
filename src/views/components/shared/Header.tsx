@@ -73,7 +73,7 @@ const Header = (props: Props) => {
     //#region Display Methods
     const getAllRequests = useCallback(() => {
         const requests = myViewRequests
-            .map((request) => (
+            .map(request => (
                 <ApproveDenyRequest
                     key={request.id}
                     requestId={request.id}

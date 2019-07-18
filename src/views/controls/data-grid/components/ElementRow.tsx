@@ -55,8 +55,8 @@ function ElementRow<T>(props: Props<T>) {
 const Container = styled.div<{element: {isSelected ?: boolean,  isBottom?: boolean}}>`
     display: flex;
     flex-direction: row;
-    background: ${(props) => props.element.isSelected ? "#79c8ec" : "#eeeeee"};
-    border-top: ${(props) => props.element.isBottom ? "solid black 1px" : "none"};
+    background: ${props => props.element.isSelected ? "#79c8ec" : "#eeeeee"};
+    border-top: ${props => props.element.isBottom ? "solid black 1px" : "none"};
 `;
 //#endregion
 

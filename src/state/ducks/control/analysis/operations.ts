@@ -20,7 +20,7 @@ export const GetAnalysisInformationForUserEpic = (
     action$: Observable<ViewAnalysisForUser>,
 ) => action$.pipe(
     ofType<ViewAnalysisForUser>(types.VIEW_ANALYSIS_FOR_USER),
-    mergeMap((action) => {
+    mergeMap(action => {
 // tslint:disable-next-line: no-any
         const headers: any = generateHeaders();
         headers.Authorization = `Bearer ${sessionStorage.getItem("jwtToken")}`;

@@ -5,27 +5,27 @@ import { defaultFormatter, gpaFormatter } from "../../views/controls/data-grid/m
 
 export const analysisColumns = List([
     new DataGridColumnDefinition<AnalysisCourse>(
-        defaultFormatter((c) => c.title),
+        defaultFormatter(c => c.title),
         "Course Title",
         300,
     ),
     new DataGridColumnDefinition<AnalysisCourse>(
-        defaultFormatter((c) => c.creditHours),
+        defaultFormatter(c => c.creditHours),
         "Credit Hours",
         150,
     ),
     new DataGridColumnDefinition<AnalysisCourse>(
-        gpaFormatter((c) => c.currentGPA),
+        gpaFormatter(c => c.currentGPA),
         "Curr. GPA",
         100,
     ),
     new DataGridColumnDefinition<AnalysisCourse>(
-        gpaFormatter((c) => c.guarenteedGPA),
+        gpaFormatter(c => c.guarenteedGPA),
         "Guar. GPA",
         100,
     ),
     new DataGridColumnDefinition<AnalysisCourse>(
-        gpaFormatter((c) => c.potentialGPA),
+        gpaFormatter(c => c.potentialGPA),
         "Potn. GPA",
         100,
     ),

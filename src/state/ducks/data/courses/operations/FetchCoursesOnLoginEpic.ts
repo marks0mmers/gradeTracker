@@ -10,8 +10,6 @@ export const FetchCoursesOnLoginEpic = (
 ) => {
     return action$.pipe(
         ofType(UserDataActionTypes.GET_CURRENT_USER_SUCCESS),
-        mergeMap(() => {
-            return Observable.of(GetCoursesCurrentUserCreator());
-        }),
+        mergeMap(() => Observable.of(GetCoursesCurrentUserCreator())),
     );
 };

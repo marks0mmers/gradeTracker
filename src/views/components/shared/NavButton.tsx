@@ -33,7 +33,7 @@ const NavButton = (props: Props) => {
 
 const Container = styled.div<Partial<Props>>`
     color: #333333;
-    background: ${(props) => props.id === props.activeButton ? "#4c4f52" : "#5f6366"};
+    background: ${props => props.id === props.activeButton ? "#4c4f52" : "#5f6366"};
     :hover {
         background: #6e7377;
         cursor: pointer;

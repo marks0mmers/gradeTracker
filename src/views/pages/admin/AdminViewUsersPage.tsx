@@ -15,9 +15,16 @@ import DataGrid from "../../controls/data-grid";
 import { DataGridElement } from "../../controls/data-grid/models/DataGridElement";
 
 const NewUserValidation = Yup.object().shape({
-    email: Yup.string().email().required("Email is Required"),
-    firstName: Yup.string().required("First Name is Required"),
-    lastName: Yup.string().required("Last Name is Required"),
+    email: Yup
+        .string()
+        .email("Must be in valid email format")
+        .required("Email is Required"),
+    firstName: Yup
+        .string()
+        .required("First Name is Required"),
+    lastName: Yup
+        .string()
+        .required("Last Name is Required"),
 });
 
 const AdminViewUsersPage = () => {
