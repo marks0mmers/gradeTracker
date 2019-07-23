@@ -1,6 +1,5 @@
 import { ofType } from "redux-observable";
-import { Observable } from "rxjs";
-import "rxjs/add/observable/of";
+import { Observable, of } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import { GetCurrentUserSuccess, UserDataActionTypes } from "../../users";
 import { GetCoursesCurrentUserCreator } from "../actions";
@@ -10,6 +9,6 @@ export const FetchCoursesOnLoginEpic = (
 ) => {
     return action$.pipe(
         ofType(UserDataActionTypes.GET_CURRENT_USER_SUCCESS),
-        mergeMap(() => Observable.of(GetCoursesCurrentUserCreator())),
+        mergeMap(() => of(GetCoursesCurrentUserCreator())),
     );
 };

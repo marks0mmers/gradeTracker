@@ -1,7 +1,6 @@
 import { Action, ActionCreator, AnyAction } from "redux";
 import { ofType, StateObservable } from "redux-observable";
-import { empty, Observable } from "rxjs";
-import "rxjs/add/observable/of";
+import { empty, Observable, of } from "rxjs";
 import { AjaxResponse } from "rxjs/internal-compatibility";
 import { ajax } from "rxjs/observable/dom/ajax";
 import { catchError, map, mergeMap } from "rxjs/operators";
@@ -79,11 +78,11 @@ export const epicBuilder = <
                         return res.response;
                     }),
                     mergeMap((data: ResData) => {
-                        return Observable.of(endActionCreator(data));
+                        return of(endActionCreator(data));
                     }),
                     catchError((err: Error) => {
                         Toast.error(err.message);
-                        return Observable.of(failActionCreator(err));
+                        return of(failActionCreator(err));
                     }),
                 );
             }),

@@ -1,7 +1,6 @@
 import { LOCATION_CHANGE, LocationChangeAction, push } from "connected-react-router";
 import { combineEpics, ofType, StateObservable } from "redux-observable";
-import { empty, Observable } from "rxjs";
-import "rxjs/add/observable/of";
+import { empty, Observable, of } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import { CourseControlActionTypes as types, SetActiveCourse, SetActiveCourseCreator } from ".";
 import { Course } from "../../../../models/Course";
@@ -16,7 +15,7 @@ const ChangeRouteOnCoursesLoadEpic = (
     mergeMap((action: GetCoursesCurrentUserSuccess) => {
         const courseFromRoute = action.courses.find((c: Course) => window.location.href.includes(c.title));
         if (courseFromRoute) {
-            return Observable.of(SetActiveCourseCreator(new Course(courseFromRoute)));
+            return of(SetActiveCourseCreator(new Course(courseFromRoute)));
         } else {
             return empty();
         }
@@ -30,7 +29,7 @@ const FetchGradesOnLoginEpic = (
     ofType(LOCATION_CHANGE),
     mergeMap((action: LocationChangeAction) => {
         if (action.payload.location.pathname === "/" && state$.value.data.user.currentUser) {
-            return Observable.of(GetCoursesCurrentUserCreator());
+            return of(GetCoursesCurrentUserCreator());
         } else { return empty(); }
     }),
 );
@@ -41,7 +40,7 @@ const PushRouteOnActiveCourseEpic = (
     return action$.pipe(
         ofType(types.SET_ACTIVE_COURSE),
         mergeMap((action: SetActiveCourse) => {
-            return Observable.of(push(`/course/${action.course && action.course.title}`));
+            return of(push(`/course/${action.course && action.course.title}`));
         }),
     );
 };
