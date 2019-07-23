@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import { User } from "../../../models/User";
 
@@ -12,14 +12,24 @@ interface Props {
 
 const ApproveDenyRequest = (props: Props) => {
 
-    const handleApprove = () => {
-        props.onApprove(props.requestId);
-    };
+    //#region Prop Destructure
+    const {
+        onApprove,
+        onDeny,
+    } = props;
+    //#endregion
 
-    const handleDeny = () => {
-        props.onDeny(props.requestId);
-    };
+    //#region Private Methods
+    const handleApprove = useCallback(() => {
+        onApprove(props.requestId);
+    }, [onApprove, props.requestId]);
 
+    const handleDeny = useCallback(() => {
+        onDeny(props.requestId);
+    }, [onDeny, props.requestId]);
+    //#endregion
+
+    //#region Render Method
     return (
         <Container status={props.status}>
             <Label>{`Request from ${props.userFromRequest.firstName} ${props.userFromRequest.lastName}`}</Label>
@@ -39,12 +49,14 @@ const ApproveDenyRequest = (props: Props) => {
             </Icon>
         </Container>
     );
+    //#endregion
 };
 
+//#region Styles
 const Container = styled.div<{status: number}>`
     display: flex;
     padding: 10px;
-    background-color: ${(props) => {
+    background-color: ${props => {
         switch (props.status) {
             case 2: return "#59f75c";
             case 3: return "#f75959";
@@ -61,7 +73,7 @@ const Label = styled.span`
 
 const Icon = styled.i<{color: string}>`
     font-size: 12px;
-    color: ${(props) => props.color};
+    color: ${props => props.color};
     margin-left: 5px;
     opacity: 1;
 
@@ -69,5 +81,6 @@ const Icon = styled.i<{color: string}>`
         background: lightgray;
     }
 `;
+//#endregion
 
 export default ApproveDenyRequest;

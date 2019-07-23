@@ -1,18 +1,19 @@
-import React, {  } from "react";
+import React from "react";
 import styled from "styled-components";
 
 interface Props {
-    className?: string;
     iconName: string;
     size?: number;
     margin?: number;
 }
 
 const Icon = (props: Props) => (
-    <i id="icon" className={`${props.className} material-icons`}>{props.iconName}</i>
+    <StyledIcon id="icon" className="material-icons" {...props}>{props.iconName}</StyledIcon>
 );
 
-export default styled(Icon)`
-    margin: auto ${(props) => props.margin ? `${props.margin}px` : `auto`};
-    font-size: ${(props) => props.size}px;
+const StyledIcon = styled.i<Partial<Props>>`
+    margin: auto ${props => props.margin ? `${props.margin}px` : `auto`};
+    font-size: ${props => props.size || 20}px;
 `;
+
+export default Icon;

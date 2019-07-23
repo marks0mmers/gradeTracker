@@ -7,10 +7,12 @@ import {
 
 interface ICourseDataState {
     courses: Map<string, Course>;
+    coursesForUser: Map<string, Course>;
 }
 
 export const CourseDataState = Record<ICourseDataState>({
     courses: Map(),
+    coursesForUser: Map(),
 });
 
 export type CourseDataState = RecordOf<ICourseDataState>;
@@ -25,7 +27,7 @@ export const CourseDataReducer = (
                 ? state.setIn(["courses", action.course.id], action.course)
                 : state;
         case (types.GET_COURSES_CURRENT_USER_SUCCESS):
-            const immutableCourses = action.courses.map((course) => new Course({...course}));
+            const immutableCourses = action.courses.map(course => new Course({...course}));
             const courseMap: Map<string, Course> = List(immutableCourses)
                 .reduce((cs: Map<string, Course>, c: Course) => {
                     return c.id ? cs.set(c.id, c) : cs;
@@ -39,6 +41,8 @@ export const CourseDataReducer = (
             return action.course.id
                 ? state.removeIn(["courses", action.course.id])
                 : state;
+        case (types.SET_COURSES_FOR_USER):
+            return state.set("coursesForUser", action.courses);
         default:
             return state;
     }

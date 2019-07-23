@@ -1,42 +1,45 @@
-import React, { MouseEvent, ReactNode } from "react";
+import React, { MouseEvent, ReactNode, useCallback } from "react";
 import styled from "styled-components";
 
 export interface BodyCellProps {
-    className?: string;
     height: number;
     width: number;
-    content?: string | ReactNode;
+    content: ReactNode;
     columnIndex?: number;
     onCellClick: (event: MouseEvent<HTMLDivElement>, props: BodyCellProps) => void;
 }
 
 const BodyCell = (props: BodyCellProps) => {
-    const handleCellClick = (event: MouseEvent<HTMLDivElement>) => {
-        props.onCellClick(event, props);
-    };
 
+    //#region Prop Destructure
+    const { onCellClick } = props;
+    //#endregion
+
+    //#region Private Methods
+    const handleCellClick = useCallback((event: MouseEvent<HTMLDivElement>) => {
+        onCellClick(event, props);
+    }, [onCellClick, props]);
+    //#endregion
+
+    //#region Render Method
     return (
-        <div
+        <Container
             id="body-cell"
-            className={props.className}
             onClick={handleCellClick}
         >
-            <StyledSpan>
-                {props.content}
-            </StyledSpan>
-        </div>
+            {props.content}
+        </Container>
     );
+    //#endregion
 };
 
-const StyledSpan = styled.span`
-    width: 100%;
-    text-align: center;
-    line-height: 30px;
-`;
-
-export default styled(BodyCell)`
+//#region Styles
+const Container = styled.div<Partial<BodyCellProps>>`
     display: flex;
     flex: 1;
-    width: ${(props) => props.width}px;
-    height: ${(props) => props.height}px;
+    width: ${props => props.width}px;
+    height: ${props => props.height}px;
 `;
+//#endregion
+
+export default BodyCell;

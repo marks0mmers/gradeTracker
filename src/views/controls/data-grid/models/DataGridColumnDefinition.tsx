@@ -1,15 +1,15 @@
-import { Record, RecordOf } from "immutable";
+import { ReactNode } from "react";
 
-interface IDataGridColumnDefinition {
-    field?: string;
-    label?: string;
-    width?: number;
+type Formatter<T> = (payload: T) => ReactNode;
+
+export class DataGridColumnDefinition<T> {
+    public formatter: Formatter<T>;
+    public label: string;
+    public width?: number;
+
+    constructor(formatter: Formatter<T>, label: string, width?: number) {
+        this.formatter = formatter;
+        this.label = label;
+        this.width = width;
+    }
 }
-
-export const DataGridColumnDefinition = Record<IDataGridColumnDefinition>({
-    field: undefined,
-    label: undefined,
-    width: 150,
-});
-
-export type DataGridColumnDefinition = RecordOf<IDataGridColumnDefinition>;

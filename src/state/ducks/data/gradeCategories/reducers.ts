@@ -4,10 +4,12 @@ import { GradeCategoryDataActions, GradeCategoryDataActionTypes as types } from 
 
 interface IGradeCategoryDataState {
     gradeCategories: Map<string, GradeCategory>;
+    gradeCategoriesForUser: Map<string, GradeCategory>;
 }
 
 export const GradeCategoryDataState = Record<IGradeCategoryDataState>({
     gradeCategories: Map(),
+    gradeCategoriesForUser: Map(),
 });
 
 export type GradeCategoryDataState = RecordOf<IGradeCategoryDataState>;
@@ -72,6 +74,8 @@ export const GradeCategoryDataReducer = (
                     existingGrades2.indexOf(action.grade),
                 ])
                 : state;
+        case (types.SET_GRADE_CATEGORIES_FOR_USER):
+            return state.set("gradeCategoriesForUser", action.categories);
         default:
             return state;
     }

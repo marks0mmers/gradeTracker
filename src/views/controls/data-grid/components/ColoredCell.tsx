@@ -2,22 +2,21 @@ import React, {  } from "react";
 import styled from "styled-components";
 
 interface Props {
-    className?: string;
     grade?: number;
 }
 
 const ColoredCell = (props: Props) => (
-    <span className={props.className}>
+    <Container grade={props.grade}>
         {props.grade}
-    </span>
+    </Container>
 );
 
-export default styled(ColoredCell)`
+const Container = styled.span<Props>`
     width: 100%;
     line-height: 30px;
     text-align: center;
     color: black;
-    background: ${(props) => {
+    background: ${props => {
         const grade = props.grade || 0;
         if (grade >= 90) {
             return "#409C40";
@@ -30,3 +29,5 @@ export default styled(ColoredCell)`
         }
     }};
 `;
+
+export default ColoredCell;

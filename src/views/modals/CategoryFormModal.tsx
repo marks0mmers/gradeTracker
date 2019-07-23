@@ -1,18 +1,21 @@
 import { Formik, FormikProps } from "formik";
-import React from "react";
+import { Map } from "immutable";
+import React, { useCallback } from "react";
 import styled from "styled-components";
+import Required from "views/components/shared/Required";
 import * as Yup from "yup";
 import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
 import { CreateGradeCategoryCreator, EditGradeCategoryCreator } from "../../state/ducks/data/gradeCategories";
 import { useMapDispatch } from "../../state/hooks";
+import Button from "../components/shared/Button";
 import Input from "../components/styled-inputs/Input";
-import Button from "../controls/button/Button";
 
 interface Props {
     isCreating: boolean;
     initialValues?: CategoryForm;
     originalCategory?: GradeCategory;
+    categories?: Map<string, GradeCategory>;
     course?: Course;
 
     exitModal: () => void;
@@ -26,12 +29,19 @@ interface CategoryForm {
 
 const CategoryFormModal = (props: Props) => {
 
+    //#region Prop Destructure
+    const { exitModal } = props;
+    //#endregion
+
+    //#region Redux State
     const {handleCreateCategory, handleUpdateCategory} = useMapDispatch({
         handleCreateCategory: CreateGradeCategoryCreator,
         handleUpdateCategory: EditGradeCategoryCreator,
     });
+    //#endregion
 
-    const handleFormSubmit = (values: CategoryForm) => {
+    //#region Private Methods
+    const handleFormSubmit = useCallback((values: CategoryForm) => {
         if (props.isCreating && props.course) {
             const category = new GradeCategory({
                 courseId: props.course.id,
@@ -40,7 +50,7 @@ const CategoryFormModal = (props: Props) => {
                 numberOfGrades: +values.numberOfGrades,
             });
             handleCreateCategory(category, props.course.id || "");
-            props.exitModal();
+            exitModal();
         } else if (props.originalCategory) {
             const category = new GradeCategory({
                 id: props.originalCategory.id,
@@ -50,19 +60,23 @@ const CategoryFormModal = (props: Props) => {
                 numberOfGrades: +values.numberOfGrades,
             });
             handleUpdateCategory(category);
-            props.exitModal();
+            exitModal();
         }
-    };
+    }, [exitModal, handleCreateCategory, handleUpdateCategory, props.course, props.isCreating, props.originalCategory]);
+    //#endregion
 
-    const buildFormValue = (
+    //#region Display Methods
+    const buildFormValue = useCallback((
         label: string,
         value: string | number,
         formProps: FormikProps<CategoryForm>,
         name: string,
+        required: boolean,
         error?: string,
     ) => (
         <LabelInput>
             {label}
+            {required && <Required />}
             <Input
                 type="text"
                 onChange={formProps.handleChange}
@@ -72,8 +86,10 @@ const CategoryFormModal = (props: Props) => {
             />
             {error && <Error>{error}</Error>}
         </LabelInput>
-    );
+    ), []);
+    //#endregion
 
+    //#region Render Method
     return (
         <Formik
             initialValues={(!props.isCreating && props.initialValues) || {
@@ -85,13 +101,19 @@ const CategoryFormModal = (props: Props) => {
             validateOnBlur={false}
             validateOnChange={false}
             validationSchema={Yup.object().shape({
-                title: Yup.string()
+                title: Yup
+                    .string()
                     .required("Grade Category is Required"),
-                percentage: Yup.number()
+                percentage: Yup
+                    .number()
                     .positive("Percentage has to be positive.")
-                    .lessThan(101, "Max percentage is 100")
+                    .lessThan(props.categories ? 101 - props.categories
+                        .map((g) => g.percentage)
+                        .reduce((acc: number, val) => acc += val)
+                    : 101, "Max percentage is 100")
                     .required("Percentage is required"),
-                numberOfGrades: Yup.number()
+                numberOfGrades: Yup
+                    .number()
                     .positive("Number of Grades must be positive")
                     .required("Number of Grades is Required"),
             })}
@@ -103,6 +125,7 @@ const CategoryFormModal = (props: Props) => {
                         formProps.values.title,
                         formProps,
                         "title",
+                        true,
                         formProps.errors.title,
                     )}
                     {buildFormValue(
@@ -110,6 +133,7 @@ const CategoryFormModal = (props: Props) => {
                         formProps.values.percentage,
                         formProps,
                         "percentage",
+                        true,
                         formProps.errors.percentage,
                     )}
                     {buildFormValue(
@@ -117,6 +141,7 @@ const CategoryFormModal = (props: Props) => {
                         formProps.values.numberOfGrades,
                         formProps,
                         "numberOfGrades",
+                        true,
                         formProps.errors.numberOfGrades,
                     )}
                     <Button
@@ -128,8 +153,10 @@ const CategoryFormModal = (props: Props) => {
             )}
         </Formik>
     );
+    //#endregion
 };
 
+//#region Styles
 const LabelInput = styled.div`
     margin-bottom: 10px;
     font-weight: bold;
@@ -138,5 +165,6 @@ const LabelInput = styled.div`
 const Error = styled.div`
     color: red;
 `;
+//#endregion
 
 export default CategoryFormModal;

@@ -8,26 +8,32 @@ import { getCurrentUser, getUsers, GetUsersCreator } from "../../../state/ducks/
 import { useMapDispatch, useMapState } from "../../../state/hooks";
 import { RootState } from "../../../state/rootReducer";
 import { useComponentMount } from "../../../util/Hooks";
+import Button from "../../components/shared/Button";
 import Divider from "../../components/shared/Divider";
 import Input from "../../components/styled-inputs/Input";
-import Button from "../../controls/button/Button";
 import DataGrid from "../../controls/data-grid";
 import { DataGridElement } from "../../controls/data-grid/models/DataGridElement";
 
-interface Props {
-    className?: string;
-}
-
 const NewUserValidation = Yup.object().shape({
-    email: Yup.string().email().required("Email is Required"),
-    firstName: Yup.string().required("First Name is Required"),
-    lastName: Yup.string().required("Last Name is Required"),
+    email: Yup
+        .string()
+        .email("Must be in valid email format")
+        .required("Email is Required"),
+    firstName: Yup
+        .string()
+        .required("First Name is Required"),
+    lastName: Yup
+        .string()
+        .required("Last Name is Required"),
 });
 
-const AdminViewUsersPage = (props: Props) => {
+const AdminViewUsersPage = () => {
 
+    //#region Component State
     const [selectedUser, setSelectedUser] = useState<User>();
+    //#endregion
 
+    //#region Redux State
     const {
         // currentUser,
         users,
@@ -37,20 +43,42 @@ const AdminViewUsersPage = (props: Props) => {
     }));
 
     const {getUsersAction} = useMapDispatch({getUsersAction: GetUsersCreator});
+    //#endregion
 
+    //#region Lifecycle Methods
     useComponentMount(() => {
         getUsersAction();
     });
+    //#endregion
 
-    const handleSelectUser = (event: MouseEvent<HTMLDivElement>, payload: UserGridView) => {
+    //#region Private Methods
+    const handleSelectUser = useCallback((event: MouseEvent<HTMLDivElement>, payload: UserGridView) => {
         const newSelectedUser = users.find((user: User) => user._id === payload._id);
         setSelectedUser(newSelectedUser);
-    };
+    }, [users]);
 
-    const buildInputField = <T extends {}>(
+    const getUserGridData = useCallback(() => {
+        return users.map((user: User) => new DataGridElement<User>(
+            new User({
+                _id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+            }),
+            selectedUser && user._id === selectedUser._id,
+        )).toList();
+    }, [users, selectedUser]);
+
+    const handleEditUser = useCallback((editedUser: User) => {
+        alert(editedUser);
+    }, []);
+    //#endregion
+
+    //#region Display Methods
+    const buildInputField = useCallback((
         label: string,
         value: string,
-        formProps: FormikProps<T>,
+        formProps: FormikProps<User>,
         name: string,
         error?: string,
         type?: string,
@@ -68,27 +96,12 @@ const AdminViewUsersPage = (props: Props) => {
                 {error && <Error>{error}</Error>}
             </LabelInput>
         );
-    };
+    }, []);
+    //#endregion
 
-    const getUserGridData = useCallback(() => {
-        return users.map((user: User) => new DataGridElement({
-            payload: {
-                _id: user._id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-            },
-            isSelected: selectedUser && user._id === selectedUser._id,
-        })).toList();
-    }, [users, selectedUser]);
-
-    const handleEditUser = (editedUser: User) => {
-// tslint:disable-next-line: no-console
-        console.log(editedUser);
-    };
-
+    //#region Render Method
     return (
-        <div id="admin-view-users-page" className={props.className}>
+        <Container id="admin-view-users-page">
             <DataGrid
                 id="users-data-grid"
                 elements={getUserGridData()}
@@ -138,10 +151,12 @@ const AdminViewUsersPage = (props: Props) => {
                     )}
                 </Formik>
             }
-        </div>
+        </Container>
     );
+    //#endregion
 };
 
+//#region Styles
 const LabelInput = styled.div`
     margin-bottom: 10px;
     font-weight: bold;
@@ -151,8 +166,11 @@ const Error = styled.div`
     color: red;
 `;
 
-export default styled(AdminViewUsersPage)`
+const Container = styled.div`
     margin: 10px;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
 `;
+//#endregion
+
+export default AdminViewUsersPage;

@@ -1,35 +1,40 @@
 import { List } from "immutable";
-import React, { MouseEvent } from "react";
+import React, { MouseEvent, useCallback } from "react";
 import styled from "styled-components";
 import { DataGridColumnDefinition } from "../models/DataGridColumnDefinition";
 import { DataGridElement } from "../models/DataGridElement";
 import BodyCell, { BodyCellProps } from "./BodyCell";
 
-interface Props {
-    className?: string;
-    element: DataGridElement;
-    columnDefinitions: List<DataGridColumnDefinition> | undefined;
+interface Props<T> {
+    element: DataGridElement<T>;
+    columnDefinitions: List<DataGridColumnDefinition<T>> | undefined;
     height: number;
-// tslint:disable-next-line: no-any
-    onBodyCellClick?: (event: MouseEvent<HTMLDivElement>, payload: any, props: BodyCellProps) => void;
+    onBodyCellClick?: (event: MouseEvent<HTMLDivElement>, payload: T, props: BodyCellProps) => void;
 }
 
-const ElementRow = (props: Props) => {
+function ElementRow<T>(props: Props<T>) {
 
-    const handleCellClick = (event: MouseEvent<HTMLDivElement>, bodyProps: BodyCellProps) => {
-        const handler = props.onBodyCellClick;
+    //#region Prop Destructure
+    const {onBodyCellClick} = props;
+    //#endregion
+
+    //#region Private Methods
+    const handleCellClick = useCallback((event: MouseEvent<HTMLDivElement>, bodyProps: BodyCellProps) => {
+        const handler = onBodyCellClick;
         if (handler) {
             handler(event, props.element.payload, bodyProps);
         }
-    };
+    }, [onBodyCellClick, props.element]);
+    //#endregion
 
+    //#region Render Method
     return (
-        <div id="element-row" className={props.className}>
+        <Container id="element-row" {...props}>
             {props.columnDefinitions && props.columnDefinitions.map((
-                column: DataGridColumnDefinition, idx: number,
+                column: DataGridColumnDefinition<T>, idx: number,
             ) => {
                 const { payload } = props.element;
-                const content = column.field && payload && payload[column.field];
+                const content = column.formatter && column.formatter(payload);
                 return (
                         <BodyCell
                             key={idx}
@@ -41,13 +46,18 @@ const ElementRow = (props: Props) => {
                     );
                 })
             }
-        </div>
+        </Container>
     );
-};
+    //#endregion
+}
 
-export default styled(ElementRow)`
+//#region Styles
+const Container = styled.div<{element: {isSelected ?: boolean,  isBottom?: boolean}}>`
     display: flex;
     flex-direction: row;
-    background: ${(props) => props.element.isSelected ? "#79c8ec" : "#eeeeee"};
-    border-top: ${(props) => props.element.isBottom ? "solid black 1px" : "none"};
+    background: ${props => props.element.isSelected ? "#79c8ec" : "#eeeeee"};
+    border-top: ${props => props.element.isBottom ? "solid black 1px" : "none"};
 `;
+//#endregion
+
+export default ElementRow;

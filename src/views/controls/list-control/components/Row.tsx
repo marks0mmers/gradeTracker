@@ -1,9 +1,9 @@
 import { Map } from "immutable";
-import React, { ChangeEvent, Fragment, useState } from "react";
+import React, { ChangeEvent, Fragment, useCallback, useState } from "react";
 import styled from "styled-components";
 import { useComponentUpdate } from "../../../../util/Hooks";
+import Button from "../../../components/shared/Button";
 import Input from "../../../components/styled-inputs/Input";
-import Button from "../../button/Button";
 
 interface Props {
     className?: string;
@@ -21,83 +21,74 @@ interface Props {
     onClear?: () => void;
 }
 
-interface State {
-    formValues: Map<string, string>;
-    initialKey: string;
-}
-
 const Row = (props: Props) => {
 
-    const [state, setState] = useState<State>({
-        formValues: Map<string, string>(),
-        initialKey: "",
-    });
+    //#region Prop Destructure
+    const {onClick, onSave, onClear} = props;
+    //#endregion
 
+    //#region Component State
+    const [formValues, setFormValues] = useState(Map<string, string>());
+    const [initialKey, setInitialKey] = useState("");
+    //#endregion
+
+    //#region Lifecycle Methods
     useComponentUpdate(() => {
-        setState({
-            formValues: Map<string, string>()
-                .set("primary", props.primaryProperty || "")
-                .set("secondary", props.secondaryProperty ? props.secondaryProperty.split("%")[0] : ""),
-            initialKey: props.primaryProperty ? props.primaryProperty : "",
-        });
+        setFormValues(Map<string, string>()
+            .set("primary", props.primaryProperty || "")
+            .set("secondary", props.secondaryProperty ? props.secondaryProperty.split("%")[0] : ""));
+        setInitialKey(props.primaryProperty ? props.primaryProperty : "");
     }, [props.isEditing]);
+    //#endregion
 
-    const handleClick = () => {
-        const handler = props.onClick;
-        if (handler && props.primaryProperty) {
-            handler(
+    //#region Private Methods
+    const handleClick = useCallback(() => {
+        if (onClick && props.primaryProperty) {
+            onClick(
                 props.primaryProperty,
                 props.secondaryProperty,
             );
         }
-    };
+    }, [onClick, props.primaryProperty, props.secondaryProperty]);
 
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { formValues } = state;
+    const handleInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
-        setState({
-            formValues: formValues.set(name, value),
-            ...state,
-        });
-    };
+        setFormValues(formValues.set(name, value));
+    }, [formValues]);
 
-    const handleSave = () => {
-        const { formValues, initialKey } = state;
+    const handleSave = useCallback(() => {
         const primary = formValues.get("primary", "");
         const secondary = formValues.get("secondary");
-        const handler = props.onSave;
-        if (handler) {
-            handler(primary, secondary, initialKey);
+        if (onSave) {
+            onSave(primary, secondary, initialKey);
         }
-    };
+    }, [formValues, initialKey, onSave]);
 
-    const handleClear = () => {
-        setState({
-            formValues: Map(),
-            ...state,
-        });
-        const handler = props.onClear;
-        if (handler) {
-            handler();
+    const handleClear = useCallback(() => {
+        setFormValues(Map());
+        if (onClear) {
+            onClear();
         }
-    };
+    }, [onClear]);
+    //#endregion
 
+    //#region Render Method
     return (
-        <div
-            className={props.className}
-            key={props.key}
+        <Container
+            id="list-control-row"
+            {...props}
             onClick={handleClick}
         >
             {
                 !props.isCreating && !props.isEditing
                 ? <Fragment>
-                    <span className="primary">{props.primaryProperty}</span>
-                    {props.secondaryProperty && <span className="secondary"><i>{props.secondaryProperty}</i></span>}
+                    <Primary id="primary">{props.primaryProperty}</Primary>
+                    {props.secondaryProperty && <Secondary id="secondary"><i>{props.secondaryProperty}</i></Secondary>}
                 </Fragment>
                 : <Fragment>
                     <Input
                         name="primary"
-                        value={state.formValues.get("primary")}
+                        value={formValues.get("primary")}
                         height={20}
                         gridArea="primary"
                         onChange={handleInputChange}
@@ -105,7 +96,7 @@ const Row = (props: Props) => {
                     />
                     <Input
                         name="secondary"
-                        value={state.formValues.get("secondary")}
+                        value={formValues.get("secondary")}
                         height={20}
                         gridArea="secondary"
                         onChange={handleInputChange}
@@ -131,18 +122,29 @@ const Row = (props: Props) => {
                     />
                 </Fragment>
             }
-        </div>
+        </Container>
     );
+    //#endregion
 };
 
-export default styled(Row)`
+const Primary = styled.span`
+    grid-area: primary;
+    font-size: 20px;
+`;
+
+const Secondary = styled.span`
+    grid-area: secondary;
+    opacity: 60%;
+`;
+
+const Container = styled.div<Props>`
     display: grid;
     grid-template-rows: auto auto;
-    grid-template-columns: ${(props) => props.isCreating || props.isEditing
+    grid-template-columns: ${props => props.isCreating || props.isEditing
         ? "15px 1fr 50px 50px 15px"
         :  "15px 1fr 15px"
     };
-    grid-template-areas: ${(props) => props.isCreating || props.isEditing
+    grid-template-areas: ${props => props.isCreating || props.isEditing
         ?
             `". primary cancel save ."
              ". secondary cancel save ."`
@@ -151,31 +153,13 @@ export default styled(Row)`
              ". secondary ."`
     };
     grid-row-gap: 5px;
-    background: ${(props) => props.isSelected && !props.isEditing ? "#79c8ec" : "white"};
+    background: ${props => props.isSelected && !props.isEditing ? "#79c8ec" : "white"};
     padding: 5px 0;
     border-bottom: solid #898989 1px;
 
     :hover {
-        background: ${(props) => props.isCreating || props.isEditing ? "white" : "eee"};
-    }
-
-    .primary {
-        grid-area: primary;
-        font-size: 20px;
-    }
-
-    .secondary {
-        grid-area: secondary;
-        opacity: 60%;
-    }
-
-    .primary-input {
-        grid-area: primary;
-        margin-right: 15px;
-    }
-
-    .secondary-input {
-        grid-area: secondary;
-        margin-right: 15px;
+        background: ${props => props.isCreating || props.isEditing ? "white" : "eee"};
     }
 `;
+
+export default Row;

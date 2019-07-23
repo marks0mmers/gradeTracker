@@ -1,5 +1,6 @@
+import { push } from "connected-react-router";
 import { List } from "immutable";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { User } from "../../models/User";
 import { ViewRequestStatus } from "../../models/ViewRequest";
@@ -11,41 +12,49 @@ import { getSentViewRequests } from "../../state/ducks/data/viewRequests/selecto
 import { useMapDispatch, useMapState } from "../../state/hooks";
 import { RootState } from "../../state/rootReducer";
 import { useComponentMount } from "../../util/Hooks";
+import Button from "../components/shared/Button";
 import Divider from "../components/shared/Divider";
-import Button from "../controls/button/Button";
 import { ListControlElement } from "../controls/list-control/models/ListControlElement";
 import ListControl from "../controls/list-control/package/ListControl";
 
 const ViewRequestsPage = () => {
 
+    //#region Component State
     const [selectedUser, setSelectedUser] = useState<User>();
     const [selectedViewRequest, setSelectedViewRequest] = useState<ViewRequest>();
+    //#endregion
 
+    //#region Redux State
     const { users, currentUser, pendingViewRequests } = useMapState((state: RootState) => ({
         currentUser: getCurrentUser(state),
         users: getUsers(state),
         pendingViewRequests: getSentViewRequests(state),
     }));
 
-    const { fetchUsers, fetchSentViewRequests, sendViewRequest } = useMapDispatch({
+    const { fetchUsers, fetchSentViewRequests, sendViewRequest, pushRoute } = useMapDispatch({
         fetchUsers: GetUsersCreator,
         fetchSentViewRequests: GetSentViewRequestsCreator,
         sendViewRequest: SendViewRequestCreator,
+        pushRoute: push,
     });
+    //#endregion
 
+    //#region Lifecycle Methods
     useComponentMount(() => {
         fetchUsers();
         fetchSentViewRequests();
     });
+    //#endregion
 
-    const handleRowClick = (primary: string, secondary?: string) => {
+    //#region Private Methods
+    const handleRowClick = useCallback((primary: string, secondary?: string) => {
         const selected = users.find((user) => user.email === secondary);
         if (selected) {
             setSelectedUser(selected);
         }
-    };
+    }, [users]);
 
-    const handleViewRequestClick = (primary: string, secondary?: string) => {
+    const handleViewRequestClick = useCallback((primary: string, secondary?: string) => {
         const receiverName = primary.split(": ")[1];
         const receiver = users.find((user) => `${user.firstName} ${user.lastName}` === receiverName);
         const request = pendingViewRequests.find((req) =>
@@ -59,9 +68,9 @@ const ViewRequestsPage = () => {
         } else {
             setSelectedViewRequest(undefined);
         }
-    };
+    }, [currentUser, pendingViewRequests, users]);
 
-    const getSendViewRequestsListData = (): List<ListControlElement> => {
+    const getSendViewRequestsListData = useCallback((): List<ListControlElement> => {
         return users
             .filter((user) => currentUser && user._id !== currentUser._id)
             .filter((user) => !pendingViewRequests.some((req) => req.receiver === user._id))
@@ -71,9 +80,9 @@ const ViewRequestsPage = () => {
                 isSelected: user === selectedUser,
             }))
             .toList();
-    };
+    }, [currentUser, pendingViewRequests, selectedUser, users]);
 
-    const getSentRequestsListData = (): List<ListControlElement> => {
+    const getSentRequestsListData = useCallback((): List<ListControlElement> => {
         return pendingViewRequests
             .map((request) => {
                 const receiver = users.find((user) => user._id === request.receiver);
@@ -84,14 +93,22 @@ const ViewRequestsPage = () => {
                 };
             })
             .toList();
-    };
+    }, [pendingViewRequests, selectedViewRequest, users]);
 
-    const onSendClick = () => {
+    const onSendClick = useCallback(() => {
         if (selectedUser) {
             sendViewRequest(selectedUser._id);
         }
-    };
+    }, [selectedUser, sendViewRequest]);
 
+    const onViewUserClick = useCallback(() => {
+        if (selectedViewRequest) {
+            pushRoute(`/analysis/${selectedViewRequest.receiver}`);
+        }
+    }, [pushRoute, selectedViewRequest]);
+    //#endregion
+
+    //#region Render Method
     return (
         <Container>
             <ListControl
@@ -125,18 +142,21 @@ const ViewRequestsPage = () => {
                         tooltip="View Courses for User"
                         height={40}
                         width={60}
+                        onClick={onViewUserClick}
                     />
                 )}
             />
         </Container>
     );
-
+    //#endregion
 };
 
+//#region Styles
 const Container = styled.div`
     margin: 10px;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
 `;
+//#endregion
 
 export default ViewRequestsPage;

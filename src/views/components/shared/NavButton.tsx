@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import Icon from "./Icon";
 
 interface Props {
     id?: string;
-    className?: string;
     iconName: string;
     activeButton?: string;
 
@@ -13,28 +12,32 @@ interface Props {
 
 const NavButton = (props: Props) => {
 
-    const handleClick = () => {
+    const { onClick } = props;
+
+    const handleClick = useCallback(() => {
         if (props.id) {
-            props.onClick(props.id);
+            onClick(props.id);
         }
-    };
+    }, [onClick, props.id]);
 
     return (
-        <div id={props.id} className={props.className} onClick={handleClick}>
+        <Container id={props.id} onClick={handleClick} activeButton={props.activeButton}>
             <Icon
                 iconName={props.iconName}
                 size={50}
                 margin={5}
             />
-        </div>
+        </Container>
     );
 };
 
-export default styled(NavButton)`
+const Container = styled.div<Partial<Props>>`
     color: #333333;
-    background: ${(props) => props.id === props.activeButton ? "#4c4f52" : "#5f6366"};
+    background: ${props => props.id === props.activeButton ? "#4c4f52" : "#5f6366"};
     :hover {
         background: #6e7377;
         cursor: pointer;
     }
 `;
+
+export default NavButton;

@@ -1,9 +1,9 @@
 import { Record, RecordOf } from "immutable";
-import { Course } from "../../../../models/Course";
 import {
     CourseControlActions,
     CourseControlActionTypes as types,
-} from "./";
+} from ".";
+import { Course } from "../../../../models/Course";
 
 interface ICourseControlState {
     activeCourse?: Course;
