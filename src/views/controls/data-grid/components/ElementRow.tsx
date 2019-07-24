@@ -36,15 +36,15 @@ function ElementRow<T>(props: Props<T>) {
                 const { payload } = props.element;
                 const content = column.formatter && column.formatter(payload);
                 return (
-                        <BodyCell
-                            key={idx}
-                            width={column.width || 200}
-                            height={props.height}
-                            content={content}
-                            onCellClick={handleCellClick}
-                        />
-                    );
-                })
+                    <BodyCell
+                        key={idx}
+                        width={column.width || 200}
+                        height={props.height}
+                        content={content}
+                        onCellClick={handleCellClick}
+                    />
+                );
+            })
             }
         </Container>
     );
@@ -52,7 +52,7 @@ function ElementRow<T>(props: Props<T>) {
 }
 
 //#region Styles
-const Container = styled.div<{element: {isSelected ?: boolean,  isBottom?: boolean}}>`
+const Container = styled.div<{element: {isSelected?: boolean;  isBottom?: boolean}}>`
     display: flex;
     flex-direction: row;
     background: ${props => props.element.isSelected ? "#79c8ec" : "#eeeeee"};

@@ -19,6 +19,7 @@
     "react-redux": "^7.1.0",
     "react-router": "^4.3.1",
     "react-scripts": "^3.0.1",
+    "react-spinners": "^0.5.13",
     "react-toastify": "^4.5.2",
     "recharts": "^1.2.0",
     "redux": "^4.0.0",
@@ -42,8 +43,17 @@
     "@types/recharts": "^1.0.23",
     "@types/toastr": "2.1.35",
     "@types/yup": "^0.26.12",
-    "tslint": "^5.18.0",
-    "tslint-react": "^4.0.0",
+    "@typescript-eslint/eslint-plugin": "^1.13.0",
+    "@typescript-eslint/parser": "^1.13.0",
+    "babel-eslint": "^10.0.2",
+    "eslint": "5.16.0",
+    "eslint-config-react": "^1.1.7",
+    "eslint-config-react-app": "^4.0.1",
+    "eslint-plugin-flowtype": "2.50.3",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-react-hooks": "^1.6.1",
     "typescript": "3.4.5"
   },
   "resolutions": {
@@ -52,7 +62,8 @@
   "main": "src/index.tsx",
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "lint:fix": "eslint ./src/**/*.{ts,tsx}"
   },
   "browserslist": {
     "production": [

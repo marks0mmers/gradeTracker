@@ -97,7 +97,7 @@ const CategoryDetailedPane = (props: Props) => {
                 "Number of Grades:",
                 props.selectedCategory ? props.selectedCategory.numberOfGrades : "",
                 "numberGrades",
-                )}
+            )}
             {buildDisplayLabel(
                 "Remaining Grades:",
                 props.selectedCategory ? props.selectedCategory.remainingGrades : "",

@@ -2,6 +2,7 @@ import { connectRouter, RouterState } from "connected-react-router";
 import { History } from "history";
 import { combineReducers } from "redux";
 import { CourseControlReducer, CourseControlState } from "./ducks/control/courses";
+import { LoadingMaskReducer, LoadingMaskState } from "./ducks/control/loadingmask/reducers";
 import { CourseDataReducer, CourseDataState } from "./ducks/data/courses";
 import { GradeCategoryDataReducer, GradeCategoryDataState } from "./ducks/data/gradeCategories/reducers";
 import { UserDataReducer, UserDataState } from "./ducks/data/users/reducers";
@@ -10,6 +11,7 @@ import { ViewRequestDataReducer, ViewRequestDataState } from "./ducks/data/viewR
 export interface RootState {
     control: {
         course: CourseControlState;
+        loadingMask: LoadingMaskState;
     };
     data: {
         course: CourseDataState;
@@ -23,6 +25,7 @@ export interface RootState {
 export const rootReducer = (history: History) => combineReducers({
     control: combineReducers({
         course: CourseControlReducer,
+        loadingMask: LoadingMaskReducer,
     }),
     data: combineReducers({
         course: CourseDataReducer,

@@ -79,13 +79,13 @@ const AnalysisPage = (props: Props) => {
     //#region Display Methods
     const getGraphData = useCallback(() => {
         const analysisCourses = elements && elements.map((value) => value && value.payload).toList();
-        return analysisCourses && analysisCourses.map((value: AnalysisCourse) => {
+        return analysisCourses && analysisCourses.map((value: AnalysisCourse): GraphData => {
             return {
                 Current: value.currentGPA,
                 Guarenteed: value.guarenteedGPA,
                 Potential: value.potentialGPA,
                 name: value.title,
-            } as GraphData;
+            };
         }).toArray();
     }, [elements]);
     //#endregion

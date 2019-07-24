@@ -10,29 +10,6 @@ import { getCoursesForUser } from "../../data/courses/selectors";
 import { getGradeCategories } from "../../data/gradeCategories";
 import { getGradeCategoriesForUser } from "../../data/gradeCategories/selectors";
 
-export const getAnalysisGridData = createSelector(
-    [
-        getCourses,
-        getGradeCategories,
-    ],
-    (
-        courses: Map<string, Course>,
-        gradeCategories: Map<string, GradeCategory>,
-    ) => {
-        return generateData(courses, gradeCategories);
-    },
-);
-
-export const getAnalysisGridDataForUser = createSelector(
-    [getCoursesForUser, getGradeCategoriesForUser],
-    (
-        coursesForUser: Map<string, Course>,
-        gradeCategoriesForUser: Map<string, GradeCategory>,
-    ) => {
-        return generateData(coursesForUser, gradeCategoriesForUser);
-    },
-);
-
 const generateData = (courses: Map<string, Course>, gradeCategories: Map<string, GradeCategory>) => {
     let retList: List<DataGridElement<AnalysisCourse>> = List();
 
@@ -93,3 +70,26 @@ const generateData = (courses: Map<string, Course>, gradeCategories: Map<string,
     ));
     return retList;
 };
+
+export const getAnalysisGridData = createSelector(
+    [
+        getCourses,
+        getGradeCategories,
+    ],
+    (
+        courses: Map<string, Course>,
+        gradeCategories: Map<string, GradeCategory>,
+    ) => {
+        return generateData(courses, gradeCategories);
+    },
+);
+
+export const getAnalysisGridDataForUser = createSelector(
+    [getCoursesForUser, getGradeCategoriesForUser],
+    (
+        coursesForUser: Map<string, Course>,
+        gradeCategoriesForUser: Map<string, GradeCategory>,
+    ) => {
+        return generateData(coursesForUser, gradeCategoriesForUser);
+    },
+);
