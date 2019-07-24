@@ -13,6 +13,8 @@ import Divider from "../../components/shared/Divider";
 import Input from "../../components/styled-inputs/Input";
 import DataGrid from "../../controls/data-grid";
 import { DataGridElement } from "../../controls/data-grid/models/DataGridElement";
+import { getIsLoading } from "../../../state/ducks/control/loadingmask/selectors";
+import ActivityLoading from "../../components/shared/LoadingMask";
 
 const NewUserValidation = Yup.object().shape({
     email: Yup
@@ -37,9 +39,11 @@ const AdminViewUsersPage = () => {
     const {
         // currentUser,
         users,
+        isLoading,
     } = useMapState((state: RootState) => ({
         currentUser: getCurrentUser(state),
         users: getUsers(state),
+        isLoading: getIsLoading(state),
     }));
 
     const {getUsersAction} = useMapDispatch({getUsersAction: GetUsersCreator});
@@ -101,6 +105,8 @@ const AdminViewUsersPage = () => {
 
     //#region Render Method
     return (
+        <>
+        { isLoading && <ActivityLoading /> }
         <Container id="admin-view-users-page">
             <DataGrid
                 id="users-data-grid"
@@ -152,6 +158,7 @@ const AdminViewUsersPage = () => {
                 </Formik>
             }
         </Container>
+        </>
     );
     //#endregion
 };

@@ -2,7 +2,7 @@ import { List } from "immutable";
 import React, { MouseEvent, useCallback } from "react";
 import styled from "styled-components";
 import { BodyCellProps } from "../components/BodyCell";
-import ElementRow from "../components/ElementRow";
+import { ElementRow } from "../components/ElementRow";
 import HeaderCell from "../components/HeaderCell";
 import { DataGridColumnDefinition } from "../models/DataGridColumnDefinition";
 import { DataGridElement } from "../models/DataGridElement";

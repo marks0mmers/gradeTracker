@@ -81,46 +81,46 @@ const Row = (props: Props) => {
         >
             {
                 !props.isCreating && !props.isEditing
-                ? <Fragment>
-                    <Primary id="primary">{props.primaryProperty}</Primary>
-                    {props.secondaryProperty && <Secondary id="secondary"><i>{props.secondaryProperty}</i></Secondary>}
-                </Fragment>
-                : <Fragment>
-                    <Input
-                        name="primary"
-                        value={formValues.get("primary")}
-                        height={20}
-                        gridArea="primary"
-                        onChange={handleInputChange}
-                        placeholder={props.primaryPlaceHolder}
-                    />
-                    <Input
-                        name="secondary"
-                        value={formValues.get("secondary")}
-                        height={20}
-                        gridArea="secondary"
-                        onChange={handleInputChange}
-                        placeholder={props.secondaryPlaceHolder}
-                    />
-                    <Button
-                        tooltip="Cancel"
-                        gridArea="cancel"
-                        icon="clear"
-                        height={50}
-                        width={50}
-                        marginLeftRight={5}
-                        onClick={handleClear}
-                    />
-                    <Button
-                        tooltip="Save"
-                        gridArea="save"
-                        icon="save"
-                        height={50}
-                        width={50}
-                        marginLeftRight={5}
-                        onClick={handleSave}
-                    />
-                </Fragment>
+                    ? <Fragment>
+                        <Primary id="primary">{props.primaryProperty}</Primary>
+                        {props.secondaryProperty && <Secondary id="secondary"><i>{props.secondaryProperty}</i></Secondary>}
+                    </Fragment>
+                    : <Fragment>
+                        <Input
+                            name="primary"
+                            value={formValues.get("primary")}
+                            height={20}
+                            gridArea="primary"
+                            onChange={handleInputChange}
+                            placeholder={props.primaryPlaceHolder}
+                        />
+                        <Input
+                            name="secondary"
+                            value={formValues.get("secondary")}
+                            height={20}
+                            gridArea="secondary"
+                            onChange={handleInputChange}
+                            placeholder={props.secondaryPlaceHolder}
+                        />
+                        <Button
+                            tooltip="Cancel"
+                            gridArea="cancel"
+                            icon="clear"
+                            height={50}
+                            width={50}
+                            marginLeftRight={5}
+                            onClick={handleClear}
+                        />
+                        <Button
+                            tooltip="Save"
+                            gridArea="save"
+                            icon="save"
+                            height={50}
+                            width={50}
+                            marginLeftRight={5}
+                            onClick={handleSave}
+                        />
+                    </Fragment>
             }
         </Container>
     );
@@ -143,15 +143,15 @@ const Container = styled.div<Props>`
     grid-template-columns: ${props => props.isCreating || props.isEditing
         ? "15px 1fr 50px 50px 15px"
         :  "15px 1fr 15px"
-    };
+};
     grid-template-areas: ${props => props.isCreating || props.isEditing
         ?
-            `". primary cancel save ."
+        `". primary cancel save ."
              ". secondary cancel save ."`
         :
-            `". primary ."
+        `". primary ."
              ". secondary ."`
-    };
+};
     grid-row-gap: 5px;
     background: ${props => props.isSelected && !props.isEditing ? "#79c8ec" : "white"};
     padding: 5px 0;

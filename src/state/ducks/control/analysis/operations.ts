@@ -21,7 +21,7 @@ export const GetAnalysisInformationForUserEpic = (
 ) => action$.pipe(
     ofType<ViewAnalysisForUser>(types.VIEW_ANALYSIS_FOR_USER),
     mergeMap(action => {
-// tslint:disable-next-line: no-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const headers: any = generateHeaders();
         headers.Authorization = `Bearer ${sessionStorage.getItem("jwtToken")}`;
         return ajax.getJSON<Data>(

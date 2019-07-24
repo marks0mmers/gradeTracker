@@ -40,11 +40,11 @@ export const epicBuilder = <
                 let ajaxCall: Observable<AjaxResponse> = empty();
                 const token = sessionStorage.getItem("jwtToken");
                 const requestHeaders = token
-                ? {
-                    ...requestHeadersNoAuth,
-                    Authorization: `Bearer ${token}`,
-                }
-                : requestHeadersNoAuth;
+                    ? {
+                        ...requestHeadersNoAuth,
+                        Authorization: `Bearer ${token}`,
+                    }
+                    : requestHeadersNoAuth;
                 switch (requestType) {
                     case AjaxMethodType.GET:
                         ajaxCall = ajax.get(

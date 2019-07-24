@@ -7,7 +7,7 @@ export class DataGridColumnDefinition<T> {
     public label: string;
     public width?: number;
 
-    constructor(formatter: Formatter<T>, label: string, width?: number) {
+    public constructor(formatter: Formatter<T>, label: string, width?: number) {
         this.formatter = formatter;
         this.label = label;
         this.width = width;

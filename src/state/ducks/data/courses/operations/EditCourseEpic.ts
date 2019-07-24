@@ -1,7 +1,6 @@
 import { generateHeaders } from "../../../../../util/GenerateHeaders";
 import { AjaxMethodType, epicBuilder } from "../../common/EpicBuilder";
-import { EditCourse, EditCourseSuccessCreator } from "../actions";
-import { CourseDataActionTypes as types} from "../actions";
+import { EditCourse, EditCourseSuccessCreator , CourseDataActionTypes as types} from "../actions";
 import { CourseFailureActionCreator } from "../actions/CourseFailureAction";
 
 export const EditCourseEpic = epicBuilder(

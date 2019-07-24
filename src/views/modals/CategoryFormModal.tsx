@@ -2,8 +2,8 @@ import { Formik, FormikProps } from "formik";
 import { Map } from "immutable";
 import React, { useCallback } from "react";
 import styled from "styled-components";
-import Required from "views/components/shared/Required";
 import * as Yup from "yup";
+import Required from "../components/shared/Required";
 import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
 import { CreateGradeCategoryCreator, EditGradeCategoryCreator } from "../../state/ducks/data/gradeCategories";
@@ -107,10 +107,11 @@ const CategoryFormModal = (props: Props) => {
                 percentage: Yup
                     .number()
                     .positive("Percentage has to be positive.")
-                    .lessThan(props.categories ? 101 - props.categories
-                        .map((g) => g.percentage)
-                        .reduce((acc: number, val) => acc += val)
-                    : 101, "Max percentage is 100")
+                    .lessThan(props.categories 
+                        ? 101 - props.categories
+                            .map((g) => g.percentage)
+                            .reduce((acc: number, val) => acc += val)
+                        : 101, "Max percentage is 100")
                     .required("Percentage is required"),
                 numberOfGrades: Yup
                     .number()

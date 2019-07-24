@@ -12,7 +12,7 @@ const Icon = (props: Props) => (
 );
 
 const StyledIcon = styled.i<Partial<Props>>`
-    margin: auto ${props => props.margin ? `${props.margin}px` : `auto`};
+    margin: auto ${props => props.margin ? `${props.margin}px` : "auto"};
     font-size: ${props => props.size || 20}px;
 `;
 

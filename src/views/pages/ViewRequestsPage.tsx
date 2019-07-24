@@ -3,8 +3,7 @@ import { List } from "immutable";
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { User } from "../../models/User";
-import { ViewRequestStatus } from "../../models/ViewRequest";
-import { ViewRequest } from "../../models/ViewRequest";
+import { ViewRequestStatus, ViewRequest } from "../../models/ViewRequest";
 import { GetUsersCreator } from "../../state/ducks/data/users/actions/GetUsers";
 import { getCurrentUser, getUsers } from "../../state/ducks/data/users/selectors";
 import { GetSentViewRequestsCreator, SendViewRequestCreator } from "../../state/ducks/data/viewRequests/actions";
@@ -16,6 +15,8 @@ import Button from "../components/shared/Button";
 import Divider from "../components/shared/Divider";
 import { ListControlElement } from "../controls/list-control/models/ListControlElement";
 import ListControl from "../controls/list-control/package/ListControl";
+import { getIsLoading } from "../../state/ducks/control/loadingmask/selectors";
+import ActivityLoading from "../components/shared/LoadingMask";
 
 const ViewRequestsPage = () => {
 
@@ -25,7 +26,8 @@ const ViewRequestsPage = () => {
     //#endregion
 
     //#region Redux State
-    const { users, currentUser, pendingViewRequests } = useMapState((state: RootState) => ({
+    const { users, currentUser, pendingViewRequests, isLoading } = useMapState((state: RootState) => ({
+        isLoading: getIsLoading(state),
         currentUser: getCurrentUser(state),
         users: getUsers(state),
         pendingViewRequests: getSentViewRequests(state),
@@ -110,6 +112,8 @@ const ViewRequestsPage = () => {
 
     //#region Render Method
     return (
+        <>
+        { isLoading && <ActivityLoading />}
         <Container>
             <ListControl
                 header={true}
@@ -147,6 +151,7 @@ const ViewRequestsPage = () => {
                 )}
             />
         </Container>
+        </>
     );
     //#endregion
 };

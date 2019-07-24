@@ -19,7 +19,7 @@ interface Props {
 export default styled.input<Props>`
     height: ${props => props.height || 20}px;
     font-size: ${props => (props.height || 20) * 0.75}px;
-    width: ${props => props.width ? `${props.width}px` : `100%`};
+    width: ${props => props.width ? `${props.width}px` : "100%"};
     border-radius: 3px;
     border: solid ${props => props.isInvalid ? "red" : "#eeeeee"} 1px;
     grid-area: ${props => props.gridArea};
