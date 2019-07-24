@@ -1,5 +1,5 @@
 import { List } from "immutable";
-import { User } from "models/User";
+import { User } from "../../models/User";
 import { DataGridColumnDefinition } from "../../views/controls/data-grid/models/DataGridColumnDefinition";
 import { defaultFormatter } from "../../views/controls/data-grid/models/Formatters";
 

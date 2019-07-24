@@ -12,7 +12,7 @@ interface Props<T> {
     onBodyCellClick?: (event: MouseEvent<HTMLDivElement>, payload: T, props: BodyCellProps) => void;
 }
 
-function ElementRow<T>(props: Props<T>) {
+export function ElementRow<T>(props: Props<T>) {
 
     //#region Prop Destructure
     const {onBodyCellClick} = props;
@@ -59,5 +59,3 @@ const Container = styled.div<{element: {isSelected?: boolean;  isBottom?: boolea
     border-top: ${props => props.element.isBottom ? "solid black 1px" : "none"};
 `;
 //#endregion
-
-export default ElementRow;

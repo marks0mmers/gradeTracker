@@ -5,6 +5,7 @@ import { CourseDataEpics } from "./ducks/data/courses/operations";
 import { GradeCategoryDataEpics } from "./ducks/data/gradeCategories";
 import { UserDataEpics } from "./ducks/data/users";
 import { ViewRequestEpics } from "./ducks/data/viewRequests/operations";
+import { ShowLoadingMaskEpic, HideLoadingMaskEpic } from "./ducks/control/loadingmask/operations";
 
 export const rootEpic = combineEpics(
     CourseControlEpics,
@@ -13,4 +14,6 @@ export const rootEpic = combineEpics(
     GradeCategoryDataEpics,
     ViewRequestEpics,
     GetAnalysisInformationForUserEpic,
+    ShowLoadingMaskEpic,
+    HideLoadingMaskEpic,
 );

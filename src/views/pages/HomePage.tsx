@@ -2,6 +2,7 @@ import { push } from "connected-react-router";
 import React, { Fragment, useCallback, useState } from "react";
 import ReactModal from "react-modal";
 import styled from "styled-components";
+import ActivityLoading from "../components/shared/LoadingMask";
 import { Course } from "../../models/Course";
 import { getCourses } from "../../state/ducks/data/courses";
 import { getCurrentUser } from "../../state/ducks/data/users";
@@ -13,6 +14,7 @@ import Button from "../components/shared/Button";
 import Divider from "../components/shared/Divider";
 import ModalHeader from "../modals/common/ModalHeader";
 import CourseFormModal from "../modals/CourseFormModal";
+import { getIsLoading } from "../../state/ducks/control/loadingmask/selectors";
 
 const HomePage = () => {
 
@@ -23,9 +25,10 @@ const HomePage = () => {
     //#endregion
 
     //#region Redux State
-    const {courses, currentUser} = useMapState((rootState: RootState) => ({
-        courses: getCourses(rootState),
-        currentUser: getCurrentUser(rootState),
+    const {courses, currentUser, isLoading} = useMapState((state: RootState) => ({
+        isLoading: getIsLoading(state),
+        courses: getCourses(state),
+        currentUser: getCurrentUser(state),
     }));
 
     const {pushRoute} = useMapDispatch({pushRoute: push});
@@ -74,6 +77,8 @@ const HomePage = () => {
 
     //#region Render Method
     return (
+        <>
+        { isLoading && <ActivityLoading /> }
         <Container id="home-page">
             <Route id="route">Courses</Route>
             <ButtonWrapper id="button-wrapper">
@@ -128,6 +133,7 @@ const HomePage = () => {
                 {getCourseButtons()}
             </Content>
         </Container>
+        </>
     );
     //#endregion
 };

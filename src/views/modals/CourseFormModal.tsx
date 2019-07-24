@@ -1,8 +1,8 @@
 import { Formik, FormikProps } from "formik";
 import React, { useCallback } from "react";
 import styled from "styled-components";
-import Required from "views/components/shared/Required";
 import * as Yup from "yup";
+import Required from "../components/shared/Required";
 import { Course } from "../../models/Course";
 import { CreateNewCourseCreator, EditCourseCreator } from "../../state/ducks/data/courses";
 import { getCurrentUser } from "../../state/ducks/data/users";

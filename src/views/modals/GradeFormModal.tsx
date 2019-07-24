@@ -1,8 +1,8 @@
 import { Formik, FormikProps } from "formik";
 import React, { useCallback } from "react";
 import styled from "styled-components";
-import Required from "views/components/shared/Required";
 import * as Yup from "yup";
+import Required from "../components/shared/Required";
 import { Grade } from "../../models/Grade";
 import { GradeCategory } from "../../models/GradeCategory";
 import { CreateGradeCreator, EditGradeCreator } from "../../state/ducks/data/gradeCategories";

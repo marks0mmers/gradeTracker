@@ -1,8 +1,8 @@
 import { push } from "connected-react-router";
-import React, { Fragment, MouseEvent, useCallback, useState } from "react";
-import { useMemo } from "react";
+import React, { Fragment, MouseEvent, useCallback, useState , useMemo } from "react";
 import ReactModal from "react-modal";
 import styled from "styled-components";
+import ActivityLoading from "../components/shared/LoadingMask";
 import { categoryColumns } from "../../constants/columns/CategoryColumns";
 import { GradeCategory } from "../../models/GradeCategory";
 import {
@@ -26,6 +26,7 @@ import Divider from "../components/shared/Divider";
 import DataGrid from "../controls/data-grid";
 import CategoryFormModal from "../modals/CategoryFormModal";
 import ModalHeader from "../modals/common/ModalHeader";
+import { getIsLoading } from "../../state/ducks/control/loadingmask/selectors";
 
 const CourseDetailedPage = () => {
 
@@ -40,11 +41,13 @@ const CourseDetailedPage = () => {
         selectedCategory,
         categories,
         course,
-    } = useMapState((rootState: RootState) => ({
-        categoryElements: getDetailedCourseElements(rootState),
-        selectedCategory: getSelectedGradeCategory(rootState),
-        categories: getGradeCategories(rootState),
-        course: getActiveCourse(rootState),
+        isLoading,
+    } = useMapState((state: RootState) => ({
+        isLoading: getIsLoading(state),
+        categoryElements: getDetailedCourseElements(state),
+        selectedCategory: getSelectedGradeCategory(state),
+        categories: getGradeCategories(state),
+        course: getActiveCourse(state),
     }));
 
     const {
@@ -119,6 +122,8 @@ const CourseDetailedPage = () => {
 
     //#region Render Method
     return (
+        <>
+        { isLoading && <ActivityLoading /> }
         <Container id={`${course ? course.title : ""}-detailed`}>
             <ClickRoute
                 id="click-route"
@@ -206,6 +211,7 @@ const CourseDetailedPage = () => {
                 }
             </Content>
         </Container>
+        </>
     );
     //#endregion
 };

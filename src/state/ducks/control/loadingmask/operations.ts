@@ -3,9 +3,9 @@ import { ofType } from "redux-observable";
 import { Observable, of } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import { CourseDataActionTypes } from "../../data/courses/actions/types";
+import { GradeCategoryDataActionTypes } from "../../data/gradeCategories/actions/types";
 import { UserDataActionTypes } from "../../data/users/actions/types";
 import { HideLoadingMaskCreator, ShowLoadingMaskCreator } from "./actions";
-import { GradeCategoryDataActionTypes } from "../../data/gradeCategories/actions/types";
 
 export const ShowLoadingMaskEpic = (
     action$: Observable<AnyAction>,

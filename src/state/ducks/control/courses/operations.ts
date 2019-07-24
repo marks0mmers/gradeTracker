@@ -2,11 +2,11 @@ import { LOCATION_CHANGE, LocationChangeAction, push } from "connected-react-rou
 import { combineEpics, ofType, StateObservable } from "redux-observable";
 import { empty, Observable, of } from "rxjs";
 import { mergeMap } from "rxjs/operators";
-import { CourseControlActionTypes as types, SetActiveCourse, SetActiveCourseCreator } from ".";
 import { Course } from "../../../../models/Course";
 import { CourseDataActionTypes, GetCoursesCurrentUserSuccess } from "../../../../state/ducks/data/courses";
 import { RootState } from "../../../rootReducer";
 import { GetCoursesCurrentUserCreator } from "../../data/courses/actions/GetCoursesCurrentUser";
+import { CourseControlActionTypes as types, SetActiveCourse, SetActiveCourseCreator } from ".";
 
 const ChangeRouteOnCoursesLoadEpic = (
     action$: Observable<GetCoursesCurrentUserSuccess>,

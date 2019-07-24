@@ -2,8 +2,9 @@ import { push } from "connected-react-router";
 import { Formik, FormikProps } from "formik";
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
-import Required from "views/components/shared/Required";
 import * as Yup from "yup";
+import ActivityLoading from "../components/shared/LoadingMask";
+import Required from "../components/shared/Required";
 import { LoginUser, User } from "../../models/User";
 import { CreateNewUserCreator, getCurrentUser, LoginCreator } from "../../state/ducks/data/users";
 import { getPreviousRoute } from "../../state/ducks/router/selectors";
@@ -11,6 +12,7 @@ import { useMapDispatch, useMapState } from "../../state/hooks";
 import { useComponentMount, useComponentUpdate } from "../../util/Hooks";
 import Button from "../components/shared/Button";
 import Input from "../components/styled-inputs/Input";
+import { getIsLoading } from "../../state/ducks/control/loadingmask/selectors";
 
 //#region Form / Validation
 interface UserForm {
@@ -66,9 +68,10 @@ const LoginPage = () => {
     //#endregion
 
     //#region Redux State
-    const {currentUser, prevRoute} = useMapState((rootState) => ({
-        currentUser: getCurrentUser(rootState),
-        prevRoute: getPreviousRoute(rootState),
+    const {currentUser, prevRoute, isLoading} = useMapState((state) => ({
+        isLoading: getIsLoading(state),
+        currentUser: getCurrentUser(state),
+        prevRoute: getPreviousRoute(state),
     }));
 
     const {createNewUser, login, pushRoute} = useMapDispatch({
@@ -242,6 +245,8 @@ const LoginPage = () => {
 
     //#region Render Method
     return (
+        <>
+        { isLoading && <ActivityLoading /> }
         <Container id="login-page">
             <LoginContainer id="login-container">
                 <Header>
@@ -258,6 +263,7 @@ const LoginPage = () => {
                 </Formik>
             </LoginContainer>
         </Container>
+        </>
     );
     //#endregion
 };

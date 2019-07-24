@@ -3,6 +3,7 @@ import React, { useCallback } from "react";
 import { match } from "react-router";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import styled from "styled-components";
+import ActivityLoading from "../components/shared/LoadingMask";
 import { analysisColumns } from "../../constants/columns/AnalysisColumns";
 import { AnalysisCourse } from "../../models/AnalysisCourse";
 import { ViewAnalysisForUserCreator } from "../../state/ducks/control/analysis/actions";
@@ -17,6 +18,7 @@ import { RootState } from "../../state/rootReducer";
 import { useComponentMount, useComponentUpdate } from "../../util/Hooks";
 import Divider from "../components/shared/Divider";
 import DataGrid from "../controls/data-grid";
+import { getIsLoading } from "../../state/ducks/control/loadingmask/selectors";
 
 interface GraphData {
     name: string;
@@ -33,7 +35,8 @@ interface Props {
 const AnalysisPage = (props: Props) => {
 
     //#region Redux State
-    const {elements} = useMapState((state: RootState) => ({
+    const {elements, isLoading} = useMapState((state: RootState) => ({
+        isLoading: getIsLoading(state),
         elements: props.match.params.userId ? getAnalysisGridDataForUser(state) : getAnalysisGridData(state),
     }));
 
@@ -92,6 +95,8 @@ const AnalysisPage = (props: Props) => {
 
     //#region Render Method
     return (
+        <>
+        { isLoading && <ActivityLoading /> }
         <Container id="analysis-page">
             <Route id="route">
                 Analysis
@@ -125,6 +130,7 @@ const AnalysisPage = (props: Props) => {
                 </BarChart>
             </ResponsiveContainer>
         </Container>
+        </>
     );
     //#endregion
 };
