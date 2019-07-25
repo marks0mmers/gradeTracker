@@ -26,14 +26,14 @@ const ViewRequestsPage = () => {
     //#endregion
 
     //#region Redux State
-    const { users, currentUser, pendingViewRequests, isLoading } = useMapState((state: RootState) => ({
+    const state = useMapState((state: RootState) => ({
         isLoading: getIsLoading(state),
         currentUser: getCurrentUser(state),
         users: getUsers(state),
         pendingViewRequests: getSentViewRequests(state),
     }));
 
-    const { fetchUsers, fetchSentViewRequests, sendViewRequest, pushRoute } = useMapDispatch({
+    const actions = useMapDispatch({
         fetchUsers: GetUsersCreator,
         fetchSentViewRequests: GetSentViewRequestsCreator,
         sendViewRequest: SendViewRequestCreator,
@@ -43,25 +43,25 @@ const ViewRequestsPage = () => {
 
     //#region Lifecycle Methods
     useComponentMount(() => {
-        fetchUsers();
-        fetchSentViewRequests();
+        actions.fetchUsers();
+        actions.fetchSentViewRequests();
     });
     //#endregion
 
     //#region Private Methods
     const handleRowClick = useCallback((primary: string, secondary?: string) => {
-        const selected = users.find((user) => user.email === secondary);
+        const selected = state.users.find((user) => user.email === secondary);
         if (selected) {
             setSelectedUser(selected);
         }
-    }, [users]);
+    }, [state.users]);
 
-    const handleViewRequestClick = useCallback((primary: string, secondary?: string) => {
+    const handleViewRequestClick = useCallback((primary: string) => {
         const receiverName = primary.split(": ")[1];
-        const receiver = users.find((user) => `${user.firstName} ${user.lastName}` === receiverName);
-        const request = pendingViewRequests.find((req) =>
-            (currentUser &&
-            req.requester === currentUser._id &&
+        const receiver = state.users.find((user) => `${user.firstName} ${user.lastName}` === receiverName);
+        const request = state.pendingViewRequests.find((req) =>
+            (state.currentUser &&
+            req.requester === state.currentUser._id &&
             receiver &&
             req.receiver === receiver._id) || false,
         );
@@ -70,24 +70,24 @@ const ViewRequestsPage = () => {
         } else {
             setSelectedViewRequest(undefined);
         }
-    }, [currentUser, pendingViewRequests, users]);
+    }, [state.currentUser, state.pendingViewRequests, state.users]);
 
     const getSendViewRequestsListData = useCallback((): List<ListControlElement> => {
-        return users
-            .filter((user) => currentUser && user._id !== currentUser._id)
-            .filter((user) => !pendingViewRequests.some((req) => req.receiver === user._id))
+        return state.users
+            .filter((user) => state.currentUser && user._id !== state.currentUser._id)
+            .filter((user) => !state.pendingViewRequests.some((req) => req.receiver === user._id))
             .map((user) => ({
                 primaryProperty: `${user.firstName} ${user.lastName}`,
                 secondaryProperty: user.email,
                 isSelected: user === selectedUser,
             }))
             .toList();
-    }, [currentUser, pendingViewRequests, selectedUser, users]);
+    }, [selectedUser, state.currentUser, state.pendingViewRequests, state.users]);
 
     const getSentRequestsListData = useCallback((): List<ListControlElement> => {
-        return pendingViewRequests
+        return state.pendingViewRequests
             .map((request) => {
-                const receiver = users.find((user) => user._id === request.receiver);
+                const receiver = state.users.find((user) => user._id === request.receiver);
                 return {
                     primaryProperty: `Sent to: ${receiver && receiver.firstName} ${receiver && receiver.lastName}`,
                     secondaryProperty: `Status: ${ViewRequestStatus[request.status]}`,
@@ -95,25 +95,25 @@ const ViewRequestsPage = () => {
                 };
             })
             .toList();
-    }, [pendingViewRequests, selectedViewRequest, users]);
+    }, [selectedViewRequest, state.pendingViewRequests, state.users]);
 
     const onSendClick = useCallback(() => {
         if (selectedUser) {
-            sendViewRequest(selectedUser._id);
+            actions.sendViewRequest(selectedUser._id);
         }
-    }, [selectedUser, sendViewRequest]);
+    }, [actions, selectedUser]);
 
     const onViewUserClick = useCallback(() => {
         if (selectedViewRequest) {
-            pushRoute(`/analysis/${selectedViewRequest.receiver}`);
+            actions.pushRoute(`/analysis/${selectedViewRequest.receiver}`);
         }
-    }, [pushRoute, selectedViewRequest]);
+    }, [actions, selectedViewRequest]);
     //#endregion
 
     //#region Render Method
     return (
         <>
-        { isLoading && <ActivityLoading />}
+        { state.isLoading && <ActivityLoading />}
         <Container>
             <ListControl
                 header={true}

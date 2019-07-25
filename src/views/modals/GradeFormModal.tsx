@@ -31,9 +31,9 @@ const GradeFormModal = (componentProps: Props) => {
     //#endregion
 
     //#region Redux State
-    const {handleCreateGrade, handleEditGrade} = useMapDispatch({
-        handleCreateGrade: CreateGradeCreator,
-        handleEditGrade: EditGradeCreator,
+    const actions = useMapDispatch({
+        createGrade: CreateGradeCreator,
+        editGrade: EditGradeCreator,
     });
     //#endregion
 
@@ -44,7 +44,7 @@ const GradeFormModal = (componentProps: Props) => {
                 gradeCategoryId: componentProps.gradeCategory.id,
                 ...values,
             });
-            handleCreateGrade(grade);
+            actions.createGrade(grade);
             exitModal();
         } else if (componentProps.originalGrade) {
             const grade = new Grade({
@@ -52,17 +52,10 @@ const GradeFormModal = (componentProps: Props) => {
                 gradeCategoryId: componentProps.originalGrade.gradeCategoryId,
                 ...values,
             });
-            handleEditGrade(grade);
+            actions.editGrade(grade);
             exitModal();
         }
-    }, [
-        componentProps.gradeCategory,
-        componentProps.isCreating,
-        componentProps.originalGrade,
-        exitModal,
-        handleCreateGrade,
-        handleEditGrade,
-    ]);
+    }, [actions, componentProps.gradeCategory, componentProps.isCreating, componentProps.originalGrade, exitModal]);
     //#endregion
 
     //#region Display Methods

@@ -20,12 +20,12 @@ import ViewRequestsPage from "./pages/ViewRequestsPage";
 const Layout = () => {
 
     //#region Redux State
-    const {routerLocation, currentUser} = useMapState((state) => ({
+    const state = useMapState((state) => ({
         routerLocation: getPathName(state),
         currentUser: getCurrentUser(state),
     }));
 
-    const {fetchCurrentUser, logout, pushRoute} = useMapDispatch({
+    const actions = useMapDispatch({
         pushRoute: push,
         fetchCurrentUser: GetCurrentUserCreator,
         logout: LogoutCreator,
@@ -34,14 +34,14 @@ const Layout = () => {
 
     //#region Lifecycle Methods
     useComponentMount(() => {
-        if (!currentUser && sessionStorage.getItem("jwtToken")) {
-            fetchCurrentUser();
+        if (!state.currentUser && sessionStorage.getItem("jwtToken")) {
+            actions.fetchCurrentUser();
         }
     });
 
     useComponentUpdate(() => {
-        if (!currentUser && !window.location.href.includes("/login")) {
-            pushRoute("/login", routerLocation);
+        if (!state.currentUser && !window.location.href.includes("/login")) {
+            actions.pushRoute("/login", state.routerLocation);
         }
     });
     //#endregion
@@ -49,16 +49,16 @@ const Layout = () => {
     //#region Render Method
     return (
         <Container id="layout">
-            { currentUser &&
+            { state.currentUser &&
                 <Fragment>
                     <Header
                         title="Gradebook"
-                        currentUser={currentUser}
-                        logout={logout}
+                        currentUser={state.currentUser}
+                        logout={actions.logout}
                     />
                     <NavBar
-                        pushRoute={pushRoute}
-                        currentUser={currentUser}
+                        currentUser={state.currentUser}
+                        pushRoute={actions.pushRoute}
                     />
                 </Fragment>
             }
@@ -88,7 +88,7 @@ const Layout = () => {
                     component={AnalysisPage}
                     path="/analysis"
                 />
-                {protectRoute("admin", currentUser)(
+                {protectRoute("admin", state.currentUser)(
                     <Route
                         path="/admin"
                         component={AdminViewUsersPage}

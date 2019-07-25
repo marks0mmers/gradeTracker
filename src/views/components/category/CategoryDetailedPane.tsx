@@ -24,7 +24,7 @@ const CategoryDetailedPane = (props: Props) => {
     //#endregion
 
     //#region Redux State
-    const {deleteGrade} = useMapDispatch({deleteGrade: DeleteGradeCreator});
+    const actions = useMapDispatch({deleteGrade: DeleteGradeCreator});
     //#endregion
 
     //#region Private Methods
@@ -60,9 +60,9 @@ const CategoryDetailedPane = (props: Props) => {
 
     const handleDeleteGrade = useCallback(() => {
         if (selectedGrade && props.selectedCategory) {
-            deleteGrade(selectedGrade.id);
+            actions.deleteGrade(selectedGrade.id);
         }
-    }, [deleteGrade, props.selectedCategory, selectedGrade]);
+    }, [actions, props.selectedCategory, selectedGrade]);
 
     const handleSelectGrade = useCallback((primaryProperty: string) => {
         const selectedGradeObject = props.selectedCategory &&

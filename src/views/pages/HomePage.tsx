@@ -25,20 +25,20 @@ const HomePage = () => {
     //#endregion
 
     //#region Redux State
-    const {courses, currentUser, isLoading} = useMapState((state: RootState) => ({
+    const state = useMapState((state: RootState) => ({
         isLoading: getIsLoading(state),
         courses: getCourses(state),
         currentUser: getCurrentUser(state),
     }));
 
-    const {pushRoute} = useMapDispatch({pushRoute: push});
+    const actions = useMapDispatch({pushRoute: push});
     //#endregion
 
     //#region Lifecycle Methods
     useComponentMount(() => {
         document.title = "Grade Tracker";
-        if (!currentUser) {
-            pushRoute("/login");
+        if (!state.currentUser) {
+            actions.pushRoute("/login");
         }
     });
     //#endregion
@@ -63,7 +63,7 @@ const HomePage = () => {
 
     //#region Display Methods
     const getCourseButtons = useCallback(() => {
-        return courses && courses.map((course: Course, key: string) => {
+        return state.courses.map((course: Course, key: string) => {
             return (
                 <CourseOverviewButton
                     key={key}
@@ -72,13 +72,13 @@ const HomePage = () => {
                 />
             );
         }).toList();
-    }, [courses, handleEditClick]);
+    }, [handleEditClick, state.courses]);
     //#endregion
 
     //#region Render Method
     return (
         <>
-        { isLoading && <ActivityLoading /> }
+        { state.isLoading && <ActivityLoading /> }
         <Container id="home-page">
             <Route id="route">Courses</Route>
             <ButtonWrapper id="button-wrapper">

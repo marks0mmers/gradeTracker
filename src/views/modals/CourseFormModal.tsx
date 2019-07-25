@@ -33,11 +33,11 @@ const CourseFormModal = (componentProps: Props) => {
     //#endregion
 
     //#region Redux State
-    const {currentUser} = useMapState((state: RootState) => ({currentUser: getCurrentUser(state)}));
+    const state = useMapState((state: RootState) => ({currentUser: getCurrentUser(state)}));
 
-    const {handleCreateCourse, handleUpdateCourse} = useMapDispatch({
-        handleCreateCourse: CreateNewCourseCreator,
-        handleUpdateCourse: EditCourseCreator,
+    const actions = useMapDispatch({
+        createCourse: CreateNewCourseCreator,
+        updateCourse: EditCourseCreator,
     });
     //#endregion
 
@@ -67,13 +67,13 @@ const CourseFormModal = (componentProps: Props) => {
 
     //#region Private Methods
     const handleFormSubmit = useCallback((values: CourseForm) => {
-        if (currentUser) {
+        if (state.currentUser) {
             if (componentProps.isCreating) {
                 const course = new Course({
-                    userId: currentUser._id,
+                    userId: state.currentUser._id,
                     ...values,
                 });
-                handleCreateCourse(course);
+                actions.createCourse(course);
                 exitModal();
             } else if (componentProps.originalCourse) {
                 const course = new Course({
@@ -83,18 +83,11 @@ const CourseFormModal = (componentProps: Props) => {
                     creditHours: values.creditHours,
                     section: values.section,
                 });
-                handleUpdateCourse(course);
+                actions.updateCourse(course);
                 exitModal();
             }
         }
-    }, [
-        componentProps.isCreating,
-        componentProps.originalCourse,
-        currentUser,
-        exitModal,
-        handleCreateCourse,
-        handleUpdateCourse,
-    ]);
+    }, [actions, componentProps.isCreating, componentProps.originalCourse, exitModal, state.currentUser]);
     //#endregion
 
     //#region Render Method
