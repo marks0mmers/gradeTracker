@@ -26,10 +26,10 @@ interface CourseForm {
     creditHours: number;
 }
 
-const CourseFormModal = (componentProps: Props) => {
+const CourseFormModal = (props: Props) => {
 
     //#region Prop Destructure
-    const { exitModal } = componentProps;
+    const { exitModal } = props;
     //#endregion
 
     //#region Redux State
@@ -68,16 +68,16 @@ const CourseFormModal = (componentProps: Props) => {
     //#region Private Methods
     const handleFormSubmit = useCallback((values: CourseForm) => {
         if (state.currentUser) {
-            if (componentProps.isCreating) {
+            if (props.isCreating) {
                 const course = new Course({
                     userId: state.currentUser._id,
                     ...values,
                 });
                 actions.createCourse(course);
                 exitModal();
-            } else if (componentProps.originalCourse) {
+            } else if (props.originalCourse) {
                 const course = new Course({
-                    ...componentProps.originalCourse.toObject(),
+                    ...props.originalCourse.toObject(),
                     title: values.title,
                     description: values.description,
                     creditHours: values.creditHours,
@@ -87,13 +87,13 @@ const CourseFormModal = (componentProps: Props) => {
                 exitModal();
             }
         }
-    }, [actions, componentProps.isCreating, componentProps.originalCourse, exitModal, state.currentUser]);
+    }, [actions, props.isCreating, props.originalCourse, exitModal, state.currentUser]);
     //#endregion
 
     //#region Render Method
     return (
         <Formik
-            initialValues={componentProps.initialValues || {
+            initialValues={props.initialValues || {
                 title: "",
                 description: "",
                 section: 0,
@@ -121,39 +121,39 @@ const CourseFormModal = (componentProps: Props) => {
                     .required(),
             })}
         >
-            {(props: FormikProps<CourseForm>) => (
-                <form onSubmit={props.handleSubmit}>
+            {(formProps: FormikProps<CourseForm>) => (
+                <form onSubmit={formProps.handleSubmit}>
                     {buildFormValue(
                         "Course Title",
-                        props.values.title,
-                        props,
+                        formProps.values.title,
+                        formProps,
                         "title",
                         true,
-                        props.errors.title,
+                        formProps.errors.title,
                     )}
                     {buildFormValue(
                         "Course Description",
-                        props.values.description,
-                        props,
+                        formProps.values.description,
+                        formProps,
                         "description",
                         true,
-                        props.errors.description,
+                        formProps.errors.description,
                     )}
                     {buildFormValue(
                         "Course Section",
-                        props.values.section,
-                        props,
+                        formProps.values.section,
+                        formProps,
                         "section",
                         true,
-                        props.errors.section,
+                        formProps.errors.section,
                     )}
                     {buildFormValue(
                         "Credit Hours",
-                        props.values.creditHours,
-                        props,
+                        formProps.values.creditHours,
+                        formProps,
                         "creditHours",
                         true,
-                        props.errors.creditHours,
+                        formProps.errors.creditHours,
                     )}
                     <Button
                         type="submit"

@@ -19,19 +19,17 @@ interface Props<T> {
 function DataGrid<T>(props: Props<T>) {
 
     //#region Display Methods
-    const renderHeaderCells = useCallback(() => props.columnDefinitions && props.columnDefinitions.map((
-        column: DataGridColumnDefinition<T>,
-        idx: number,
-    ) => {
-        return (
+    const renderHeaderCells = useCallback(
+        () => props.columnDefinitions && props.columnDefinitions.map((column: DataGridColumnDefinition<T>, idx: number) => (
             <HeaderCell
                 key={idx}
                 height={props.rowHeight || 30}
                 width={column.width || 200}
                 content={column.label || ""}
             />
-        );
-    }).toList(), [props.columnDefinitions, props.rowHeight]);
+        )).toList(),
+        [props.columnDefinitions, props.rowHeight],
+    );
 
     const renderBodyCells = useCallback(
         () => props.elements && props.elements.map((element: DataGridElement<T>, idx: number) => (

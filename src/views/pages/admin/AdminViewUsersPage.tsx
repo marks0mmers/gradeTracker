@@ -57,17 +57,15 @@ const AdminViewUsersPage = () => {
         setSelectedUser(newSelectedUser);
     }, [state.users]);
 
-    const getUserGridData = useCallback(() => {
-        return state.users.map((user: User) => new DataGridElement<User>(
-            new User({
-                _id: user._id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-            }),
-            selectedUser && user._id === selectedUser._id,
-        )).toList();
-    }, [selectedUser, state.users]);
+    const getUserGridData = useCallback(() => state.users.map((user: User) => new DataGridElement<User>(
+        new User({
+            _id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+        }),
+        selectedUser && user._id === selectedUser._id,
+    )).toList(), [selectedUser, state.users]);
 
     const handleEditUser = useCallback((editedUser: User) => {
         alert(editedUser);
@@ -82,21 +80,19 @@ const AdminViewUsersPage = () => {
         name: string,
         error?: string,
         type?: string,
-    ) => {
-        return (
-            <LabelInput>
-                {label}
-                <Input
-                    type={type || "text"}
-                    onChange={formProps.handleChange}
-                    onBlur={formProps.handleBlur}
-                    value={value}
-                    name={name}
-                />
-                {error && <Error>{error}</Error>}
-            </LabelInput>
-        );
-    }, []);
+    ) => (
+        <LabelInput>
+            {label}
+            <Input
+                type={type || "text"}
+                onChange={formProps.handleChange}
+                onBlur={formProps.handleBlur}
+                value={value}
+                name={name}
+            />
+            {error && <Error>{error}</Error>}
+        </LabelInput>
+    ), []);
     //#endregion
 
     //#region Render Method

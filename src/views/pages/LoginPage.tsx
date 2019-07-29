@@ -127,23 +127,21 @@ const LoginPage = () => {
         error?: string,
         type?: string,
         autoComplete?: string,
-    ) => {
-        return (
-            <LabelInput>
-                {label}
-                {required && <Required />}
-                <Input
-                    type={type || "text"}
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={value}
-                    autoComplete={autoComplete}
-                    name={name}
-                />
-                {error && <Error>{error}</Error>}
-            </LabelInput>
-        );
-    }, []);
+    ) => (
+        <LabelInput>
+            {label}
+            {required && <Required />}
+            <Input
+                type={type || "text"}
+                onChange={props.handleChange}
+                onBlur={props.handleBlur}
+                value={value}
+                autoComplete={autoComplete}
+                name={name}
+            />
+            {error && <Error>{error}</Error>}
+        </LabelInput>
+    ), []);
 
     const buildButton = useCallback((
         height: number,
