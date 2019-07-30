@@ -5,7 +5,6 @@ import { ajax } from "rxjs/observable/dom/ajax";
 import { mergeMap } from "rxjs/operators";
 import { Course } from "../../../../models/Course";
 import { GradeCategory } from "../../../../models/GradeCategory";
-import { generateHeaders } from "../../../../util/GenerateHeaders";
 import { SetCoursesForUserCreator } from "../../data/courses/actions/SetCoursesForUser";
 import { SetGradeCategoriesForUserCreator } from "../../data/gradeCategories/actions/SetGradeCategoriesForUser";
 import { ViewAnalysisForUser } from "./actions";
@@ -21,9 +20,10 @@ export const GetAnalysisInformationForUserEpic = (
 ) => action$.pipe(
     ofType<ViewAnalysisForUser>(types.VIEW_ANALYSIS_FOR_USER),
     mergeMap(action => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const headers: any = generateHeaders();
-        headers.Authorization = `Bearer ${sessionStorage.getItem("jwtToken")}`;
+        const headers = {
+            Authorization: `Bearer ${sessionStorage.getItem("jwtToken")}`,
+            "Content-Type": "application/json",
+        };
         return ajax.getJSON<Data>(
             `/api/courses/user/${action.userId}`,
             headers,
