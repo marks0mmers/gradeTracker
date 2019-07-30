@@ -21,15 +21,15 @@ export const ViewRequestDataReducer = (
 ) => {
     switch (action.type) {
         case (types.GET_MY_VIEW_REQUESTS_SUCCESS):
-            return state.set("myViewRequests", action.requests.reduce(
-                (requests, request) => requests.set(request.id, request),
-                Map<string, ViewRequest>(),
-            ));
+            return state.set("myViewRequests", action.requests
+                .toMap()
+                .mapKeys((_, r) => r.id)
+                .toMap());
         case (types.GET_PENDING_VIEW_REQUESTS_SUCCESS):
-            return state.set("pendingViewRequests", action.requests.reduce(
-                (requests, request) => requests.set(request.id, request),
-                Map<string, ViewRequest>(),
-            ));
+            return state.set("pendingViewRequests", action.requests
+                .toMap()
+                .mapKeys((_, r) => r.id)
+                .toMap());
         case (types.SEND_VIEW_REQUEST_SUCCESS):
             return state.setIn(["pendingViewRequests", action.request.id], action.request);
         case (types.APPROVE_VIEW_REQUEST_SUCCESS):

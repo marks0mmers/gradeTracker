@@ -32,10 +32,11 @@ export const UserDataReducer = (
             sessionStorage.removeItem("jwtToken");
             return state.set("currentUser", undefined);
         case (types.GET_USERS_SUCCESS):
-            return state.set("users", List<User>(action.users).reduce(
-                (users: Map<string, User>, user: User) => users.set(user._id, new User(user)),
-                Map(),
-            ));
+            return state.set("users", List(action.users)
+                .map(u => new User(u))
+                .toMap()
+                .mapKeys((_, u) => u._id)
+                .toMap());
         default:
             return state;
     }
