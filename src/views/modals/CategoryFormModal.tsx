@@ -110,7 +110,7 @@ const CategoryFormModal = (props: Props) => {
                     .lessThan(props.categories 
                         ? 101 - props.categories
                             .map((g) => g.percentage)
-                            .reduce((acc: number, val) => acc += val)
+                            .reduce((acc: number, val) => acc += val, 0)
                         : 101, "Max percentage is 100")
                     .required("Percentage is required"),
                 numberOfGrades: Yup

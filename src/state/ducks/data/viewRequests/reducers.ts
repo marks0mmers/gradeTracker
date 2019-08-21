@@ -1,4 +1,4 @@
-import { Map, Record, RecordOf } from "immutable";
+import { Map, Record, RecordOf, List } from "immutable";
 import { ViewRequest } from "../../../../models/ViewRequest";
 import { ViewRequestDataActions } from "./actions";
 import { ViewRequestDataActionTypes as types} from "./types";
@@ -21,12 +21,12 @@ export const ViewRequestDataReducer = (
 ) => {
     switch (action.type) {
         case (types.GET_MY_VIEW_REQUESTS_SUCCESS):
-            return state.set("myViewRequests", action.requests
+            return state.set("myViewRequests", List(action.requests)
                 .toMap()
                 .mapKeys((_, r) => r.id)
                 .toMap());
         case (types.GET_PENDING_VIEW_REQUESTS_SUCCESS):
-            return state.set("pendingViewRequests", action.requests
+            return state.set("pendingViewRequests", List(action.requests)
                 .toMap()
                 .mapKeys((_, r) => r.id)
                 .toMap());
