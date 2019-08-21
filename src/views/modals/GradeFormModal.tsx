@@ -24,52 +24,45 @@ interface GradeForm {
     grade: number;
 }
 
-const GradeFormModal = (componentProps: Props) => {
+const GradeFormModal = (props: Props) => {
 
     //#region Prop Destructure
-    const { exitModal } = componentProps;
+    const { exitModal } = props;
     //#endregion
 
     //#region Redux State
-    const {handleCreateGrade, handleEditGrade} = useMapDispatch({
-        handleCreateGrade: CreateGradeCreator,
-        handleEditGrade: EditGradeCreator,
+    const actions = useMapDispatch({
+        createGrade: CreateGradeCreator,
+        editGrade: EditGradeCreator,
     });
     //#endregion
 
     //#region Private Methods
     const handleFormSubmit = useCallback((values: GradeForm) => {
-        if (componentProps.isCreating && componentProps.gradeCategory) {
+        if (props.isCreating && props.gradeCategory) {
             const grade = new Grade({
-                gradeCategoryId: componentProps.gradeCategory.id,
+                gradeCategoryId: props.gradeCategory.id,
                 ...values,
             });
-            handleCreateGrade(grade);
+            actions.createGrade(grade);
             exitModal();
-        } else if (componentProps.originalGrade) {
+        } else if (props.originalGrade) {
             const grade = new Grade({
-                id: componentProps.originalGrade.id,
-                gradeCategoryId: componentProps.originalGrade.gradeCategoryId,
+                id: props.originalGrade.id,
+                gradeCategoryId: props.originalGrade.gradeCategoryId,
                 ...values,
             });
-            handleEditGrade(grade);
+            actions.editGrade(grade);
             exitModal();
         }
-    }, [
-        componentProps.gradeCategory,
-        componentProps.isCreating,
-        componentProps.originalGrade,
-        exitModal,
-        handleCreateGrade,
-        handleEditGrade,
-    ]);
+    }, [actions, props.gradeCategory, props.isCreating, props.originalGrade, exitModal]);
     //#endregion
 
     //#region Display Methods
     const buildFormValue = useCallback((
         label: string,
         value: string | number,
-        props: FormikProps<GradeForm>,
+        formProps: FormikProps<GradeForm>,
         name: string,
         required: boolean,
         error?: string,
@@ -79,8 +72,8 @@ const GradeFormModal = (componentProps: Props) => {
             {required && <Required />}
             <Input
                 type="text"
-                onChange={props.handleChange}
-                onBlur={props.handleBlur}
+                onChange={formProps.handleChange}
+                onBlur={formProps.handleBlur}
                 value={value}
                 name={name}
             />
@@ -92,7 +85,7 @@ const GradeFormModal = (componentProps: Props) => {
     //#region Render Method
     return (
         <Formik
-            initialValues={(!componentProps.isCreating && componentProps.initialValues) || {
+            initialValues={(!props.isCreating && props.initialValues) || {
                 name: "",
                 grade: 0,
             }}
@@ -110,23 +103,23 @@ const GradeFormModal = (componentProps: Props) => {
                     .required("Grade is Required"),
             })}
         >
-            {(props: FormikProps<GradeForm>) => (
-                <form onSubmit={props.handleSubmit}>
+            {(formProps: FormikProps<GradeForm>) => (
+                <form onSubmit={formProps.handleSubmit}>
                     {buildFormValue(
                         "Grade Name",
-                        props.values.name,
-                        props,
+                        formProps.values.name,
+                        formProps,
                         "name",
                         true,
-                        props.errors.name,
+                        formProps.errors.name,
                     )}
                     {buildFormValue(
                         "Grade Value",
-                        props.values.grade,
-                        props,
+                        formProps.values.grade,
+                        formProps,
                         "grade",
                         true,
-                        props.errors.grade,
+                        formProps.errors.grade,
                     )}
                     <Button
                         type="submit"

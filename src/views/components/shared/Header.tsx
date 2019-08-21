@@ -31,17 +31,12 @@ const Header = (props: Props) => {
     //#endregion
 
     //#region Redux State
-    const { myViewRequests, users } = useMapState((state: RootState) => ({
+    const state = useMapState((state: RootState) => ({
         myViewRequests: getMyViewRequests(state),
         users: getUsers(state),
     }));
 
-    const {
-        fetchMyViewRequests,
-        approveViewRequest,
-        denyViewRequest,
-        fetchUsers,
-    } = useMapDispatch({
+    const actions =  useMapDispatch({
         fetchMyViewRequests: GetMyViewRequestsCreator,
         approveViewRequest: ApproveViewRequestCreator,
         denyViewRequest: DenyViewRequestCreator,
@@ -51,8 +46,8 @@ const Header = (props: Props) => {
 
     //#region Lifecycle Methods
     useComponentMount(() => {
-        fetchUsers();
-        fetchMyViewRequests();
+        actions.fetchUsers();
+        actions.fetchMyViewRequests();
     });
     //#endregion
 
@@ -62,29 +57,29 @@ const Header = (props: Props) => {
     }, [showPopup]);
 
     const handleApprove = useCallback((requestId: string) => {
-        approveViewRequest(requestId);
-    }, [approveViewRequest]);
+        actions.approveViewRequest(requestId);
+    }, [actions]);
 
     const handleDeny = useCallback((requestId: string) => {
-        denyViewRequest(requestId);
-    }, [denyViewRequest]);
+        actions.denyViewRequest(requestId);
+    }, [actions]);
     //#endregion
 
     //#region Display Methods
     const getAllRequests = useCallback(() => {
-        const requests = myViewRequests
+        const requests = state.myViewRequests
             .map(request => (
                 <ApproveDenyRequest
                     key={request.id}
                     requestId={request.id}
                     status={request.status}
-                    userFromRequest={users.find((u) => request.requester === u._id) || new User()}
+                    userFromRequest={state.users.find((u) => request.requester === u._id) || new User()}
                     onApprove={handleApprove}
                     onDeny={handleDeny}
                 />
             )).toList();
         return requests.size > 0 ? requests : (<span>No View Requests</span>);
-    }, [handleApprove, handleDeny, myViewRequests, users]);
+    }, [handleApprove, handleDeny, state.myViewRequests, state.users]);
     //#endregion
 
     //#region Render Methods

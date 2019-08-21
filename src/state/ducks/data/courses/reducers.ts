@@ -27,12 +27,11 @@ export const CourseDataReducer = (
                 ? state.setIn(["courses", action.course.id], action.course)
                 : state;
         case (types.GET_COURSES_CURRENT_USER_SUCCESS):
-            const immutableCourses = action.courses.map(course => new Course({...course}));
-            const courseMap: Map<string, Course> = List(immutableCourses)
-                .reduce((cs: Map<string, Course>, c: Course) => {
-                    return c.id ? cs.set(c.id, c) : cs;
-                }, Map<string, Course>());
-            return state.set("courses", courseMap);
+            return state.set("courses", List(action.courses)
+                .map(c => new Course(c))
+                .toMap()
+                .mapKeys((_, c) => c.id || "")
+                .toMap());
         case (types.EDIT_COURSE_SUCCESS):
             return action.newCourse.id
                 ? state.setIn(["courses", action.newCourse.id], action.newCourse)

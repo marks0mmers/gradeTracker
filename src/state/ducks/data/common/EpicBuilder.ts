@@ -29,63 +29,52 @@ export const epicBuilder = <
     routeBuilder: (action: IA, state: RootState) => string,
     requestHeadersNoAuth: {},
     requestBody?: (action: IA, state: RootState) => {},
-) => {
-    return (
-        action$: Observable<IA>,
-        state$: StateObservable<RootState>,
-    ): Observable<AnyAction> => {
-        return action$.pipe(
-            ofType(type),
-            mergeMap((action: IA) => {
-                let ajaxCall: Observable<AjaxResponse> = empty();
-                const token = sessionStorage.getItem("jwtToken");
-                const requestHeaders = token
-                    ? {
-                        ...requestHeadersNoAuth,
-                        Authorization: `Bearer ${token}`,
-                    }
-                    : requestHeadersNoAuth;
-                switch (requestType) {
-                    case AjaxMethodType.GET:
-                        ajaxCall = ajax.get(
-                            routeBuilder(action, state$.value),
-                            requestHeaders,
-                        );
-                        break;
-                    case AjaxMethodType.POST:
-                        ajaxCall = ajax.post(
-                            routeBuilder(action, state$.value),
-                            requestBody && requestBody(action, state$.value),
-                            requestHeaders,
-                        );
-                        break;
-                    case AjaxMethodType.PUT:
-                        ajaxCall = ajax.put(
-                            routeBuilder(action, state$.value),
-                            requestBody && requestBody(action, state$.value),
-                            requestHeaders,
-                        );
-                        break;
-                    case AjaxMethodType.DELETE:
-                        ajaxCall = ajax.delete(
-                            routeBuilder(action, state$.value),
-                            requestHeaders,
-                        );
-                        break;
-                }
-                return ajaxCall.pipe(
-                    map((res: AjaxResponse) => {
-                        return res.response;
-                    }),
-                    mergeMap((data: ResData) => {
-                        return of(endActionCreator(data));
-                    }),
-                    catchError((err: Error) => {
-                        Toast.error(err.message);
-                        return of(failActionCreator(err));
-                    }),
+) => (
+    action$: Observable<IA>,
+    state$: StateObservable<RootState>,
+): Observable<AnyAction> => action$.pipe(
+    ofType(type),
+    mergeMap((action: IA) => {
+        let ajaxCall: Observable<AjaxResponse> = empty();
+        const token = sessionStorage.getItem("jwtToken");
+        const requestHeaders = token
+            ? {
+                ...requestHeadersNoAuth,
+                Authorization: `Bearer ${token}`,
+            }
+            : requestHeadersNoAuth;
+        switch (requestType) {
+            case AjaxMethodType.GET:
+                ajaxCall = ajax.get(
+                    routeBuilder(action, state$.value),
+                    requestHeaders,
                 );
-            }),
+                break;
+            case AjaxMethodType.POST:
+                ajaxCall = ajax.post(
+                    routeBuilder(action, state$.value),
+                    requestBody && requestBody(action, state$.value),
+                    requestHeaders,
+                );
+                break;
+            case AjaxMethodType.PUT:
+                ajaxCall = ajax.put(
+                    routeBuilder(action, state$.value),
+                    requestBody && requestBody(action, state$.value),
+                    requestHeaders,
+                );
+                break;
+            case AjaxMethodType.DELETE:
+                ajaxCall = ajax.delete(
+                    routeBuilder(action, state$.value),
+                    requestHeaders,
+                );
+                break;
+        }
+        return ajaxCall.pipe(
+            map((res: AjaxResponse) => res.response),
+            mergeMap((data: ResData) => of(endActionCreator(data))),
+            catchError((err: Error) => Toast.error(err.message) && of(failActionCreator(err))),
         );
-    };
-};
+    }),
+);

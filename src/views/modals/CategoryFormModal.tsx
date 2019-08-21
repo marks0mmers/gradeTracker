@@ -34,9 +34,9 @@ const CategoryFormModal = (props: Props) => {
     //#endregion
 
     //#region Redux State
-    const {handleCreateCategory, handleUpdateCategory} = useMapDispatch({
-        handleCreateCategory: CreateGradeCategoryCreator,
-        handleUpdateCategory: EditGradeCategoryCreator,
+    const actions = useMapDispatch({
+        createCategory: CreateGradeCategoryCreator,
+        updateCategory: EditGradeCategoryCreator,
     });
     //#endregion
 
@@ -49,7 +49,7 @@ const CategoryFormModal = (props: Props) => {
                 percentage: +values.percentage,
                 numberOfGrades: +values.numberOfGrades,
             });
-            handleCreateCategory(category, props.course.id || "");
+            actions.createCategory(category, props.course.id || "");
             exitModal();
         } else if (props.originalCategory) {
             const category = new GradeCategory({
@@ -59,10 +59,10 @@ const CategoryFormModal = (props: Props) => {
                 percentage: +values.percentage,
                 numberOfGrades: +values.numberOfGrades,
             });
-            handleUpdateCategory(category);
+            actions.updateCategory(category);
             exitModal();
         }
-    }, [exitModal, handleCreateCategory, handleUpdateCategory, props.course, props.isCreating, props.originalCategory]);
+    }, [actions, exitModal, props.course, props.isCreating, props.originalCategory]);
     //#endregion
 
     //#region Display Methods
@@ -110,7 +110,7 @@ const CategoryFormModal = (props: Props) => {
                     .lessThan(props.categories 
                         ? 101 - props.categories
                             .map((g) => g.percentage)
-                            .reduce((acc: number, val) => acc += val)
+                            .reduce((acc: number, val) => acc += val, 0)
                         : 101, "Max percentage is 100")
                     .required("Percentage is required"),
                 numberOfGrades: Yup

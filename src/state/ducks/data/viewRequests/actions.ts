@@ -1,4 +1,3 @@
-import { List } from "immutable";
 import { ViewRequest } from "../../../../models/ViewRequest";
 import { ViewRequestDataActionTypes as types } from "./types";
 
@@ -11,11 +10,11 @@ export const GetMyViewRequestsCreator = (): GetMyViewRequests => ({
 });
 
 export interface GetMyViewRequestsSuccess {
-    requests: List<ViewRequest>;
+    requests: ViewRequest[];
     type: types.GET_MY_VIEW_REQUESTS_SUCCESS;
 }
 
-export const GetMyViewRequestsSuccessCreator = (requests: List<ViewRequest>): GetMyViewRequestsSuccess => ({
+export const GetMyViewRequestsSuccessCreator = (requests: ViewRequest[]): GetMyViewRequestsSuccess => ({
     requests,
     type: types.GET_MY_VIEW_REQUESTS_SUCCESS,
 });
@@ -29,11 +28,11 @@ export const GetSentViewRequestsCreator = (): GetSentViewRequests => ({
 });
 
 export interface GetSentViewRequestsSuccess {
-    requests: List<ViewRequest>;
+    requests: ViewRequest[];
     type: types.GET_PENDING_VIEW_REQUESTS_SUCCESS;
 }
 
-export const GetSentViewRequestsSuccessCreator = (requests: List<ViewRequest>): GetSentViewRequestsSuccess => ({
+export const GetSentViewRequestsSuccessCreator = (requests: ViewRequest[]): GetSentViewRequestsSuccess => ({
     requests,
     type: types.GET_PENDING_VIEW_REQUESTS_SUCCESS,
 });

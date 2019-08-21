@@ -36,42 +36,36 @@ const AdminViewUsersPage = () => {
     //#endregion
 
     //#region Redux State
-    const {
-        // currentUser,
-        users,
-        isLoading,
-    } = useMapState((state: RootState) => ({
+    const state = useMapState((state: RootState) => ({
         currentUser: getCurrentUser(state),
         users: getUsers(state),
         isLoading: getIsLoading(state),
     }));
 
-    const {getUsersAction} = useMapDispatch({getUsersAction: GetUsersCreator});
+    const actions = useMapDispatch({getUsersAction: GetUsersCreator});
     //#endregion
 
     //#region Lifecycle Methods
     useComponentMount(() => {
-        getUsersAction();
+        actions.getUsersAction();
     });
     //#endregion
 
     //#region Private Methods
     const handleSelectUser = useCallback((event: MouseEvent<HTMLDivElement>, payload: UserGridView) => {
-        const newSelectedUser = users.find((user: User) => user._id === payload._id);
+        const newSelectedUser = state.users.find((user: User) => user._id === payload._id);
         setSelectedUser(newSelectedUser);
-    }, [users]);
+    }, [state.users]);
 
-    const getUserGridData = useCallback(() => {
-        return users.map((user: User) => new DataGridElement<User>(
-            new User({
-                _id: user._id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-            }),
-            selectedUser && user._id === selectedUser._id,
-        )).toList();
-    }, [users, selectedUser]);
+    const getUserGridData = useCallback(() => state.users.map((user: User) => new DataGridElement<User>(
+        new User({
+            _id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+        }),
+        selectedUser && user._id === selectedUser._id,
+    )).toList(), [selectedUser, state.users]);
 
     const handleEditUser = useCallback((editedUser: User) => {
         alert(editedUser);
@@ -86,27 +80,25 @@ const AdminViewUsersPage = () => {
         name: string,
         error?: string,
         type?: string,
-    ) => {
-        return (
-            <LabelInput>
-                {label}
-                <Input
-                    type={type || "text"}
-                    onChange={formProps.handleChange}
-                    onBlur={formProps.handleBlur}
-                    value={value}
-                    name={name}
-                />
-                {error && <Error>{error}</Error>}
-            </LabelInput>
-        );
-    }, []);
+    ) => (
+        <LabelInput>
+            {label}
+            <Input
+                type={type || "text"}
+                onChange={formProps.handleChange}
+                onBlur={formProps.handleBlur}
+                value={value}
+                name={name}
+            />
+            {error && <Error>{error}</Error>}
+        </LabelInput>
+    ), []);
     //#endregion
 
     //#region Render Method
     return (
         <>
-        { isLoading && <ActivityLoading /> }
+        { state.isLoading && <ActivityLoading /> }
         <Container id="admin-view-users-page">
             <DataGrid
                 id="users-data-grid"

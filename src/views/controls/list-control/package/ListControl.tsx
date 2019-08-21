@@ -44,22 +44,20 @@ const ListControl = (props: Props) => (
                 />
             }
             {
-                props.elements && props.elements.map((value: ListControlElement, key: number) => {
-                    return (
-                        <Row
-                            key={key}
-                            primaryProperty={value.primaryProperty}
-                            secondaryProperty={value.secondaryProperty}
-                            isSelected={value.isSelected}
-                            isEditing={value.isEditing}
-                            primaryPlaceHolder={props.primaryPlaceHolder}
-                            secondaryPlaceHolder={props.secondaryPlaceHolder}
-                            onClick={props.onRowClick}
-                            onClear={props.onRowClear}
-                            onSave={props.onRowSave}
-                        />
-                    );
-                }).toArray()
+                props.elements && props.elements.map((value: ListControlElement, key: number) => (
+                    <Row
+                        key={key}
+                        primaryProperty={value.primaryProperty}
+                        secondaryProperty={value.secondaryProperty}
+                        isSelected={value.isSelected}
+                        isEditing={value.isEditing}
+                        primaryPlaceHolder={props.primaryPlaceHolder}
+                        secondaryPlaceHolder={props.secondaryPlaceHolder}
+                        onClick={props.onRowClick}
+                        onClear={props.onRowClear}
+                        onSave={props.onRowSave}
+                    />
+                )).toArray()
             }
         </Body>
         {

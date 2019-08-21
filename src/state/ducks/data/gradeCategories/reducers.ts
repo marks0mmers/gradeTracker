@@ -26,20 +26,16 @@ export const GradeCategoryDataReducer = (
             );
         case (types.GET_GRADE_CATEGORIES_FOR_COURSE_SUCCESS):
             return state.set("gradeCategories", List(action.gradeCategories)
-                .reduce((
-                    categories: Map<string, GradeCategory>,
-                    category: GradeCategory,
-                ) => categories.set(
-                    category.id, new GradeCategory(category).set("grades", List(category.grades)),
-                ), Map<string, GradeCategory>()));
+                .map(gc => new GradeCategory(gc).set("grades", List(gc.grades)))
+                .toMap()
+                .mapKeys((_, gc) => gc.id)
+                .toMap());
         case (types.GET_GRADE_CATEGORIES_FOR_CURRENT_USER_SUCCESS):
             return state.set("gradeCategories", List(action.gradeCategories)
-                .reduce((
-                    categories: Map<string, GradeCategory>,
-                    category: GradeCategory,
-                ) => categories.set(
-                    category.id, new GradeCategory(category).set("grades", List(category.grades)),
-                ), Map<string, GradeCategory>()));
+                .map(gc => new GradeCategory(gc).set("grades", List(gc.grades)))
+                .toMap()
+                .mapKeys((_, gc) => gc.id)
+                .toMap());
         case (types.EDIT_GRADE_CATEGORY_SUCCESS):
             return state.setIn(
                 ["gradeCategories", action.category.id],
@@ -49,11 +45,12 @@ export const GradeCategoryDataReducer = (
             return state.removeIn(["gradeCategories", action.category.id]);
         case (types.CREATE_GRADE_SUCCESS):
             return state.setIn(
+                // -1 for the last spot in the list
                 ["gradeCategories", action.grade.gradeCategoryId, "grades", -1],
                 action.grade,
             );
         case (types.EDIT_GRADE_SUCCESS):
-            const category1 = state.gradeCategories && state.gradeCategories.get(action.grade.gradeCategoryId);
+            const category1 = state.gradeCategories.get(action.grade.gradeCategoryId);
             const existingGrades = category1 && category1.grades;
             return existingGrades
                 ? state.setIn([
@@ -64,7 +61,7 @@ export const GradeCategoryDataReducer = (
                 ], action.grade)
                 : state;
         case (types.DELETE_GRADE_SUCCESS):
-            const category2 = state.gradeCategories && state.gradeCategories.get(action.grade.gradeCategoryId);
+            const category2 = state.gradeCategories.get(action.grade.gradeCategoryId);
             const existingGrades2 = category2 && category2.grades;
             return existingGrades2
                 ? state.removeIn([

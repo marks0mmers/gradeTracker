@@ -35,18 +35,12 @@ interface Props {
 const AnalysisPage = (props: Props) => {
 
     //#region Redux State
-    const {elements, isLoading} = useMapState((state: RootState) => ({
+    const state = useMapState((state: RootState) => ({
         isLoading: getIsLoading(state),
         elements: props.match.params.userId ? getAnalysisGridDataForUser(state) : getAnalysisGridData(state),
     }));
 
-    const {
-        getAllCategories,
-        getDataForUser,
-        setCoursesForUser,
-        viewAnalysis,
-        setGradeCategoriesForUser,
-    } = useMapDispatch({
+    const actions = useMapDispatch({
         getAllCategories: GetGradeCategoriesForCurrentUserCreator,
         getDataForUser: ViewAnalysisForUserCreator,
         setCoursesForUser: SetCoursesForUserCreator,
@@ -59,44 +53,42 @@ const AnalysisPage = (props: Props) => {
     useComponentMount(() => {
         document.title = "Grades Analysis";
         if (props.match.params.userId) {
-            viewAnalysis(props.match.params.userId);
-            getDataForUser(props.match.params.userId);
+            actions.viewAnalysis(props.match.params.userId);
+            actions.getDataForUser(props.match.params.userId);
         } else {
-            getAllCategories();
+            actions.getAllCategories();
         }
         return () => {
-            setCoursesForUser(Map());
-            setGradeCategoriesForUser(Map());
+            actions.setCoursesForUser(Map());
+            actions.setGradeCategoriesForUser(Map());
         };
     });
 
     useComponentUpdate(() => {
         if (!props.match.params.userId) {
-            setCoursesForUser(Map());
-            setGradeCategoriesForUser(Map());
-            getAllCategories();
+            actions.setCoursesForUser(Map());
+            actions.setGradeCategoriesForUser(Map());
+            actions.getAllCategories();
         }
     }, [props.match.params.userId]);
     //#endregion
 
     //#region Display Methods
     const getGraphData = useCallback(() => {
-        const analysisCourses = elements && elements.map((value) => value && value.payload).toList();
-        return analysisCourses && analysisCourses.map((value: AnalysisCourse): GraphData => {
-            return {
-                Current: value.currentGPA,
-                Guarenteed: value.guarenteedGPA,
-                Potential: value.potentialGPA,
-                name: value.title,
-            };
-        }).toArray();
-    }, [elements]);
+        const analysisCourses = state.elements.map((value) => value && value.payload).toList();
+        return analysisCourses && analysisCourses.map((value: AnalysisCourse): GraphData => ({
+            Current: value.currentGPA,
+            Guarenteed: value.guarenteedGPA,
+            Potential: value.potentialGPA,
+            name: value.title,
+        })).toArray();
+    }, [state.elements]);
     //#endregion
 
     //#region Render Method
     return (
         <>
-        { isLoading && <ActivityLoading /> }
+        { state.isLoading && <ActivityLoading /> }
         <Container id="analysis-page">
             <Route id="route">
                 Analysis
@@ -107,7 +99,7 @@ const AnalysisPage = (props: Props) => {
                 gridArea="grid"
                 rowHeight={30}
                 columnDefinitions={analysisColumns}
-                elements={elements}
+                elements={state.elements}
             />
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={getGraphData()}>

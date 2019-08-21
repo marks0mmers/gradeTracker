@@ -21,6 +21,7 @@
         "eol-last": ["error", "always"],
         "semi": ["error", "always"],
         "react/prop-types": "off",
+        "no-multiple-empty-lines": "error",
         "react/display-name": "off",
         "import/order": ["error", { "newlines-between": "never" }],
         "no-case-declarations": "off",

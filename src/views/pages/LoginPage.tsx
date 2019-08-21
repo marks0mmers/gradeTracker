@@ -68,13 +68,13 @@ const LoginPage = () => {
     //#endregion
 
     //#region Redux State
-    const {currentUser, prevRoute, isLoading} = useMapState((state) => ({
+    const state = useMapState((state) => ({
         isLoading: getIsLoading(state),
         currentUser: getCurrentUser(state),
         prevRoute: getPreviousRoute(state),
     }));
 
-    const {createNewUser, login, pushRoute} = useMapDispatch({
+    const actions = useMapDispatch({
         createNewUser: CreateNewUserCreator,
         login: LoginCreator,
         pushRoute: push,
@@ -87,8 +87,8 @@ const LoginPage = () => {
     });
 
     useComponentUpdate(() => {
-        if (currentUser) {
-            pushRoute(prevRoute || "/");
+        if (state.currentUser) {
+            actions.pushRoute(state.prevRoute || "/");
         }
     });
     //#endregion
@@ -110,11 +110,11 @@ const LoginPage = () => {
             const newUser = new User({
                 ...values,
             });
-            createNewUser(newUser);
+            actions.createNewUser(newUser);
         } else {
-            login(values as LoginUser);
+            actions.login(values as LoginUser);
         }
-    }, [createNewUser, creatingNewUser, login]);
+    }, [actions, creatingNewUser]);
     //#endregion
 
     //#region Display Methods
@@ -127,23 +127,21 @@ const LoginPage = () => {
         error?: string,
         type?: string,
         autoComplete?: string,
-    ) => {
-        return (
-            <LabelInput>
-                {label}
-                {required && <Required />}
-                <Input
-                    type={type || "text"}
-                    onChange={props.handleChange}
-                    onBlur={props.handleBlur}
-                    value={value}
-                    autoComplete={autoComplete}
-                    name={name}
-                />
-                {error && <Error>{error}</Error>}
-            </LabelInput>
-        );
-    }, []);
+    ) => (
+        <LabelInput>
+            {label}
+            {required && <Required />}
+            <Input
+                type={type || "text"}
+                onChange={props.handleChange}
+                onBlur={props.handleBlur}
+                value={value}
+                autoComplete={autoComplete}
+                name={name}
+            />
+            {error && <Error>{error}</Error>}
+        </LabelInput>
+    ), []);
 
     const buildButton = useCallback((
         height: number,
@@ -246,7 +244,7 @@ const LoginPage = () => {
     //#region Render Method
     return (
         <>
-        { isLoading && <ActivityLoading /> }
+        { state.isLoading && <ActivityLoading /> }
         <Container id="login-page">
             <LoginContainer id="login-container">
                 <Header>

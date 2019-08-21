@@ -21,16 +21,16 @@ const CourseOverviewButton = (props: Props) => {
     //#endregion
 
     //#region Redux State
-    const {handleSelectCourse, handleDeleteCourse} = useMapDispatch({
-        handleSelectCourse: SetActiveCourseCreator,
-        handleDeleteCourse: DeleteCourseCreator,
+    const actions = useMapDispatch({
+        selectCourse: SetActiveCourseCreator,
+        deleteCourse: DeleteCourseCreator,
     });
     //#endregion
 
     //#region Private Methods
     const handleClick = useCallback(() => {
-        handleSelectCourse(props.course);
-    }, [handleSelectCourse, props.course]);
+        actions.selectCourse(props.course);
+    }, [actions, props.course]);
 
     const handleEditClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
@@ -40,9 +40,9 @@ const CourseOverviewButton = (props: Props) => {
     const handleDelete = useCallback((event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         if (window.confirm("Are you sure you want to delete this course? (This cannot be undone)")) {
-            handleDeleteCourse(props.course.id || "");
+            actions.deleteCourse(props.course.id || "");
         }
-    }, [handleDeleteCourse, props.course]);
+    }, [actions, props.course.id]);
     //#endregion
 
     //#region Render Method

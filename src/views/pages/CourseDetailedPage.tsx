@@ -36,13 +36,7 @@ const CourseDetailedPage = () => {
     //#endregion
 
     //#region Redux State
-    const {
-        categoryElements,
-        selectedCategory,
-        categories,
-        course,
-        isLoading,
-    } = useMapState((state: RootState) => ({
+    const state = useMapState((state: RootState) => ({
         isLoading: getIsLoading(state),
         categoryElements: getDetailedCourseElements(state),
         selectedCategory: getSelectedGradeCategory(state),
@@ -50,13 +44,7 @@ const CourseDetailedPage = () => {
         course: getActiveCourse(state),
     }));
 
-    const {
-        pushRoute,
-        selectGradeCategory,
-        setActiveCourse,
-        deleteGradeCategory,
-        getGradeCategoriesForCourse,
-    } = useMapDispatch({
+    const actions = useMapDispatch({
         pushRoute: push,
         selectGradeCategory: SelectGradeCategoryCreator,
         setActiveCourse: SetActiveCourseCreator,
@@ -67,23 +55,23 @@ const CourseDetailedPage = () => {
 
     //#region Lifecycle Methods
     useComponentMount(() => {
-        if (course) {
-            document.title = `${course.title} Details`;
-            getGradeCategoriesForCourse(course.id || "");
+        if (state.course) {
+            document.title = `${state.course.title} Details`;
+            actions.getGradeCategoriesForCourse(state.course.id || "");
         }
         return () => {
-            selectGradeCategory(undefined);
+            actions.selectGradeCategory(undefined);
         };
     });
     //#endregion
 
     //#region Private Methods
     const handleBodyCellClick = useCallback((event: MouseEvent<HTMLDivElement>, payload: GradeCategory) => {
-        const category = categories && categories.find((value: GradeCategory) => value.id === payload.id);
+        const category = state.categories && state.categories.find((value: GradeCategory) => value.id === payload.id);
         if (category && payload.title !== "Total") {
-            selectGradeCategory(category.id);
+            actions.selectGradeCategory(category.id);
         }
-    }, [categories, selectGradeCategory]);
+    }, [actions, state.categories]);
 
     const handleCreate = useCallback(() => {
         setIsCreating(true);
@@ -91,18 +79,18 @@ const CourseDetailedPage = () => {
     }, []);
 
     const handleEdit = useCallback(() => {
-        if (selectedCategory) {
+        if (state.selectedCategory) {
             setIsCreating(false);
             setIsEditing(true);
         }
-    }, [selectedCategory]);
+    }, [state.selectedCategory]);
 
     const handleDelete = useCallback(() => {
-        if (selectedCategory) {
-            deleteGradeCategory(selectedCategory);
-            selectGradeCategory(undefined);
+        if (state.selectedCategory) {
+            actions.deleteGradeCategory(state.selectedCategory);
+            actions.selectGradeCategory(undefined);
         }
-    }, [deleteGradeCategory, selectGradeCategory, selectedCategory]);
+    }, [actions, state.selectedCategory]);
 
     const handleCancel = useCallback(() => {
         setIsCreating(false);
@@ -110,21 +98,21 @@ const CourseDetailedPage = () => {
     }, []);
 
     const handleRootClick = useCallback(() => {
-        setActiveCourse();
-        pushRoute("/");
-    }, [pushRoute, setActiveCourse]);
+        actions.setActiveCourse();
+        actions.pushRoute("/");
+    }, [actions]);
 
     const selected = useMemo(
-        () => categories && categories.get(selectedCategory || ""),
-        [categories, selectedCategory],
+        () => state.categories && state.categories.get(state.selectedCategory || ""),
+        [state.categories, state.selectedCategory],
     );
     //#endregion
 
     //#region Render Method
     return (
         <>
-        { isLoading && <ActivityLoading /> }
-        <Container id={`${course ? course.title : ""}-detailed`}>
+        { state.isLoading && <ActivityLoading /> }
+        <Container id={`${state.course ? state.course.title : ""}-detailed`}>
             <ClickRoute
                 id="click-route"
                 onClick={handleRootClick}
@@ -179,10 +167,10 @@ const CourseDetailedPage = () => {
                     />
                     <CategoryFormModal
                         isCreating={isCreating}
-                        course={course}
+                        course={state.course}
                         exitModal={handleCancel}
-                        categories={categories}
-                        originalCategory={categories && categories.get(selectedCategory || "")}
+                        categories={state.categories}
+                        originalCategory={state.categories && state.categories.get(state.selectedCategory || "")}
                         initialValues={selected && {
                             title: selected.title,
                             percentage: selected.percentage,
@@ -193,11 +181,11 @@ const CourseDetailedPage = () => {
                 <DataGrid
                     id="grade-category-grid"
                     columnDefinitions={categoryColumns}
-                    elements={categoryElements}
+                    elements={state.categoryElements}
                     onBodyCellClick={handleBodyCellClick}
                 />
                 {
-                    selectedCategory &&
+                    state.selectedCategory &&
                     <Fragment>
                         <Divider
                             isVertical={false}
@@ -205,7 +193,7 @@ const CourseDetailedPage = () => {
                             bottom={10}
                         />
                         <CategoryDetailedPane
-                            selectedCategory={categories && categories.get(selectedCategory)}
+                            selectedCategory={state.categories && state.categories.get(state.selectedCategory)}
                         />
                     </Fragment>
                 }

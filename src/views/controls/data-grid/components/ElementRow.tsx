@@ -20,9 +20,8 @@ export function ElementRow<T>(props: Props<T>) {
 
     //#region Private Methods
     const handleCellClick = useCallback((event: MouseEvent<HTMLDivElement>, bodyProps: BodyCellProps) => {
-        const handler = onBodyCellClick;
-        if (handler) {
-            handler(event, props.element.payload, bodyProps);
+        if (onBodyCellClick) {
+            onBodyCellClick(event, props.element.payload, bodyProps);
         }
     }, [onBodyCellClick, props.element]);
     //#endregion
@@ -44,8 +43,7 @@ export function ElementRow<T>(props: Props<T>) {
                         onCellClick={handleCellClick}
                     />
                 );
-            })
-            }
+            })}
         </Container>
     );
     //#endregion
