@@ -14,11 +14,7 @@ interface Props {
     onEditClick: (course?: Course) => void;
 }
 
-const CourseOverviewButton = (props: Props) => {
-
-    //#region Prop Destructure
-    const { onEditClick } = props;
-    //#endregion
+const CourseOverviewButton = ({onEditClick, ...props}: Props) => {
 
     //#region Redux State
     const actions = useMapDispatch({

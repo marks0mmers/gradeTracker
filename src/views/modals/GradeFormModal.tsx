@@ -24,11 +24,7 @@ interface GradeForm {
     grade: number;
 }
 
-const GradeFormModal = (props: Props) => {
-
-    //#region Prop Destructure
-    const { exitModal } = props;
-    //#endregion
+const GradeFormModal = ({exitModal, ...props}: Props) => {
 
     //#region Redux State
     const actions = useMapDispatch({

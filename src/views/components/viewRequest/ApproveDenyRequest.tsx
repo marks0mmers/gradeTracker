@@ -10,14 +10,7 @@ interface Props {
     onDeny: (requestId: string) => void;
 }
 
-const ApproveDenyRequest = (props: Props) => {
-
-    //#region Prop Destructure
-    const {
-        onApprove,
-        onDeny,
-    } = props;
-    //#endregion
+const ApproveDenyRequest = ({onApprove, onDeny, ...props}: Props) => {
 
     //#region Private Methods
     const handleApprove = useCallback(() => {

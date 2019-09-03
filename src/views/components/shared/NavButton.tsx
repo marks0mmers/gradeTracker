@@ -10,9 +10,7 @@ interface Props {
     onClick: (id: string) => void;
 }
 
-const NavButton = (props: Props) => {
-
-    const { onClick } = props;
+const NavButton = ({onClick, ...props}: Props) => {
 
     const handleClick = useCallback(() => {
         if (props.id) {

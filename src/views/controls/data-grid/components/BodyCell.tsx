@@ -9,15 +9,11 @@ export interface BodyCellProps {
     onCellClick: (event: MouseEvent<HTMLDivElement>, props: BodyCellProps) => void;
 }
 
-const BodyCell = (props: BodyCellProps) => {
-
-    //#region Prop Destructure
-    const { onCellClick } = props;
-    //#endregion
+const BodyCell = ({onCellClick, ...props}: BodyCellProps) => {
 
     //#region Private Methods
     const handleCellClick = useCallback((event: MouseEvent<HTMLDivElement>) => {
-        onCellClick(event, props);
+        onCellClick(event, {onCellClick, ...props});
     }, [onCellClick, props]);
     //#endregion
 

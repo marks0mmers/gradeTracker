@@ -26,11 +26,7 @@ interface CourseForm {
     creditHours: number;
 }
 
-const CourseFormModal = (props: Props) => {
-
-    //#region Prop Destructure
-    const { exitModal } = props;
-    //#endregion
+const CourseFormModal = ({exitModal, ...props}: Props) => {
 
     //#region Redux State
     const state = useMapState((state: RootState) => ({currentUser: getCurrentUser(state)}));

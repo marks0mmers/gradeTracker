@@ -27,11 +27,7 @@ interface CategoryForm {
     numberOfGrades: number;
 }
 
-const CategoryFormModal = (props: Props) => {
-
-    //#region Prop Destructure
-    const { exitModal } = props;
-    //#endregion
+const CategoryFormModal = ({exitModal, ...props}: Props) => {
 
     //#region Redux State
     const actions = useMapDispatch({
