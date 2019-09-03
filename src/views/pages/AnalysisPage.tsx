@@ -65,11 +65,9 @@ const AnalysisPage = (props: Props) => {
     });
 
     useComponentUpdate(() => {
-        if (!props.match.params.userId) {
-            actions.setCoursesForUser(Map());
-            actions.setGradeCategoriesForUser(Map());
-            actions.getAllCategories();
-        }
+        actions.setCoursesForUser(Map());
+        actions.setGradeCategoriesForUser(Map());
+        actions.getAllCategories();
     }, [props.match.params.userId]);
     //#endregion
 
