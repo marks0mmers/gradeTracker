@@ -1,15 +1,13 @@
 import { Formik, FormikProps } from "formik";
 import { Map } from "immutable";
 import React, { useCallback } from "react";
-import styled from "styled-components";
 import * as Yup from "yup";
-import Required from "../components/shared/Required";
 import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
 import { CreateGradeCategoryCreator, EditGradeCategoryCreator } from "../../state/ducks/data/gradeCategories";
 import { useMapDispatch } from "../../state/hooks";
 import Button from "../components/shared/Button";
-import Input from "../components/styled-inputs/Input";
+import { useFormBuilder } from "./common/FormBuilder";
 
 interface Props {
     isCreating: boolean;
@@ -62,27 +60,7 @@ const CategoryFormModal = ({exitModal, ...props}: Props) => {
     //#endregion
 
     //#region Display Methods
-    const buildFormValue = useCallback((
-        label: string,
-        value: string | number,
-        formProps: FormikProps<CategoryForm>,
-        name: string,
-        required: boolean,
-        error?: string,
-    ) => (
-        <LabelInput>
-            {label}
-            {required && <Required />}
-            <Input
-                type="text"
-                onChange={formProps.handleChange}
-                onBlur={formProps.handleBlur}
-                value={value}
-                name={name}
-            />
-            {error && <Error>{error}</Error>}
-        </LabelInput>
-    ), []);
+    const buildFormValue = useFormBuilder;
     //#endregion
 
     //#region Render Method
@@ -152,16 +130,5 @@ const CategoryFormModal = ({exitModal, ...props}: Props) => {
     );
     //#endregion
 };
-
-//#region Styles
-const LabelInput = styled.div`
-    margin-bottom: 10px;
-    font-weight: bold;
-`;
-
-const Error = styled.div`
-    color: red;
-`;
-//#endregion
 
 export default CategoryFormModal;
