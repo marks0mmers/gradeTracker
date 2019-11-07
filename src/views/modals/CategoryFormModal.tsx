@@ -52,6 +52,7 @@ const CategoryFormModal = ({exitModal, ...props}: Props) => {
                 title: values.title,
                 percentage: +values.percentage,
                 numberOfGrades: +values.numberOfGrades,
+                grades: props.originalCategory.grades,
             });
             actions.updateCategory(category);
             exitModal();
@@ -60,7 +61,7 @@ const CategoryFormModal = ({exitModal, ...props}: Props) => {
     //#endregion
 
     //#region Display Methods
-    const buildFormValue = useFormBuilder;
+    const buildFormValue = useFormBuilder();
     //#endregion
 
     //#region Render Method
@@ -83,6 +84,7 @@ const CategoryFormModal = ({exitModal, ...props}: Props) => {
                     .positive("Percentage has to be positive.")
                     .lessThan(props.categories 
                         ? 101 - props.categories
+                            .filter((g) => props.originalCategory ? g.id !== props.originalCategory.id : true)
                             .map((g) => g.percentage)
                             .reduce((acc: number, val) => acc += val, 0)
                         : 101, "Max percentage is 100")

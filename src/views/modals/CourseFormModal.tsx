@@ -36,7 +36,7 @@ const CourseFormModal = ({exitModal, ...props}: Props) => {
     //#endregion
 
     //#region Display Methods
-    const buildFormValue = useFormBuilder;
+    const buildFormValue = useFormBuilder();
     //#endregion
 
     //#region Private Methods

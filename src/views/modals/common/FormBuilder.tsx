@@ -1,10 +1,10 @@
 import { FormikProps } from "formik";
-import React, { useCallback } from "react";
+import React from "react";
 import styled from "styled-components";
 import Required from "../../components/shared/Required";
 import Input from "../../components/styled-inputs/Input";
 
-export const useFormBuilder = useCallback((
+export const useFormBuilder = () => (
     label: string,
     value: string | number,
     formProps: FormikProps<unknown>,
@@ -24,7 +24,7 @@ export const useFormBuilder = useCallback((
         />
         {error && <Error>{error}</Error>}
     </LabelInput>
-), []);
+);
 
 //#region Styles
 const LabelInput = styled.div`

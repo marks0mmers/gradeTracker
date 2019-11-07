@@ -53,7 +53,7 @@ const GradeFormModal = ({exitModal, ...props}: Props) => {
     //#endregion
 
     //#region Display Methods
-    const buildFormValue = useFormBuilder;
+    const buildFormValue = useFormBuilder();
     //#endregion
 
     //#region Render Method

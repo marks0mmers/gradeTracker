@@ -1,6 +1,6 @@
 import { Map } from "immutable";
 import React, { useCallback } from "react";
-import { match } from "react-router";
+import { useParams } from "react-router";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import styled from "styled-components";
 import ActivityLoading from "../components/shared/LoadingMask";
@@ -15,10 +15,11 @@ import {
 } from "../../state/ducks/data/gradeCategories/actions/SetGradeCategoriesForUser";
 import { useMapDispatch, useMapState } from "../../state/hooks";
 import { RootState } from "../../state/rootReducer";
-import { useComponentMount, useComponentUpdate } from "../../util/Hooks";
+import { useComponentMount } from "../../util/Hooks";
 import Divider from "../components/shared/Divider";
 import DataGrid from "../controls/data-grid";
 import { getIsLoading } from "../../state/ducks/control/loadingmask/selectors";
+
 
 interface GraphData {
     name: string;
@@ -29,15 +30,16 @@ interface GraphData {
 
 interface Props {
     className?: string;
-    match: match<{userId?: string}>;
 }
 
 const AnalysisPage = (props: Props) => {
 
+    const { userId } = useParams();
+
     //#region Redux State
     const state = useMapState((state: RootState) => ({
         isLoading: getIsLoading(state),
-        elements: props.match.params.userId ? getAnalysisGridDataForUser(state) : getAnalysisGridData(state),
+        elements: userId ? getAnalysisGridDataForUser(state) : getAnalysisGridData(state),
     }));
 
     const actions = useMapDispatch({
@@ -52,9 +54,9 @@ const AnalysisPage = (props: Props) => {
     //#region Lifecycle Methods
     useComponentMount(() => {
         document.title = "Grades Analysis";
-        if (props.match.params.userId) {
-            actions.viewAnalysis(props.match.params.userId);
-            actions.getDataForUser(props.match.params.userId);
+        if (userId) {
+            actions.viewAnalysis(userId);
+            actions.getDataForUser(userId);
         } else {
             actions.getAllCategories();
         }
@@ -63,12 +65,6 @@ const AnalysisPage = (props: Props) => {
             actions.setGradeCategoriesForUser(Map());
         };
     });
-
-    useComponentUpdate(() => {
-        actions.setCoursesForUser(Map());
-        actions.setGradeCategoriesForUser(Map());
-        actions.getAllCategories();
-    }, [props.match.params.userId]);
     //#endregion
 
     //#region Display Methods
