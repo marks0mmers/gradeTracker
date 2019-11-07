@@ -12,11 +12,7 @@ interface Props<T> {
     onBodyCellClick?: (event: MouseEvent<HTMLDivElement>, payload: T, props: BodyCellProps) => void;
 }
 
-export function ElementRow<T>(props: Props<T>) {
-
-    //#region Prop Destructure
-    const {onBodyCellClick} = props;
-    //#endregion
+export function ElementRow<T>({onBodyCellClick, ...props}: Props<T>) {
 
     //#region Private Methods
     const handleCellClick = useCallback((event: MouseEvent<HTMLDivElement>, bodyProps: BodyCellProps) => {

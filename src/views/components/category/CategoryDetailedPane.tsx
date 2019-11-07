@@ -54,7 +54,7 @@ const CategoryDetailedPane = (props: Props) => {
     const handleEditGrade = useCallback(() => {
         if (selectedGrade) {
             setIsCreating(false);
-            setIsEditing(false);
+            setIsEditing(true);
         }
     }, [selectedGrade]);
 

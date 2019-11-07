@@ -19,11 +19,7 @@ interface Props {
     pushRoute: typeof push;
 }
 
-const NavBar = (props: Props) => {
-
-    //#region Prop Destructure
-    const { pushRoute } = props;
-    //#endregion
+const NavBar = ({pushRoute, ...props}: Props) => {
 
     //#region Component State
     const [activeButton, setActiveButton] = useState<Routes>(Routes.COURSE_OVERVIEW);

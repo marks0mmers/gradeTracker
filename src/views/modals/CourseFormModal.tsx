@@ -1,15 +1,13 @@
 import { Formik, FormikProps } from "formik";
 import React, { useCallback } from "react";
-import styled from "styled-components";
 import * as Yup from "yup";
-import Required from "../components/shared/Required";
 import { Course } from "../../models/Course";
 import { CreateNewCourseCreator, EditCourseCreator } from "../../state/ducks/data/courses";
 import { getCurrentUser } from "../../state/ducks/data/users";
 import { useMapDispatch, useMapState } from "../../state/hooks";
 import { RootState } from "../../state/rootReducer";
 import Button from "../components/shared/Button";
-import Input from "../components/styled-inputs/Input";
+import { useFormBuilder } from "./common/FormBuilder";
 
 interface Props {
     isCreating: boolean;
@@ -26,11 +24,7 @@ interface CourseForm {
     creditHours: number;
 }
 
-const CourseFormModal = (props: Props) => {
-
-    //#region Prop Destructure
-    const { exitModal } = props;
-    //#endregion
+const CourseFormModal = ({exitModal, ...props}: Props) => {
 
     //#region Redux State
     const state = useMapState((state: RootState) => ({currentUser: getCurrentUser(state)}));
@@ -42,27 +36,7 @@ const CourseFormModal = (props: Props) => {
     //#endregion
 
     //#region Display Methods
-    const buildFormValue = useCallback((
-        label: string,
-        value: string | number,
-        props: FormikProps<CourseForm>,
-        name: string,
-        required: boolean,
-        error?: string,
-    ) => (
-        <LabelInput>
-            {label}
-            {required && <Required />}
-            <Input
-                type="text"
-                onChange={props.handleChange}
-                onBlur={props.handleBlur}
-                value={value}
-                name={name}
-            />
-            {error && <Error>{error}</Error>}
-        </LabelInput>
-    ), []);
+    const buildFormValue = useFormBuilder();
     //#endregion
 
     //#region Private Methods
@@ -166,16 +140,5 @@ const CourseFormModal = (props: Props) => {
     );
     //#endregion
 };
-
-//#region Styles
-const LabelInput = styled.div`
-    margin-bottom: 10px;
-    font-weight: bold;
-`;
-
-const Error = styled.div`
-    color: red;
-`;
-//#endregion
 
 export default CourseFormModal;

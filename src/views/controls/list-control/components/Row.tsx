@@ -21,11 +21,7 @@ interface Props {
     onClear?: () => void;
 }
 
-const Row = (props: Props) => {
-
-    //#region Prop Destructure
-    const {onClick, onSave, onClear} = props;
-    //#endregion
+const Row = ({onClear, onClick, onSave, ...props}: Props) => {
 
     //#region Component State
     const [formValues, setFormValues] = useState(Map<string, string>());
