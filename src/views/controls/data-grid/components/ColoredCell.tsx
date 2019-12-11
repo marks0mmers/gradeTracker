@@ -7,7 +7,7 @@ interface Props {
 
 const ColoredCell = (props: Props) => (
     <Container grade={props.grade}>
-        {props.grade}
+        {props.grade?.toFixed(4)}
     </Container>
 );
 
@@ -22,7 +22,7 @@ const Container = styled.span<Props>`
             return "#409C40";
         } else if (grade >= 80) {
             return "#FFFF76";
-        } else if (grade >= 70) {
+        } else if (grade >= 60) {
             return "#de8054";
         } else {
             return "#de5454";
