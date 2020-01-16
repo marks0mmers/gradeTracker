@@ -1,6 +1,6 @@
 import { List, Map } from "immutable";
 import { ofType } from "redux-observable";
-import { empty, Observable, of } from "rxjs";
+import { Observable, of } from "rxjs";
 import { ajax } from "rxjs/observable/dom/ajax";
 import { mergeMap } from "rxjs/operators";
 import { Course } from "../../../../models/Course";
@@ -29,17 +29,14 @@ export const GetAnalysisInformationForUserEpic = (
             headers,
         ).pipe(
             mergeMap((data?: Data) => {
-                const courses = data && List(data.courses).reduce(
-                    (m: Map<string, Course>, c: Course) => m.set(c.id || "", new Course(c)),
+                const courses = List(data?.courses ?? []).reduce(
+                    (m: Map<string, Course>, c: Course) => m.set(c.id ?? "", new Course(c)),
                     Map(),
                 );
-                const categories = data && List(data.categories).reduce(
+                const categories = List(data?.categories ?? []).reduce(
                     (m: Map<string, GradeCategory>, g: GradeCategory) => m.set(g.id, new GradeCategory(g)),
                     Map(),
                 );
-                if (!courses || !categories) {
-                    return empty();
-                }
                 return of(
                     SetCoursesForUserCreator(courses),
                     SetGradeCategoriesForUserCreator(categories),

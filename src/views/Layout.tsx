@@ -3,7 +3,7 @@ import React, { Fragment } from "react";
 import { Route, Switch } from "react-router";
 import { ToastContainer } from "react-toastify";
 import styled from "styled-components";
-import { getCurrentUser, GetCurrentUserCreator, LogoutCreator } from "../state/ducks/data/users";
+import { getCurrentUser, GetCurrentUserCreator } from "../state/ducks/data/users";
 import { getPathName } from "../state/ducks/router/selectors";
 import { useMapDispatch, useMapState } from "../state/hooks";
 import { useComponentMount, useComponentUpdate } from "../util/Hooks";
@@ -28,7 +28,6 @@ const Layout = () => {
     const actions = useMapDispatch({
         pushRoute: push,
         fetchCurrentUser: GetCurrentUserCreator,
-        logout: LogoutCreator,
     });
     //#endregion
 
@@ -53,8 +52,6 @@ const Layout = () => {
                 <Fragment>
                     <Header
                         title="Gradebook"
-                        currentUser={state.currentUser}
-                        logout={actions.logout}
                     />
                     <NavBar
                         currentUser={state.currentUser}

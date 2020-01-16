@@ -54,7 +54,7 @@ const NavBar = ({pushRoute, ...props}: Props) => {
                 onClick={handleNavClick}
             />
             {
-                props.currentUser && props.currentUser.roles.some((role: Role) => role.role === "admin") &&
+                props.currentUser?.roles.some((role: Role) => role.role === "admin") &&
                 <NavButton
                     id={Routes.ADMIN}
                     iconName="account_box"

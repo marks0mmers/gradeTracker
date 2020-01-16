@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { User } from "../../../models/User";
 import { LogoutCreator } from "../../../state/ducks/data/users";
 import { GetUsersCreator } from "../../../state/ducks/data/users/actions/GetUsers";
-import { getUsers } from "../../../state/ducks/data/users/selectors";
+import { getUsers, getCurrentUser } from "../../../state/ducks/data/users/selectors";
 import {
     ApproveViewRequestCreator,
     DenyViewRequestCreator,
@@ -19,9 +19,6 @@ import Divider from "./Divider";
 
 interface Props {
     title?: string;
-    currentUser?: User;
-
-    logout: typeof LogoutCreator;
 }
 
 const Header = (props: Props) => {
@@ -34,6 +31,7 @@ const Header = (props: Props) => {
     const state = useMapState((state: RootState) => ({
         myViewRequests: getMyViewRequests(state),
         users: getUsers(state),
+        currentUser: getCurrentUser(state),
     }));
 
     const actions =  useMapDispatch({
@@ -41,6 +39,7 @@ const Header = (props: Props) => {
         approveViewRequest: ApproveViewRequestCreator,
         denyViewRequest: DenyViewRequestCreator,
         fetchUsers: GetUsersCreator,
+        logout: LogoutCreator,
     });
     //#endregion
 
@@ -89,9 +88,9 @@ const Header = (props: Props) => {
             <div />
             <CurrentUser>
                 {`${
-                    props.currentUser && props.currentUser.firstName
+                    state.currentUser?.firstName
                 } ${
-                    props.currentUser && props.currentUser.lastName
+                    state.currentUser?.lastName
                 }`}
             </CurrentUser>
             <Button
@@ -111,7 +110,7 @@ const Header = (props: Props) => {
             }
             <Button
                 text="Logout"
-                onClick={props.logout}
+                onClick={actions.logout}
                 height={40}
                 marginLeftRight={10}
                 marginTopBottom={10}
