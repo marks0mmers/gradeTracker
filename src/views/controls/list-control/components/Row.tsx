@@ -31,20 +31,18 @@ const Row = ({onClear, onClick, onSave, ...props}: Props) => {
     //#region Lifecycle Methods
     useComponentUpdate(() => {
         setFormValues(Map<string, string>()
-            .set("primary", props.primaryProperty || "")
-            .set("secondary", props.secondaryProperty ? props.secondaryProperty.split("%")[0] : ""));
-        setInitialKey(props.primaryProperty ? props.primaryProperty : "");
+            .set("primary", props.primaryProperty ?? "")
+            .set("secondary", props.secondaryProperty?.split("%")[0] ?? ""));
+        setInitialKey(props.primaryProperty ?? "");
     }, [props.isEditing]);
     //#endregion
 
     //#region Private Methods
     const handleClick = useCallback(() => {
-        if (onClick && props.primaryProperty) {
-            onClick(
-                props.primaryProperty,
-                props.secondaryProperty,
-            );
-        }
+        onClick?.(
+            props.primaryProperty ?? "",
+            props.secondaryProperty,
+        );
     }, [onClick, props.primaryProperty, props.secondaryProperty]);
 
     const handleInputChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
@@ -55,16 +53,12 @@ const Row = ({onClear, onClick, onSave, ...props}: Props) => {
     const handleSave = useCallback(() => {
         const primary = formValues.get("primary", "");
         const secondary = formValues.get("secondary");
-        if (onSave) {
-            onSave(primary, secondary, initialKey);
-        }
+        onSave?.(primary, secondary, initialKey);
     }, [formValues, initialKey, onSave]);
 
     const handleClear = useCallback(() => {
         setFormValues(Map());
-        if (onClear) {
-            onClear();
-        }
+        onClear?.();
     }, [onClear]);
     //#endregion
 
@@ -75,48 +69,47 @@ const Row = ({onClear, onClick, onSave, ...props}: Props) => {
             {...props}
             onClick={handleClick}
         >
-            {
-                !props.isCreating && !props.isEditing
-                    ? <Fragment>
-                        <Primary id="primary">{props.primaryProperty}</Primary>
-                        {props.secondaryProperty && <Secondary id="secondary"><i>{props.secondaryProperty}</i></Secondary>}
-                    </Fragment>
-                    : <Fragment>
-                        <Input
-                            name="primary"
-                            value={formValues.get("primary")}
-                            height={20}
-                            gridArea="primary"
-                            onChange={handleInputChange}
-                            placeholder={props.primaryPlaceHolder}
-                        />
-                        <Input
-                            name="secondary"
-                            value={formValues.get("secondary")}
-                            height={20}
-                            gridArea="secondary"
-                            onChange={handleInputChange}
-                            placeholder={props.secondaryPlaceHolder}
-                        />
-                        <Button
-                            tooltip="Cancel"
-                            gridArea="cancel"
-                            icon="clear"
-                            height={50}
-                            width={50}
-                            marginLeftRight={5}
-                            onClick={handleClear}
-                        />
-                        <Button
-                            tooltip="Save"
-                            gridArea="save"
-                            icon="save"
-                            height={50}
-                            width={50}
-                            marginLeftRight={5}
-                            onClick={handleSave}
-                        />
-                    </Fragment>
+            {!props.isCreating && !props.isEditing
+                ? <Fragment>
+                    <Primary id="primary">{props.primaryProperty}</Primary>
+                    {props.secondaryProperty && <Secondary id="secondary"><i>{props.secondaryProperty}</i></Secondary>}
+                </Fragment>
+                : <Fragment>
+                    <Input
+                        name="primary"
+                        value={formValues.get("primary")}
+                        height={20}
+                        gridArea="primary"
+                        onChange={handleInputChange}
+                        placeholder={props.primaryPlaceHolder}
+                    />
+                    <Input
+                        name="secondary"
+                        value={formValues.get("secondary")}
+                        height={20}
+                        gridArea="secondary"
+                        onChange={handleInputChange}
+                        placeholder={props.secondaryPlaceHolder}
+                    />
+                    <Button
+                        tooltip="Cancel"
+                        gridArea="cancel"
+                        icon="clear"
+                        height={50}
+                        width={50}
+                        marginLeftRight={5}
+                        onClick={handleClear}
+                    />
+                    <Button
+                        tooltip="Save"
+                        gridArea="save"
+                        icon="save"
+                        height={50}
+                        width={50}
+                        marginLeftRight={5}
+                        onClick={handleSave}
+                    />
+                </Fragment>
             }
         </Container>
     );

@@ -62,15 +62,13 @@ const HomePage = () => {
     //#endregion
 
     //#region Display Methods
-    const getCourseButtons = useCallback(() => {
-        return state.courses.map((course: Course, key: string) => (
-            <CourseOverviewButton
-                key={key}
-                course={course}
-                onEditClick={handleEditClick}
-            />
-        )).toList();
-    }, [handleEditClick, state.courses]);
+    const getCourseButtons = useCallback(() => state.courses.map((course, key) => (
+        <CourseOverviewButton
+            key={key}
+            course={course}
+            onEditClick={handleEditClick}
+        />
+    )), [handleEditClick, state.courses]);
     //#endregion
 
     //#region Render Method

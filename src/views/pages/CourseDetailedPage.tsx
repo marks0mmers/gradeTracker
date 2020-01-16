@@ -67,9 +67,9 @@ const CourseDetailedPage = () => {
 
     //#region Private Methods
     const handleBodyCellClick = useCallback((event: MouseEvent<HTMLDivElement>, payload: GradeCategory) => {
-        const category = state.categories && state.categories.find((value: GradeCategory) => value.id === payload.id);
-        if (category && payload.title !== "Total") {
-            actions.selectGradeCategory(category.id);
+        const category = state.categories.find((value) => value.id === payload.id);
+        if (payload.title !== "Total") {
+            actions.selectGradeCategory(category?.id);
         }
     }, [actions, state.categories]);
 
@@ -103,7 +103,7 @@ const CourseDetailedPage = () => {
     }, [actions]);
 
     const selected = useMemo(
-        () => state.categories && state.categories.get(state.selectedCategory || ""),
+        () => state.categories.get(state.selectedCategory || ""),
         [state.categories, state.selectedCategory],
     );
     //#endregion
@@ -170,7 +170,7 @@ const CourseDetailedPage = () => {
                         course={state.course}
                         exitModal={handleCancel}
                         categories={state.categories}
-                        originalCategory={state.categories && state.categories.get(state.selectedCategory || "")}
+                        originalCategory={state.categories.get(state.selectedCategory || "")}
                         initialValues={selected && {
                             title: selected.title,
                             percentage: selected.percentage,
@@ -193,7 +193,7 @@ const CourseDetailedPage = () => {
                             bottom={10}
                         />
                         <CategoryDetailedPane
-                            selectedCategory={state.categories && state.categories.get(state.selectedCategory)}
+                            selectedCategory={state.categories.get(state.selectedCategory)}
                         />
                     </Fragment>
                 }

@@ -53,11 +53,11 @@ const AdminViewUsersPage = () => {
 
     //#region Private Methods
     const handleSelectUser = useCallback((event: MouseEvent<HTMLDivElement>, payload: UserGridView) => {
-        const newSelectedUser = state.users.find((user: User) => user._id === payload._id);
+        const newSelectedUser = state.users.find((user) => user._id === payload._id);
         setSelectedUser(newSelectedUser);
     }, [state.users]);
 
-    const getUserGridData = useCallback(() => state.users.map((user: User) => new DataGridElement<User>(
+    const getUserGridData = useCallback(() => state.users.map((user) => new DataGridElement<User>(
         new User({
             _id: user._id,
             firstName: user.firstName,

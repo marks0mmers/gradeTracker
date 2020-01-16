@@ -29,14 +29,11 @@ const CategoryDetailedPane = (props: Props) => {
 
     //#region Private Methods
     const getListElements = useCallback(() => props.selectedCategory?.grades.map(
-        (value: Grade) => {
-            const element: ListControlElement = {
-                isSelected: value === selectedGrade,
-                primaryProperty: value.name,
-                secondaryProperty: `${value.grade.toString()} %`,
-            };
-            return element;
-        },
+        (value: Grade): ListControlElement => ({
+            isSelected: value === selectedGrade,
+            primaryProperty: value.name,
+            secondaryProperty: `${value.grade.toString()} %`,
+        })
     ).toList(), [props.selectedCategory, selectedGrade]);
 
     const handleCancel = useCallback(() => {

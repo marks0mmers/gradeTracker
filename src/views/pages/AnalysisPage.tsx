@@ -5,7 +5,6 @@ import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAx
 import styled from "styled-components";
 import ActivityLoading from "../components/shared/LoadingMask";
 import { analysisColumns } from "../../constants/columns/AnalysisColumns";
-import { AnalysisCourse } from "../../models/AnalysisCourse";
 import { ViewAnalysisForUserCreator } from "../../state/ducks/control/analysis/actions";
 import { getAnalysisGridData, getAnalysisGridDataForUser } from "../../state/ducks/control/analysis/selectors";
 import { SetCoursesForUserCreator } from "../../state/ducks/data/courses/actions/SetCoursesForUser";
@@ -69,8 +68,8 @@ const AnalysisPage = (props: Props) => {
 
     //#region Display Methods
     const getGraphData = useCallback(() => {
-        const analysisCourses = state.elements.map((value) => value && value.payload).toList();
-        return analysisCourses && analysisCourses.map((value: AnalysisCourse): GraphData => ({
+        const analysisCourses = state.elements.map((value) => value && value.payload);
+        return analysisCourses.map((value): GraphData => ({
             Current: value.currentGPA,
             Guarenteed: value.guarenteedGPA,
             Potential: value.potentialGPA,

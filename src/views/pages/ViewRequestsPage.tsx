@@ -1,5 +1,4 @@
 import { push } from "connected-react-router";
-import { List } from "immutable";
 import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { User } from "../../models/User";
@@ -72,30 +71,25 @@ const ViewRequestsPage = () => {
         }
     }, [state.currentUser, state.pendingViewRequests, state.users]);
 
-    const getSendViewRequestsListData = useCallback((): List<ListControlElement> => {
-        return state.users
-            .filter((user) => state.currentUser && user._id !== state.currentUser._id)
-            .filter((user) => !state.pendingViewRequests.some((req) => req.receiver === user._id))
-            .map((user) => ({
-                primaryProperty: `${user.firstName} ${user.lastName}`,
-                secondaryProperty: user.email,
-                isSelected: user === selectedUser,
-            }))
-            .toList();
-    }, [selectedUser, state.currentUser, state.pendingViewRequests, state.users]);
+    const getSendViewRequestsListData = useCallback(() => state.users
+        .filter((user) => state.currentUser && user._id !== state.currentUser._id)
+        .filter((user) => !state.pendingViewRequests.some((req) => req.receiver === user._id))
+        .map((user): ListControlElement => ({
+            primaryProperty: `${user.firstName} ${user.lastName}`,
+            secondaryProperty: user.email,
+            isSelected: user === selectedUser,
+        }))
+        .toList(), 
+    [selectedUser, state.currentUser, state.pendingViewRequests, state.users]);
 
-    const getSentRequestsListData = useCallback((): List<ListControlElement> => {
-        return state.pendingViewRequests
-            .map((request) => {
-                const receiver = state.users.find((user) => user._id === request.receiver);
-                return {
-                    primaryProperty: `Sent to: ${receiver && receiver.firstName} ${receiver && receiver.lastName}`,
-                    secondaryProperty: `Status: ${ViewRequestStatus[request.status]}`,
-                    isSelected: selectedViewRequest && selectedViewRequest.id === request.id,
-                };
-            })
-            .toList();
-    }, [selectedViewRequest, state.pendingViewRequests, state.users]);
+    const getSentRequestsListData = useCallback(() => state.pendingViewRequests.map((request): ListControlElement => {
+        const receiver = state.users.find((user) => user._id === request.receiver);
+        return {
+            primaryProperty: `Sent to: ${receiver && receiver.firstName} ${receiver && receiver.lastName}`,
+            secondaryProperty: `Status: ${ViewRequestStatus[request.status]}`,
+            isSelected: selectedViewRequest && selectedViewRequest.id === request.id,
+        };
+    }).toList(), [selectedViewRequest, state.pendingViewRequests, state.users]);
 
     const onSendClick = useCallback(() => {
         if (selectedUser) {

@@ -19,30 +19,24 @@ interface Props<T> {
 function DataGrid<T>(props: Props<T>) {
 
     //#region Display Methods
-    const renderHeaderCells = useCallback(
-        () => props.columnDefinitions && props.columnDefinitions.map((column: DataGridColumnDefinition<T>, idx: number) => (
-            <HeaderCell
-                key={idx}
-                height={props.rowHeight || 30}
-                width={column.width || 200}
-                content={column.label || ""}
-            />
-        )).toList(),
-        [props.columnDefinitions, props.rowHeight],
-    );
+    const renderHeaderCells = useCallback(() => props.columnDefinitions?.map((column, idx) => (
+        <HeaderCell
+            key={idx}
+            height={props.rowHeight ?? 30}
+            width={column.width ?? 200}
+            content={column.label ?? ""}
+        />
+    )), [props.columnDefinitions, props.rowHeight]);
 
-    const renderBodyCells = useCallback(
-        () => props.elements && props.elements.map((element: DataGridElement<T>, idx: number) => (
-            <ElementRow
-                key={idx}
-                element={element}
-                columnDefinitions={props.columnDefinitions}
-                height={props.rowHeight || 30}
-                onBodyCellClick={props.onBodyCellClick}
-            />
-        )),
-        [props.columnDefinitions, props.elements, props.onBodyCellClick, props.rowHeight],
-    );
+    const renderBodyCells = useCallback(() => props.elements?.map((element, idx) => (
+        <ElementRow
+            key={idx}
+            element={element}
+            columnDefinitions={props.columnDefinitions}
+            height={props.rowHeight || 30}
+            onBodyCellClick={props.onBodyCellClick}
+        />
+    )), [props.columnDefinitions, props.elements, props.onBodyCellClick, props.rowHeight]);
     //#endregion
 
     //#region Render Method
