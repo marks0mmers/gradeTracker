@@ -1,6 +1,6 @@
 import { push } from "connected-react-router";
 import { Formik, FormikProps } from "formik";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import * as Yup from "yup";
 import ActivityLoading from "../components/shared/LoadingMask";
@@ -9,7 +9,6 @@ import { LoginUser, User } from "../../models/User";
 import { CreateNewUserCreator, getCurrentUser, LoginCreator } from "../../state/ducks/data/users";
 import { getPreviousRoute } from "../../state/ducks/router/selectors";
 import { useMapDispatch, useMapState } from "../../state/hooks";
-import { useComponentMount, useComponentUpdate } from "../../util/Hooks";
 import Button from "../components/shared/Button";
 import Input from "../components/styled-inputs/Input";
 import { getIsLoading } from "../../state/ducks/control/loadingmask/selectors";
@@ -82,15 +81,15 @@ const LoginPage = () => {
     //#endregion
 
     //#region Lifecycle Methods
-    useComponentMount(() => {
+    useEffect(() => {
         document.title = "Login to Grade Tracker";
-    });
+    }, []);
 
-    useComponentUpdate(() => {
+    useEffect(() => {
         if (state.currentUser) {
             actions.pushRoute(state.prevRoute || "/");
         }
-    });
+    }, [actions, state.currentUser, state.prevRoute]);
     //#endregion
 
     //#region Private Methods

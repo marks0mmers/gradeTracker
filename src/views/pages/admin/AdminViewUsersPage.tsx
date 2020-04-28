@@ -1,5 +1,5 @@
 import { Formik, FormikProps } from "formik";
-import React, { MouseEvent, useCallback, useState } from "react";
+import React, { MouseEvent, useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import * as Yup from "yup";
 import { adminViewUsersColumns } from "../../../constants/columns/AdminViewUsersColumns";
@@ -7,7 +7,6 @@ import { User, UserGridView } from "../../../models/User";
 import { getCurrentUser, getUsers, GetUsersCreator } from "../../../state/ducks/data/users";
 import { useMapDispatch, useMapState } from "../../../state/hooks";
 import { RootState } from "../../../state/rootReducer";
-import { useComponentMount } from "../../../util/Hooks";
 import Button from "../../components/shared/Button";
 import Divider from "../../components/shared/Divider";
 import Input from "../../components/styled-inputs/Input";
@@ -46,9 +45,9 @@ const AdminViewUsersPage = () => {
     //#endregion
 
     //#region Lifecycle Methods
-    useComponentMount(() => {
+    useEffect(() => {
         actions.getUsersAction();
-    });
+    }, [actions]);
     //#endregion
 
     //#region Private Methods

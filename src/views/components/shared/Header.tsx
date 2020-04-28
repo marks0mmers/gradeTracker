@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import styled from "styled-components";
 import { User } from "../../../models/User";
 import { LogoutCreator } from "../../../state/ducks/data/users";
@@ -12,7 +12,6 @@ import {
 import { getMyViewRequests } from "../../../state/ducks/data/viewRequests/selectors";
 import { useMapDispatch, useMapState } from "../../../state/hooks";
 import { RootState } from "../../../state/rootReducer";
-import { useComponentMount } from "../../../util/Hooks";
 import ApproveDenyRequest from "../viewRequest/ApproveDenyRequest";
 import Button from "./Button";
 import Divider from "./Divider";
@@ -44,10 +43,10 @@ const Header = (props: Props) => {
     //#endregion
 
     //#region Lifecycle Methods
-    useComponentMount(() => {
+    useEffect(() => {
         actions.fetchUsers();
         actions.fetchMyViewRequests();
-    });
+    }, [actions]);
     //#endregion
 
     //#region Private Methods

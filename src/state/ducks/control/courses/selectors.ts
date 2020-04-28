@@ -25,11 +25,14 @@ export const getDetailedCourseElements = createSelector(
         let currentAverageTotal = 0;
         let potentialAverageTotal = 0;
         let guarenteedAverageTotal = 0;
+        const totalPercentageOfCurrentCategories = gradeCategories.reduce((total, g) => total += g.currentAverage > 0 ? g.percentage : 0, 0);
         gradeCategories.forEach((g: GradeCategory) => {
             totalPercentage += g.percentage;
             numberOfGradesTotal += g.numberOfGrades;
             remainingGradesTotal += g.remainingGrades;
-            currentAverageTotal += (g.currentAverage * (g.percentage / 100));
+            if (g.currentAverage > 0) {
+                currentAverageTotal += (g.currentAverage * (g.percentage / totalPercentageOfCurrentCategories));
+            } 
             potentialAverageTotal += (g.potentialAverage * (g.percentage / 100));
             guarenteedAverageTotal += (g.guarenteedAverage * (g.percentage / 100));
         });

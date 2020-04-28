@@ -36,7 +36,7 @@ export const epicBuilder = <
     ofType(type),
     mergeMap((action: IA) => {
         let ajaxCall: Observable<AjaxResponse> = empty();
-        const token = sessionStorage.getItem("jwtToken");
+        const token = localStorage.getItem("jwtToken");
         const requestHeaders = token
             ? {
                 ...requestHeadersNoAuth,

@@ -26,10 +26,10 @@ export const UserDataReducer = (
         case (types.GET_CURRENT_USER_SUCCESS):
             return state.set("currentUser", action.user);
         case (types.LOGIN_SUCCESS):
-            sessionStorage.setItem("jwtToken", action.user.token ?? "");
+            localStorage.setItem("jwtToken", action.user.token ?? "");
             return state.set("currentUser", action.user);
         case (types.LOGOUT):
-            sessionStorage.removeItem("jwtToken");
+            localStorage.removeItem("jwtToken");
             return state.set("currentUser", undefined);
         case (types.GET_USERS_SUCCESS):
             return state.set("users", List(action.users)

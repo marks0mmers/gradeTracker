@@ -1,7 +1,6 @@
 import { Map } from "immutable";
-import React, { ChangeEvent, Fragment, useCallback, useState } from "react";
+import React, { ChangeEvent, Fragment, useCallback, useState, useEffect } from "react";
 import styled from "styled-components";
-import { useComponentUpdate } from "../../../../util/Hooks";
 import Button from "../../../components/shared/Button";
 import Input from "../../../components/styled-inputs/Input";
 
@@ -29,12 +28,12 @@ const Row = ({onClear, onClick, onSave, ...props}: Props) => {
     //#endregion
 
     //#region Lifecycle Methods
-    useComponentUpdate(() => {
+    useEffect(() => {
         setFormValues(Map<string, string>()
             .set("primary", props.primaryProperty ?? "")
             .set("secondary", props.secondaryProperty?.split("%")[0] ?? ""));
         setInitialKey(props.primaryProperty ?? "");
-    }, [props.isEditing]);
+    }, [props.isEditing, props.primaryProperty, props.secondaryProperty]);
     //#endregion
 
     //#region Private Methods

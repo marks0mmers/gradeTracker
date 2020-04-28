@@ -1,5 +1,5 @@
 import { Map } from "immutable";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import styled from "styled-components";
@@ -14,7 +14,6 @@ import {
 } from "../../state/ducks/data/gradeCategories/actions/SetGradeCategoriesForUser";
 import { useMapDispatch, useMapState } from "../../state/hooks";
 import { RootState } from "../../state/rootReducer";
-import { useComponentMount } from "../../util/Hooks";
 import Divider from "../components/shared/Divider";
 import DataGrid from "../controls/data-grid";
 import { getIsLoading } from "../../state/ducks/control/loadingmask/selectors";
@@ -51,7 +50,7 @@ const AnalysisPage = (props: Props) => {
     //#endregion
 
     //#region Lifecycle Methods
-    useComponentMount(() => {
+    useEffect(() => {
         document.title = "Grades Analysis";
         if (userId) {
             actions.viewAnalysis(userId);
@@ -63,7 +62,7 @@ const AnalysisPage = (props: Props) => {
             actions.setCoursesForUser(Map());
             actions.setGradeCategoriesForUser(Map());
         };
-    });
+    }, [actions, userId]);
     //#endregion
 
     //#region Display Methods

@@ -11,15 +11,15 @@ import { getGradeCategories } from "../../data/gradeCategories";
 import { getGradeCategoriesForUser } from "../../data/gradeCategories/selectors";
 
 const generateData = (courses: Map<string, Course>, gradeCategories: Map<string, GradeCategory>) => {
-    let retList: List<DataGridElement<AnalysisCourse>> = List();
+    let retList = List<DataGridElement<AnalysisCourse>>();
 
-    courses.forEach((course: Course) => {
+    courses.forEach((course) => {
         let currentTotal = 0;
         let guarenteedTotal = 0;
         let potentialTotal = 0;
-        const categories = gradeCategories.filter((g: GradeCategory) => g.courseId === course.id);
+        const categories = gradeCategories.filter((g) => g.courseId === course.id);
         if (categories) {
-            categories.forEach((category: GradeCategory) => {
+            categories.forEach((category) => {
                 currentTotal += (category.currentAverage * category.percentage);
                 guarenteedTotal += (category.guarenteedAverage * category.percentage);
                 potentialTotal += (category.potentialAverage * category.percentage);
@@ -45,7 +45,7 @@ const generateData = (courses: Map<string, Course>, gradeCategories: Map<string,
     let guarenteedTotalGPA = 0;
     let potentialTotalGPA = 0;
     let creditHoursTotal = 0;
-    retList.forEach((value: DataGridElement<AnalysisCourse>) => {
+    retList.forEach((value) => {
         currentTotalGPA += value.payload.currentGPA * +value.payload.creditHours;
         guarenteedTotalGPA += value.payload.guarenteedGPA * +value.payload.creditHours;
         potentialTotalGPA += value.payload.potentialGPA * +value.payload.creditHours;
@@ -72,24 +72,11 @@ const generateData = (courses: Map<string, Course>, gradeCategories: Map<string,
 };
 
 export const getAnalysisGridData = createSelector(
-    [
-        getCourses,
-        getGradeCategories,
-    ],
-    (
-        courses: Map<string, Course>,
-        gradeCategories: Map<string, GradeCategory>,
-    ) => {
-        return generateData(courses, gradeCategories);
-    },
+    [getCourses, getGradeCategories],
+    generateData,
 );
 
 export const getAnalysisGridDataForUser = createSelector(
     [getCoursesForUser, getGradeCategoriesForUser],
-    (
-        coursesForUser: Map<string, Course>,
-        gradeCategoriesForUser: Map<string, GradeCategory>,
-    ) => {
-        return generateData(coursesForUser, gradeCategoriesForUser);
-    },
+    generateData,
 );

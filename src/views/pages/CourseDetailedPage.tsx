@@ -1,5 +1,5 @@
 import { push } from "connected-react-router";
-import React, { Fragment, MouseEvent, useCallback, useState , useMemo } from "react";
+import React, { Fragment, MouseEvent, useCallback, useState , useMemo, useEffect } from "react";
 import ReactModal from "react-modal";
 import styled from "styled-components";
 import ActivityLoading from "../components/shared/LoadingMask";
@@ -19,7 +19,6 @@ import {
 } from "../../state/ducks/data/gradeCategories";
 import { useMapDispatch, useMapState } from "../../state/hooks";
 import { RootState } from "../../state/rootReducer";
-import { useComponentMount } from "../../util/Hooks";
 import CategoryDetailedPane from "../components/category/CategoryDetailedPane";
 import Button from "../components/shared/Button";
 import Divider from "../components/shared/Divider";
@@ -54,7 +53,7 @@ const CourseDetailedPage = () => {
     //#endregion
 
     //#region Lifecycle Methods
-    useComponentMount(() => {
+    useEffect(() => {
         if (state.course) {
             document.title = `${state.course.title} Details`;
             actions.getGradeCategoriesForCourse(state.course.id || "");
@@ -62,7 +61,7 @@ const CourseDetailedPage = () => {
         return () => {
             actions.selectGradeCategory(undefined);
         };
-    });
+    }, [actions, state.course]);
     //#endregion
 
     //#region Private Methods

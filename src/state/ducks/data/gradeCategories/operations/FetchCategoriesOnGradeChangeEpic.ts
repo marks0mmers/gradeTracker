@@ -9,7 +9,7 @@ export const FetchCategoriesOnGradeChangeEpic = (
     action$: Observable<AnyAction>,
     state$: StateObservable<RootState>,
 ) => action$.pipe(
-    ofType(types.CREATE_GRADE_SUCCESS, types.EDIT_GRADE_SUCCESS),
+    ofType(types.CREATE_GRADE_SUCCESS, types.EDIT_GRADE_SUCCESS, types.DELETE_GRADE_SUCCESS),
     mergeMap(() => {
         const { activeCourse } = state$.value.control.course;
         return of(GetGradeCategoryForCourseCreator((activeCourse && activeCourse.id) || ""));
