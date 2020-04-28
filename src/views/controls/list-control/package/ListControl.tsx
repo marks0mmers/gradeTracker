@@ -25,7 +25,7 @@ interface Props {
 
 const ListControl = (props: Props) => (
     //#region Render Method
-    <Container id="list-control" {...props}>
+    <Container id="list-control" gridArea={props.gridArea} padding={props.padding}>
         {
             props.header &&
             <ListHeader
@@ -44,7 +44,7 @@ const ListControl = (props: Props) => (
                 />
             }
             {
-                props.elements && props.elements.map((value: ListControlElement, key: number) => (
+                props.elements?.map((value: ListControlElement, key: number) => (
                     <Row
                         key={key}
                         primaryProperty={value.primaryProperty}

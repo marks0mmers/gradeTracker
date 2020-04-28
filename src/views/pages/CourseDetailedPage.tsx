@@ -1,5 +1,5 @@
 import { push } from "connected-react-router";
-import React, { Fragment, MouseEvent, useCallback, useState , useMemo } from "react";
+import React, { Fragment, MouseEvent, useCallback, useState , useMemo, useEffect } from "react";
 import ReactModal from "react-modal";
 import styled from "styled-components";
 import ActivityLoading from "../components/shared/LoadingMask";
@@ -19,7 +19,6 @@ import {
 } from "../../state/ducks/data/gradeCategories";
 import { useMapDispatch, useMapState } from "../../state/hooks";
 import { RootState } from "../../state/rootReducer";
-import { useComponentMount } from "../../util/Hooks";
 import CategoryDetailedPane from "../components/category/CategoryDetailedPane";
 import Button from "../components/shared/Button";
 import Divider from "../components/shared/Divider";
@@ -54,7 +53,7 @@ const CourseDetailedPage = () => {
     //#endregion
 
     //#region Lifecycle Methods
-    useComponentMount(() => {
+    useEffect(() => {
         if (state.course) {
             document.title = `${state.course.title} Details`;
             actions.getGradeCategoriesForCourse(state.course.id || "");
@@ -62,14 +61,14 @@ const CourseDetailedPage = () => {
         return () => {
             actions.selectGradeCategory(undefined);
         };
-    });
+    }, [actions, state.course]);
     //#endregion
 
     //#region Private Methods
     const handleBodyCellClick = useCallback((event: MouseEvent<HTMLDivElement>, payload: GradeCategory) => {
-        const category = state.categories && state.categories.find((value: GradeCategory) => value.id === payload.id);
-        if (category && payload.title !== "Total") {
-            actions.selectGradeCategory(category.id);
+        const category = state.categories.find((value) => value.id === payload.id);
+        if (payload.title !== "Total") {
+            actions.selectGradeCategory(category?.id);
         }
     }, [actions, state.categories]);
 
@@ -103,7 +102,7 @@ const CourseDetailedPage = () => {
     }, [actions]);
 
     const selected = useMemo(
-        () => state.categories && state.categories.get(state.selectedCategory || ""),
+        () => state.categories.get(state.selectedCategory || ""),
         [state.categories, state.selectedCategory],
     );
     //#endregion
@@ -170,7 +169,7 @@ const CourseDetailedPage = () => {
                         course={state.course}
                         exitModal={handleCancel}
                         categories={state.categories}
-                        originalCategory={state.categories && state.categories.get(state.selectedCategory || "")}
+                        originalCategory={state.categories.get(state.selectedCategory || "")}
                         initialValues={selected && {
                             title: selected.title,
                             percentage: selected.percentage,
@@ -193,7 +192,7 @@ const CourseDetailedPage = () => {
                             bottom={10}
                         />
                         <CategoryDetailedPane
-                            selectedCategory={state.categories && state.categories.get(state.selectedCategory)}
+                            selectedCategory={state.categories.get(state.selectedCategory)}
                         />
                     </Fragment>
                 }

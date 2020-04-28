@@ -51,7 +51,7 @@ export const GradeCategoryDataReducer = (
             );
         case (types.EDIT_GRADE_SUCCESS):
             const category1 = state.gradeCategories.get(action.grade.gradeCategoryId);
-            const existingGrades = category1 && category1.grades;
+            const existingGrades = category1?.grades;
             return existingGrades
                 ? state.setIn([
                     "gradeCategories",
@@ -62,7 +62,7 @@ export const GradeCategoryDataReducer = (
                 : state;
         case (types.DELETE_GRADE_SUCCESS):
             const category2 = state.gradeCategories.get(action.grade.gradeCategoryId);
-            const existingGrades2 = category2 && category2.grades;
+            const existingGrades2 = category2?.grades;
             return existingGrades2
                 ? state.removeIn([
                     "gradeCategories",

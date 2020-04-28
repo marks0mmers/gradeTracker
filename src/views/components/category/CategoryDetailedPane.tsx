@@ -28,15 +28,12 @@ const CategoryDetailedPane = (props: Props) => {
     //#endregion
 
     //#region Private Methods
-    const getListElements = useCallback(() => props.selectedCategory && props.selectedCategory.grades.map(
-        (value: Grade) => {
-            const element: ListControlElement = {
-                isSelected: value === selectedGrade,
-                primaryProperty: value.name,
-                secondaryProperty: `${value.grade.toString()} %`,
-            };
-            return element;
-        },
+    const getListElements = useCallback(() => props.selectedCategory?.grades.map(
+        (value: Grade): ListControlElement => ({
+            isSelected: value === selectedGrade,
+            primaryProperty: value.name,
+            secondaryProperty: `${value.grade.toString()} %`,
+        })
     ).toList(), [props.selectedCategory, selectedGrade]);
 
     const handleCancel = useCallback(() => {
@@ -45,7 +42,7 @@ const CategoryDetailedPane = (props: Props) => {
     }, []);
 
     const handleNewGrade = useCallback(() => {
-        if (props.selectedCategory && props.selectedCategory.numberOfGrades >= props.selectedCategory.grades.size + 1) {
+        if (props.selectedCategory?.numberOfGrades ?? 0 >= (props.selectedCategory?.grades?.size ?? 0) + 1) {
             setIsCreating(true);
             setIsEditing(false);
         }
@@ -65,8 +62,8 @@ const CategoryDetailedPane = (props: Props) => {
     }, [actions, props.selectedCategory, selectedGrade]);
 
     const handleSelectGrade = useCallback((primaryProperty: string) => {
-        const selectedGradeObject = props.selectedCategory &&
-            props.selectedCategory.grades.find((g: Grade) => g.name === primaryProperty);
+        // eslint-disable-next-line no-restricted-globals
+        const selectedGradeObject = props.selectedCategory?.grades?.find((g: Grade) => g.name === primaryProperty);
         setSelectedGrade(selectedGradeObject);
     }, [props.selectedCategory]);
     //#endregion
@@ -85,37 +82,37 @@ const CategoryDetailedPane = (props: Props) => {
         <GridContainer>
             {buildDisplayLabel(
                 "Category Name:",
-                props.selectedCategory ? props.selectedCategory.title : "",
+                props.selectedCategory?.title ?? "",
                 "title",
             )}
             {buildDisplayLabel(
                 "Percentage:",
-                props.selectedCategory ? `${props.selectedCategory.percentage} %` : "",
+                `${props.selectedCategory?.percentage || ""} %`,
                 "percentage",
             )}
             {buildDisplayLabel(
                 "Number of Grades:",
-                props.selectedCategory ? props.selectedCategory.numberOfGrades : "",
+                props.selectedCategory?.numberOfGrades ?? "",
                 "numberGrades",
             )}
             {buildDisplayLabel(
                 "Remaining Grades:",
-                props.selectedCategory ? props.selectedCategory.remainingGrades : "",
+                props.selectedCategory?.remainingGrades ?? "",
                 "gradesRemaining",
             )}
             {buildDisplayLabel(
                 "Current Average:",
-                props.selectedCategory ? `${props.selectedCategory.currentAverage.toPrecision(4)}` : "",
+                `${props.selectedCategory?.currentAverage.toPrecision(4) ?? ""}`,
                 "currentAverage",
             )}
             {buildDisplayLabel(
                 "Guarenteed Average:",
-                props.selectedCategory ? `${props.selectedCategory.guarenteedAverage.toPrecision(4)}` : "",
+                `${props.selectedCategory?.guarenteedAverage.toPrecision(4) ?? ""}`,
                 "guarenteedAverage",
             )}
             {buildDisplayLabel(
                 "Potential Average:",
-                props.selectedCategory ? `${props.selectedCategory.potentialAverage.toPrecision(4)}` : "",
+                `${props.selectedCategory?.potentialAverage.toPrecision(4) ?? ""}`,
                 "potentialAverage",
             )}
             <Grades>

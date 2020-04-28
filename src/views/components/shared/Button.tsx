@@ -29,7 +29,7 @@ const StyledButton = styled.button<Props>`
     background: #bbb;
     height: ${props => props.height}px;
     width: ${props => props.width ? `${props.width}px` : "100%"};
-    margin: ${props => props.marginTopBottom || 0}px ${(props) => props.marginLeftRight || 0}px;
+    margin: ${props => props.marginTopBottom ?? 0}px ${(props) => props.marginLeftRight ?? 0}px;
     border: none;
     border-radius: 6px;
     grid-area: ${props => props.gridArea};

@@ -1,5 +1,5 @@
 import { push } from "connected-react-router";
-import React, { Fragment, useCallback, useState } from "react";
+import React, { Fragment, useCallback, useState, useEffect } from "react";
 import ReactModal from "react-modal";
 import styled from "styled-components";
 import ActivityLoading from "../components/shared/LoadingMask";
@@ -8,7 +8,6 @@ import { getCourses } from "../../state/ducks/data/courses";
 import { getCurrentUser } from "../../state/ducks/data/users";
 import { useMapDispatch, useMapState } from "../../state/hooks";
 import { RootState } from "../../state/rootReducer";
-import { useComponentMount } from "../../util/Hooks";
 import CourseOverviewButton from "../components/course/CourseOverviewButton";
 import Button from "../components/shared/Button";
 import Divider from "../components/shared/Divider";
@@ -35,12 +34,12 @@ const HomePage = () => {
     //#endregion
 
     //#region Lifecycle Methods
-    useComponentMount(() => {
+    useEffect(() => {
         document.title = "Grade Tracker";
         if (!state.currentUser) {
             actions.pushRoute("/login");
         }
-    });
+    }, [actions, state.currentUser]);
     //#endregion
 
     //#region Private Methods
@@ -62,15 +61,13 @@ const HomePage = () => {
     //#endregion
 
     //#region Display Methods
-    const getCourseButtons = useCallback(() => {
-        return state.courses.map((course: Course, key: string) => (
-            <CourseOverviewButton
-                key={key}
-                course={course}
-                onEditClick={handleEditClick}
-            />
-        )).toList();
-    }, [handleEditClick, state.courses]);
+    const getCourseButtons = useCallback(() => state.courses.map((course, key) => (
+        <CourseOverviewButton
+            key={key}
+            course={course}
+            onEditClick={handleEditClick}
+        />
+    )).toList(), [handleEditClick, state.courses]);
     //#endregion
 
     //#region Render Method

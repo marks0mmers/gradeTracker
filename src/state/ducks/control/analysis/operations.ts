@@ -1,6 +1,6 @@
 import { List, Map } from "immutable";
 import { ofType } from "redux-observable";
-import { empty, Observable, of } from "rxjs";
+import { Observable, of } from "rxjs";
 import { ajax } from "rxjs/observable/dom/ajax";
 import { mergeMap } from "rxjs/operators";
 import { Course } from "../../../../models/Course";
@@ -21,7 +21,7 @@ export const GetAnalysisInformationForUserEpic = (
     ofType<ViewAnalysisForUser>(types.VIEW_ANALYSIS_FOR_USER),
     mergeMap(action => {
         const headers = {
-            Authorization: `Bearer ${sessionStorage.getItem("jwtToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
             "Content-Type": "application/json",
         };
         return ajax.getJSON<Data>(
@@ -29,17 +29,14 @@ export const GetAnalysisInformationForUserEpic = (
             headers,
         ).pipe(
             mergeMap((data?: Data) => {
-                const courses = data && List(data.courses).reduce(
-                    (m: Map<string, Course>, c: Course) => m.set(c.id || "", new Course(c)),
-                    Map(),
+                const courses = List(data?.courses ?? []).reduce(
+                    (m, c) => m.set(c.id ?? "", new Course(c)),
+                    Map<string, Course>(),
                 );
-                const categories = data && List(data.categories).reduce(
-                    (m: Map<string, GradeCategory>, g: GradeCategory) => m.set(g.id, new GradeCategory(g)),
-                    Map(),
+                const categories = List(data?.categories ?? []).reduce(
+                    (m, g) => m.set(g.id, new GradeCategory(g)),
+                    Map<string, GradeCategory>(),
                 );
-                if (!courses || !categories) {
-                    return empty();
-                }
                 return of(
                     SetCoursesForUserCreator(courses),
                     SetGradeCategoriesForUserCreator(categories),

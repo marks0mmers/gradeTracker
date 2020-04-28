@@ -1,12 +1,11 @@
 import { push } from "connected-react-router";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { Route, Switch } from "react-router";
 import { ToastContainer } from "react-toastify";
 import styled from "styled-components";
-import { getCurrentUser, GetCurrentUserCreator, LogoutCreator } from "../state/ducks/data/users";
+import { getCurrentUser, GetCurrentUserCreator } from "../state/ducks/data/users";
 import { getPathName } from "../state/ducks/router/selectors";
 import { useMapDispatch, useMapState } from "../state/hooks";
-import { useComponentMount, useComponentUpdate } from "../util/Hooks";
 import Header from "./components/shared/Header";
 import NavBar from "./components/shared/NavBar";
 import { protectRoute } from "./components/shared/ProtectedRoute";
@@ -28,22 +27,22 @@ const Layout = () => {
     const actions = useMapDispatch({
         pushRoute: push,
         fetchCurrentUser: GetCurrentUserCreator,
-        logout: LogoutCreator,
     });
     //#endregion
 
     //#region Lifecycle Methods
-    useComponentMount(() => {
-        if (!state.currentUser && sessionStorage.getItem("jwtToken")) {
+    useEffect(() => {
+        if (!state.currentUser && localStorage.getItem("jwtToken")) {
             actions.fetchCurrentUser();
         }
-    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    useComponentUpdate(() => {
+    useEffect(() => {
         if (!state.currentUser && !window.location.href.includes("/login")) {
             actions.pushRoute("/login", state.routerLocation);
         }
-    });
+    }, [actions, state.currentUser, state.routerLocation]);
     //#endregion
 
     //#region Render Method
@@ -53,8 +52,6 @@ const Layout = () => {
                 <Fragment>
                     <Header
                         title="Gradebook"
-                        currentUser={state.currentUser}
-                        logout={actions.logout}
                     />
                     <NavBar
                         currentUser={state.currentUser}
@@ -74,7 +71,7 @@ const Layout = () => {
                 />
                 <Route
                     component={CourseDetailedPage}
-                    path={"/course/:courseTitle"}
+                    path={"/course/:courseId"}
                 />
                 <Route
                     component={ViewRequestsPage}

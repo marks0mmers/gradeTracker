@@ -25,15 +25,13 @@ export function ElementRow<T>({onBodyCellClick, ...props}: Props<T>) {
     //#region Render Method
     return (
         <Container id="element-row" {...props}>
-            {props.columnDefinitions && props.columnDefinitions.map((
-                column: DataGridColumnDefinition<T>, idx: number,
-            ) => {
+            {props.columnDefinitions?.map((column, idx) => {
                 const { payload } = props.element;
-                const content = column.formatter && column.formatter(payload);
+                const content = column.formatter(payload);
                 return (
                     <BodyCell
                         key={idx}
-                        width={column.width || 200}
+                        width={column.width ?? 200}
                         height={props.height}
                         content={content}
                         onCellClick={handleCellClick}

@@ -13,7 +13,7 @@ const ChangeRouteOnCoursesLoadEpic = (
 ) => action$.pipe(
     ofType(CourseDataActionTypes.GET_COURSES_CURRENT_USER_SUCCESS),
     mergeMap((action: GetCoursesCurrentUserSuccess) => {
-        const courseFromRoute = action.courses.find((c: Course) => window.location.href.includes(c.title));
+        const courseFromRoute = action.courses.find((c: Course) => decodeURI(window.location.href).includes(c.title));
         if (courseFromRoute) {
             return of(SetActiveCourseCreator(new Course(courseFromRoute)));
         } else {
@@ -27,11 +27,10 @@ const FetchGradesOnLoginEpic = (
     state$: StateObservable<RootState>,
 ) => action$.pipe(
     ofType(LOCATION_CHANGE),
-    mergeMap((action: LocationChangeAction) => {
-        if (action.payload.location.pathname === "/" && state$.value.data.user.currentUser) {
-            return of(GetCoursesCurrentUserCreator());
-        } else { return empty(); }
-    }),
+    mergeMap((action) => action.payload.location.pathname === "/" && state$.value.data.user.currentUser
+        ? of(GetCoursesCurrentUserCreator())
+        : empty(),
+    ),
 );
 
 const PushRouteOnActiveCourseEpic = (
@@ -39,9 +38,7 @@ const PushRouteOnActiveCourseEpic = (
 ) => {
     return action$.pipe(
         ofType(types.SET_ACTIVE_COURSE),
-        mergeMap((action: SetActiveCourse) => {
-            return of(push(`/course/${action.course && action.course.title}`));
-        }),
+        mergeMap((action) => of(push(`/course/${action.course && action.course.title}`))),
     );
 };
 
