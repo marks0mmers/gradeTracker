@@ -51,7 +51,7 @@ const CourseFormModal = ({exitModal, ...props}: Props) => {
                 exitModal();
             } else if (props.originalCourse) {
                 const course = new Course({
-                    ...props.originalCourse.toObject(),
+                    id: props.originalCourse.id,
                     title: values.title,
                     description: values.description,
                     creditHours: values.creditHours,

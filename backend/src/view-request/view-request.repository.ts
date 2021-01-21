@@ -24,7 +24,11 @@ export class ViewRequestRepositoryImpl implements ViewRequestRepository {
     }
 
     public async update(viewRequestDTO: ViewRequestDTO): Promise<ViewRequestDTO> {
-        return await viewRequestDatabase.findByIdAndUpdate(viewRequestDTO._id, viewRequestDTO, (err: Error, res: ViewRequestDocument) => res);
+        const viewRequest = await viewRequestDatabase.findById(viewRequestDTO._id);
+        viewRequest.status = viewRequestDTO.status;
+        viewRequest.requester = viewRequestDTO.requester;
+        viewRequest.receiver = viewRequestDTO.receiver;
+        return await viewRequest.save();
     }
 
     public async delete(id: string): Promise<ViewRequestDTO> {

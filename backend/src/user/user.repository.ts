@@ -17,7 +17,12 @@ export class UserRepositoryImpl implements UserRepository {
     }
 
     public async editUser(user: UserDatabaseDTO): Promise<UserDatabaseDTO> {
-        return await userDatabase.findByIdAndUpdate(user._id, user, (err: Error, res: UserDatabaseDTO) => res);
+        const userDb = await userDatabase.findById(user._id).populate("roles").exec();
+        userDb.firstName = user.firstName;
+        userDb.lastName = user.lastName;
+        userDb.email = user.email;
+        userDb.password = user.password;
+        return userDb.save();
     }
 
     public async getUser(id: string): Promise<UserDatabaseDTO> {

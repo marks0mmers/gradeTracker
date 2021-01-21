@@ -36,7 +36,7 @@ export class App {
     private config() {
         // Connect to mongoose database
         // tslint:disable-next-line:max-line-length
-        connect(process.env.MONGODB_URI || "mongodb://heroku_k1lm0tlz:vmn8kc43irbuvvckg2jtnk0vm2@ds131905.mlab.com:31905/heroku_k1lm0tlz", { useNewUrlParser: true });
+        connect(process.env.MONGODB_URI || "mongodb://host.docker.internal:27017", { useNewUrlParser: true });
 
         // Configure environment variables
         dotenv.config();
