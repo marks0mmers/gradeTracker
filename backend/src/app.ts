@@ -29,7 +29,7 @@ export class App {
         // Listen on port 8000 for calls
         this.app.listen(process.env.PORT || 8000, () => {
             // tslint:disable-next-line:no-console
-            console.log("Grade Tracker API listening on port 8000!");
+            console.log(`Grade Tracker API listening on port ${process.env.PORT || 8000}!`);
         });
     }
 
