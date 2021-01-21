@@ -1,6 +1,3 @@
-setup:
-  config:
-    MONGODB_URI: mongodb+srv://mongoUser:Password1!@cluster0.ol4si.mongodb.net/<dbname>?retryWrites=true&w=majority
 build:
   docker:
     frontend: frontend/Dockerfile.frontend
