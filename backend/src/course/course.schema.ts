@@ -18,7 +18,7 @@ export interface CourseDocument extends Document {
     userId: string;
 }
 
-const courseSchema = new Schema<CourseDTO>({
+const courseSchema = new Schema({
     title: {
         type: String,
         required: true

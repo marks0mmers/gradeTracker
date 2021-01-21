@@ -22,10 +22,11 @@ services:
   
   mongo:
     image: mongo
+    container_name: grade-tracker-mongo
     volumes:
       - data-volume:/data/db
     ports:
-      - "27017:271017"
+      - "27017:27017"
     networks:
       - grade-tracker
   

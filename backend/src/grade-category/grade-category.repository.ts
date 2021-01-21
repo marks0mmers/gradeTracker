@@ -32,10 +32,13 @@ export class GradeCategoryRepositoryImpl implements GradeCategoryRepository {
     }
 
     public async update(gradeCategoryDTO: GradeCategoryDTO): Promise<GradeCategoryDTO> {
-        return await gradeCategoryDatabase
-            .findByIdAndUpdate(gradeCategoryDTO._id, gradeCategoryDTO, (err: Error, res: GradeCategoryDocument) => res)
-            .populate("grades")
-            .exec();
+        const gradeCategory = await gradeCategoryDatabase.findById(gradeCategoryDTO._id).populate("grades").exec();
+        gradeCategory.title = gradeCategoryDTO.title;
+        gradeCategory.percentage = gradeCategoryDTO.percentage;
+        gradeCategory.numberOfGrades = gradeCategoryDTO.numberOfGrades;
+        gradeCategory.courseId = gradeCategoryDTO.courseId;
+        gradeCategory.grades = gradeCategoryDTO.grades;
+        return await gradeCategory.save();
     }
 
     public async delete(id: string): Promise<GradeCategoryDTO> {
