@@ -1,5 +1,5 @@
 import { List } from "immutable";
-import React, { MouseEvent, useCallback } from "react";
+import { MouseEvent, useCallback } from "react";
 import styled from "styled-components";
 import { BodyCellProps } from "../components/BodyCell";
 import { ElementRow } from "../components/ElementRow";
@@ -18,7 +18,6 @@ interface Props<T> {
 
 function DataGrid<T>(props: Props<T>) {
 
-    //#region Display Methods
     const renderHeaderCells = useCallback(() => props.columnDefinitions?.map((column, idx) => (
         <HeaderCell
             key={idx}
@@ -37,9 +36,7 @@ function DataGrid<T>(props: Props<T>) {
             onBodyCellClick={props.onBodyCellClick}
         />
     )), [props.columnDefinitions, props.elements, props.onBodyCellClick, props.rowHeight]);
-    //#endregion
 
-    //#region Render Method
     return (
         <Container id="data-grid" gridArea={props.gridArea}>
             <HeaderCells id="header-cells">
@@ -48,10 +45,8 @@ function DataGrid<T>(props: Props<T>) {
             {renderBodyCells()}
         </Container>
     );
-    //#endregion
 }
 
-//#region Styles
 const HeaderCells = styled.div`
     display: flex;
     flex-direction: row;
@@ -62,6 +57,5 @@ const Container = styled.div<{gridArea?: string}>`
     display: flex;
     flex-direction: column;
 `;
-//#endregion
 
 export default DataGrid;

@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useState } from "react";
+import { Fragment, useCallback, useState } from "react";
 import ReactModal from "react-modal";
 import styled from "styled-components";
 import { Grade } from "../../../models/Grade";
@@ -17,23 +17,18 @@ interface Props {
 
 const CategoryDetailedPane = (props: Props) => {
 
-    //#region Component State
     const [selectedGrade, setSelectedGrade] = useState<Grade | undefined>(undefined);
     const [isCreating, setIsCreating] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    //#endregion
 
-    //#region Redux State
-    const actions = useMapDispatch({deleteGrade: DeleteGradeCreator});
-    //#endregion
+    const dispatch = useMapDispatch({deleteGrade: DeleteGradeCreator});
 
-    //#region Private Methods
     const getListElements = useCallback(() => props.selectedCategory?.grades.map(
         (value: Grade): ListControlElement => ({
             isSelected: value === selectedGrade,
             primaryProperty: value.name,
             secondaryProperty: `${value.grade.toString()} %`,
-        })
+        }),
     ).toList(), [props.selectedCategory, selectedGrade]);
 
     const handleCancel = useCallback(() => {
@@ -57,27 +52,23 @@ const CategoryDetailedPane = (props: Props) => {
 
     const handleDeleteGrade = useCallback(() => {
         if (selectedGrade && props.selectedCategory) {
-            actions.deleteGrade(selectedGrade.id);
+            dispatch.deleteGrade(selectedGrade.id);
         }
-    }, [actions, props.selectedCategory, selectedGrade]);
+    }, [dispatch, props.selectedCategory, selectedGrade]);
 
     const handleSelectGrade = useCallback((primaryProperty: string) => {
         // eslint-disable-next-line no-restricted-globals
         const selectedGradeObject = props.selectedCategory?.grades?.find((g: Grade) => g.name === primaryProperty);
         setSelectedGrade(selectedGradeObject);
     }, [props.selectedCategory]);
-    //#endregion
 
-    //#region Display Methods
     const buildDisplayLabel = useCallback((label: string, value: string | number, gridArea: string) => (
         <LabelContainer gridArea={gridArea}>
             <PropLabel>{label}</PropLabel>
             <PropValue>{value}</PropValue>
         </LabelContainer>
     ), []);
-    //#endregion
 
-    //#region Render Method
     return (
         <GridContainer>
             {buildDisplayLabel(
@@ -184,11 +175,9 @@ const CategoryDetailedPane = (props: Props) => {
             </ReactModal>
         </GridContainer>
     );
-    //#endregion
 
 };
 
-//#region Styles
 const GridContainer = styled.div`
     display: grid;
     grid-template-rows: repeat(7, 1fr);
@@ -229,6 +218,5 @@ const Grades = styled.div`
     grid-area: list;
     min-height: 0;
 `;
-//#endregion
 
 export default CategoryDetailedPane;

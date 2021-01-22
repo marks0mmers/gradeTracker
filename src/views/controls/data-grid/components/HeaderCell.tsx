@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "styled-components";
 
 interface Props {
@@ -13,7 +12,6 @@ const HeaderCell = (props: Props) => (
     </Container>
 );
 
-//#region Styles
 const HeaderLabel = styled.span<{height: number}>`
     margin: auto;
     line-height: ${props => props.height}px;
@@ -28,6 +26,5 @@ const Container = styled.div<Props>`
     height: ${props => props.height}px;
     border-bottom: solid black 1px;
 `;
-//#endregion
 
 export default HeaderCell;

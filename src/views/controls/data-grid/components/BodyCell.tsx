@@ -1,4 +1,4 @@
-import React, { MouseEvent, ReactNode, useCallback } from "react";
+import { MouseEvent, ReactNode, useCallback } from "react";
 import styled from "styled-components";
 
 export interface BodyCellProps {
@@ -11,13 +11,10 @@ export interface BodyCellProps {
 
 const BodyCell = ({onCellClick, ...props}: BodyCellProps) => {
 
-    //#region Private Methods
     const handleCellClick = useCallback((event: MouseEvent<HTMLDivElement>) => {
         onCellClick(event, {onCellClick, ...props});
     }, [onCellClick, props]);
-    //#endregion
 
-    //#region Render Method
     return (
         <Container
             id="body-cell"
@@ -26,16 +23,13 @@ const BodyCell = ({onCellClick, ...props}: BodyCellProps) => {
             {props.content}
         </Container>
     );
-    //#endregion
 };
 
-//#region Styles
 const Container = styled.div<Partial<BodyCellProps>>`
     display: flex;
     flex: 1;
     width: ${props => props.width}px;
     height: ${props => props.height}px;
 `;
-//#endregion
 
 export default BodyCell;

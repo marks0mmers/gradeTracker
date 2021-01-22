@@ -1,19 +1,17 @@
-import { push } from "connected-react-router";
 import { Formik, FormikProps } from "formik";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import * as Yup from "yup";
 import ActivityLoading from "../components/shared/LoadingMask";
 import Required from "../components/shared/Required";
 import { LoginUser, User } from "../../models/User";
 import { CreateNewUserCreator, getCurrentUser, LoginCreator } from "../../state/ducks/data/users";
-import { getPreviousRoute } from "../../state/ducks/router/selectors";
 import { useMapDispatch, useMapState } from "../../state/hooks";
 import Button from "../components/shared/Button";
 import Input from "../components/styled-inputs/Input";
 import { getIsLoading } from "../../state/ducks/control/loadingmask/selectors";
+import { useLocation, useHistory } from "react-router";
 
-//#region Form / Validation
 interface UserForm {
     firstName: string;
     lastName: string;
@@ -51,11 +49,11 @@ const LoginValidation = Yup.object().shape({
         .string()
         .required("Password is Required"),
 });
-//#endregion
 
 const LoginPage = () => {
+    const location = useLocation();
+    const { push } = useHistory();
 
-    //#region Component State
     const [creatingNewUser, setCreatingNewUser] = useState(false);
     const [formValues, setFormValues] = useState<UserForm>({
         email: "",
@@ -64,35 +62,27 @@ const LoginPage = () => {
         lastName: "",
         repeatPassword: "",
     });
-    //#endregion
 
-    //#region Redux State
-    const state = useMapState((state) => ({
+    const appState = useMapState((state) => ({
         isLoading: getIsLoading(state),
         currentUser: getCurrentUser(state),
-        prevRoute: getPreviousRoute(state),
     }));
 
-    const actions = useMapDispatch({
+    const dispatch = useMapDispatch({
         createNewUser: CreateNewUserCreator,
         login: LoginCreator,
-        pushRoute: push,
     });
-    //#endregion
 
-    //#region Lifecycle Methods
     useEffect(() => {
         document.title = "Login to Grade Tracker";
     }, []);
 
     useEffect(() => {
-        if (state.currentUser) {
-            actions.pushRoute(String(state.prevRoute) || "/");
+        if (appState.currentUser) {
+            push(String(location.state) || "/");
         }
-    }, [actions, state.currentUser, state.prevRoute]);
-    //#endregion
+    }, [push, appState.currentUser, location.state]);
 
-    //#region Private Methods
     const toggleCreate = useCallback(() => {
         setCreatingNewUser(!creatingNewUser);
         setFormValues({
@@ -109,14 +99,12 @@ const LoginPage = () => {
             const newUser = new User({
                 ...values,
             });
-            actions.createNewUser(newUser);
+            dispatch.createNewUser(newUser);
         } else {
-            actions.login(values as LoginUser);
+            dispatch.login(values as LoginUser);
         }
-    }, [actions, creatingNewUser]);
-    //#endregion
+    }, [dispatch, creatingNewUser]);
 
-    //#region Display Methods
     const buildInputField = useCallback((
         label: string,
         value: string,
@@ -238,12 +226,10 @@ const LoginPage = () => {
             </Buttons>
         </Form>
     ), [buildButton, buildInputField, toggleCreate]);
-    //#endregion
 
-    //#region Render Method
     return (
         <>
-        { state.isLoading && <ActivityLoading /> }
+        { appState.isLoading && <ActivityLoading /> }
         <Container id="login-page">
             <LoginContainer id="login-container">
                 <Header>
@@ -262,10 +248,8 @@ const LoginPage = () => {
         </Container>
         </>
     );
-    //#endregion
 };
 
-//#region Styles
 const Form = styled.form`
     margin: 10px;
 `;
@@ -309,6 +293,5 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
 `;
-//#endregion
 
 export default LoginPage;

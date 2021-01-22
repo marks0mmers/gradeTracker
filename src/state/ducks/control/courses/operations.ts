@@ -1,12 +1,9 @@
-import { LOCATION_CHANGE, LocationChangeAction, push } from "connected-react-router";
-import { combineEpics, ofType, StateObservable } from "redux-observable";
-import { empty, Observable, of } from "rxjs";
+import { combineEpics, ofType } from "redux-observable";
+import { Observable, of } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import { Course } from "../../../../models/Course";
 import { CourseDataActionTypes, GetCoursesCurrentUserSuccess } from "../../../../state/ducks/data/courses";
-import { RootState } from "../../../rootReducer";
-import { GetCoursesCurrentUserCreator } from "../../data/courses/actions/GetCoursesCurrentUser";
-import { CourseControlActionTypes as types, SetActiveCourse, SetActiveCourseCreator } from ".";
+import { SetActiveCourseCreator } from ".";
 
 const ChangeRouteOnCoursesLoadEpic = (
     action$: Observable<GetCoursesCurrentUserSuccess>,
@@ -17,33 +14,11 @@ const ChangeRouteOnCoursesLoadEpic = (
         if (courseFromRoute) {
             return of(SetActiveCourseCreator(new Course(courseFromRoute)));
         } else {
-            return empty();
+            return of();
         }
     }),
 );
 
-const FetchGradesOnLoginEpic = (
-    action$: Observable<LocationChangeAction>,
-    state$: StateObservable<RootState>,
-) => action$.pipe(
-    ofType(LOCATION_CHANGE),
-    mergeMap((action) => action.payload.location.pathname === "/" && state$.value.data.user.currentUser
-        ? of(GetCoursesCurrentUserCreator())
-        : empty(),
-    ),
-);
-
-const PushRouteOnActiveCourseEpic = (
-    action$: Observable<SetActiveCourse>,
-) => {
-    return action$.pipe(
-        ofType(types.SET_ACTIVE_COURSE),
-        mergeMap((action) => of(push(`/course/${action.course && action.course.title}`))),
-    );
-};
-
 export const CourseControlEpics = combineEpics(
-    PushRouteOnActiveCourseEpic,
     ChangeRouteOnCoursesLoadEpic,
-    FetchGradesOnLoginEpic,
 );

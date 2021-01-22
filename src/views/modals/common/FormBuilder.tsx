@@ -1,13 +1,12 @@
 import { FormikProps } from "formik";
-import React from "react";
 import styled from "styled-components";
 import Required from "../../components/shared/Required";
 import Input from "../../components/styled-inputs/Input";
 
-export const useFormBuilder = () => (
+export const useFormBuilder = <T,>() => (
     label: string,
     value: string | number,
-    formProps: FormikProps<unknown>,
+    formProps: FormikProps<T>,
     name: string,
     required: boolean,
     error?: string,
@@ -26,7 +25,6 @@ export const useFormBuilder = () => (
     </LabelInput>
 );
 
-//#region Styles
 const LabelInput = styled.div`
     margin-bottom: 10px;
     font-weight: bold;
@@ -35,4 +33,3 @@ const LabelInput = styled.div`
 const Error = styled.div`
     color: red;
 `;
-//#endregion

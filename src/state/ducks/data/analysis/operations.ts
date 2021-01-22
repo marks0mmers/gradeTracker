@@ -1,12 +1,12 @@
 import { List, Map } from "immutable";
 import { ofType } from "redux-observable";
 import { Observable, of } from "rxjs";
-import { ajax } from "rxjs/observable/dom/ajax";
+import { ajax } from "rxjs/internal-compatibility";
 import { mergeMap } from "rxjs/operators";
 import { Course } from "../../../../models/Course";
 import { GradeCategory } from "../../../../models/GradeCategory";
-import { SetCoursesForUserCreator } from "../../data/courses/actions/SetCoursesForUser";
-import { SetGradeCategoriesForUserCreator } from "../../data/gradeCategories/actions/SetGradeCategoriesForUser";
+import { SetCoursesForUserCreator } from "../courses/actions/SetCoursesForUser";
+import { SetGradeCategoriesForUserCreator } from "../gradeCategories/actions/SetGradeCategoriesForUser";
 import { ViewAnalysisForUser } from "./actions";
 import { AnalysisControlActionTypes as types } from "./types";
 

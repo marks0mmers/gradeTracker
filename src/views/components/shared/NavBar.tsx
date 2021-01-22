@@ -1,9 +1,10 @@
-import { push } from "connected-react-router";
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import styled from "styled-components";
+import { useHistory } from "react-router";
 import { Role } from "../../../models/Role";
-import { User } from "../../../models/User";
 import NavButton from "./NavButton";
+import { useMapState } from "../../../state/hooks";
+import { getCurrentUser } from "../../../state/ducks/data/users/selectors";
 
 enum Routes {
     COURSE_OVERVIEW = "/",
@@ -13,26 +14,20 @@ enum Routes {
     ADMIN = "/admin",
 }
 
-interface Props {
-    currentUser?: User;
+const NavBar = () => {
+    const { push } = useHistory();
 
-    pushRoute: typeof push;
-}
-
-const NavBar = ({pushRoute, ...props}: Props) => {
-
-    //#region Component State
     const [activeButton, setActiveButton] = useState<Routes>(Routes.COURSE_OVERVIEW);
-    //#endregion
 
-    //#region Private Methods
+    const appState = useMapState(state => ({
+        currentUser: getCurrentUser(state),
+    }));
+
     const handleNavClick = useCallback((id: string) => {
         setActiveButton(id as Routes);
-        pushRoute(id);
-    }, [pushRoute]);
-    //#endregion
+        push(id);
+    }, [push]);
 
-    //#region Render Method
     return (
         <NavBarContainer id="nav-bar" >
             <NavButton
@@ -54,7 +49,7 @@ const NavBar = ({pushRoute, ...props}: Props) => {
                 onClick={handleNavClick}
             />
             {
-                props.currentUser?.roles.some((role: Role) => role.role === "admin") &&
+                appState.currentUser?.roles.some((role: Role) => role.role === "admin") &&
                 <NavButton
                     id={Routes.ADMIN}
                     iconName="account_box"
@@ -64,10 +59,8 @@ const NavBar = ({pushRoute, ...props}: Props) => {
             }
         </NavBarContainer>
     );
-    //#endregion
 };
 
-//#region Styles
 const NavBarContainer = styled.div`
     background: #5f6366;
     grid-area: navbar;
@@ -77,6 +70,5 @@ const NavBarContainer = styled.div`
         grid-template-columns: 60px 60px 60px 60px;
     }
 `;
-//#endregion
 
 export default NavBar;

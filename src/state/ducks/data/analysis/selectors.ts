@@ -5,10 +5,10 @@ import { Course } from "../../../../models/Course";
 import { GradeCategory } from "../../../../models/GradeCategory";
 import { getGPAFromLetter, getLetterFromGPA, getLetterGrade } from "../../../../util/GpaCalculator";
 import { DataGridElement } from "../../../../views/controls/data-grid";
-import { getCourses } from "../../data/courses";
-import { getCoursesForUser } from "../../data/courses/selectors";
-import { getGradeCategories } from "../../data/gradeCategories";
-import { getGradeCategoriesForUser } from "../../data/gradeCategories/selectors";
+import { getCourses } from "../courses";
+import { getCoursesForUser } from "../courses/selectors";
+import { getGradeCategories } from "../gradeCategories";
+import { getGradeCategoriesForUser } from "../gradeCategories/selectors";
 
 const generateData = (courses: Map<string, Course>, gradeCategories: Map<string, GradeCategory>) => {
     let retList = List<DataGridElement<AnalysisCourse>>();

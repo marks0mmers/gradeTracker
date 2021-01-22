@@ -1,4 +1,4 @@
-import React, { Fragment, MouseEvent, useCallback} from "react";
+import { Fragment, MouseEvent, useCallback} from "react";
 import styled from "styled-components";
 import { Course } from "../../../models/Course";
 import { SetActiveCourseCreator } from "../../../state/ducks/control/courses";
@@ -7,6 +7,7 @@ import { useMapDispatch } from "../../../state/hooks";
 import { leadingZeros } from "../../../util/General";
 import Button from "../../../views/components/shared/Button";
 import Divider from "../../components/shared/Divider";
+import { useHistory } from "react-router";
 
 interface Props {
     course: Course;
@@ -15,18 +16,17 @@ interface Props {
 }
 
 const CourseOverviewButton = ({onEditClick, ...props}: Props) => {
+    const { push } = useHistory();
 
-    //#region Redux State
-    const actions = useMapDispatch({
+    const dispatch = useMapDispatch({
         selectCourse: SetActiveCourseCreator,
         deleteCourse: DeleteCourseCreator,
     });
-    //#endregion
 
-    //#region Private Methods
     const handleClick = useCallback(() => {
-        actions.selectCourse(props.course);
-    }, [actions, props.course]);
+        dispatch.selectCourse(props.course);
+        push(`/course/${props.course.title}`);
+    }, [push, dispatch, props.course]);
 
     const handleEditClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
@@ -36,12 +36,10 @@ const CourseOverviewButton = ({onEditClick, ...props}: Props) => {
     const handleDelete = useCallback((event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
         if (window.confirm("Are you sure you want to delete this course? (This cannot be undone)")) {
-            actions.deleteCourse(props.course.id || "");
+            dispatch.deleteCourse(props.course.id || "");
         }
-    }, [actions, props.course.id]);
-    //#endregion
+    }, [dispatch, props.course.id]);
 
-    //#region Render Method
     return (
         <CourseOverviewButtonContainer
             id={`${props.course.title.toLowerCase()}-button`}
@@ -90,10 +88,8 @@ const CourseOverviewButton = ({onEditClick, ...props}: Props) => {
             </CourseInfo>
         </CourseOverviewButtonContainer>
     );
-    //#endregion
 };
 
-//#region Styles
 const CourseOverviewButtonContainer = styled.div`
     background: #86b3d1;
     min-height: 135px;
@@ -140,6 +136,5 @@ const Buttons = styled.div`
     display: flex;
     justify-content: flex-end;
 `;
-//#endregion
 
 export default CourseOverviewButton;

@@ -1,5 +1,5 @@
 import { Formik, FormikProps } from "formik";
-import React, { MouseEvent, useCallback, useEffect, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import * as Yup from "yup";
 import { adminViewUsersColumns } from "../../../constants/columns/AdminViewUsersColumns";
@@ -30,33 +30,26 @@ const NewUserValidation = Yup.object().shape({
 
 const AdminViewUsersPage = () => {
 
-    //#region Component State
     const [selectedUser, setSelectedUser] = useState<User>();
-    //#endregion
 
-    //#region Redux State
-    const state = useMapState((state: RootState) => ({
+    const appState = useMapState((state: RootState) => ({
         currentUser: getCurrentUser(state),
         users: getUsers(state),
         isLoading: getIsLoading(state),
     }));
 
-    const actions = useMapDispatch({getUsersAction: GetUsersCreator});
-    //#endregion
+    const dispatch = useMapDispatch({getUsersAction: GetUsersCreator});
 
-    //#region Lifecycle Methods
     useEffect(() => {
-        actions.getUsersAction();
-    }, [actions]);
-    //#endregion
+        dispatch.getUsersAction();
+    }, [dispatch]);
 
-    //#region Private Methods
     const handleSelectUser = useCallback((event: MouseEvent<HTMLDivElement>, payload: UserGridView) => {
-        const newSelectedUser = state.users.find((user) => user._id === payload._id);
+        const newSelectedUser = appState.users.find((user) => user._id === payload._id);
         setSelectedUser(newSelectedUser);
-    }, [state.users]);
+    }, [appState.users]);
 
-    const getUserGridData = useCallback(() => state.users.map((user) => new DataGridElement<User>(
+    const getUserGridData = useCallback(() => appState.users.map((user) => new DataGridElement<User>(
         new User({
             _id: user._id,
             firstName: user.firstName,
@@ -64,14 +57,12 @@ const AdminViewUsersPage = () => {
             email: user.email,
         }),
         selectedUser && user._id === selectedUser._id,
-    )).toList(), [selectedUser, state.users]);
+    )).toList(), [selectedUser, appState.users]);
 
     const handleEditUser = useCallback((editedUser: User) => {
         alert(editedUser);
     }, []);
-    //#endregion
 
-    //#region Display Methods
     const buildInputField = useCallback((
         label: string,
         value: string,
@@ -92,12 +83,10 @@ const AdminViewUsersPage = () => {
             {error && <Error>{error}</Error>}
         </LabelInput>
     ), []);
-    //#endregion
 
-    //#region Render Method
     return (
         <>
-        { state.isLoading && <ActivityLoading /> }
+        { appState.isLoading && <ActivityLoading /> }
         <Container id="admin-view-users-page">
             <DataGrid
                 id="users-data-grid"
@@ -151,10 +140,8 @@ const AdminViewUsersPage = () => {
         </Container>
         </>
     );
-    //#endregion
 };
 
-//#region Styles
 const LabelInput = styled.div`
     margin-bottom: 10px;
     font-weight: bold;
@@ -169,6 +156,5 @@ const Container = styled.div`
     display: grid;
     grid-template-columns: 1fr auto 1fr;
 `;
-//#endregion
 
 export default AdminViewUsersPage;

@@ -1,5 +1,5 @@
 import { List } from "immutable";
-import React, { MouseEvent, useCallback } from "react";
+import { MouseEvent, useCallback } from "react";
 import styled from "styled-components";
 import { DataGridColumnDefinition } from "../models/DataGridColumnDefinition";
 import { DataGridElement } from "../models/DataGridElement";
@@ -14,15 +14,12 @@ interface Props<T> {
 
 export function ElementRow<T>({onBodyCellClick, ...props}: Props<T>) {
 
-    //#region Private Methods
     const handleCellClick = useCallback((event: MouseEvent<HTMLDivElement>, bodyProps: BodyCellProps) => {
         if (onBodyCellClick) {
             onBodyCellClick(event, props.element.payload, bodyProps);
         }
     }, [onBodyCellClick, props.element]);
-    //#endregion
 
-    //#region Render Method
     return (
         <Container id="element-row" {...props}>
             {props.columnDefinitions?.map((column, idx) => {
@@ -40,14 +37,11 @@ export function ElementRow<T>({onBodyCellClick, ...props}: Props<T>) {
             })}
         </Container>
     );
-    //#endregion
 }
 
-//#region Styles
 const Container = styled.div<{element: {isSelected?: boolean;  isBottom?: boolean}}>`
     display: flex;
     flex-direction: row;
     background: ${props => props.element.isSelected ? "#79c8ec" : "#eeeeee"};
     border-top: ${props => props.element.isBottom ? "solid black 1px" : "none"};
 `;
-//#endregion

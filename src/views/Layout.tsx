@@ -1,10 +1,8 @@
-import { push } from "connected-react-router";
-import React, { Fragment, useEffect } from "react";
-import { Route, Switch } from "react-router";
+import { Fragment, useEffect } from "react";
+import { Route, Switch, useHistory, useLocation } from "react-router";
 import { ToastContainer } from "react-toastify";
 import styled from "styled-components";
 import { getCurrentUser, GetCurrentUserCreator } from "../state/ducks/data/users";
-import { getPathName } from "../state/ducks/router/selectors";
 import { useMapDispatch, useMapState } from "../state/hooks";
 import Header from "./components/shared/Header";
 import NavBar from "./components/shared/NavBar";
@@ -17,46 +15,38 @@ import LoginPage from "./pages/LoginPage";
 import ViewRequestsPage from "./pages/ViewRequestsPage";
 
 const Layout = () => {
+    const { push } = useHistory();
+    const location = useLocation();
 
-    //#region Redux State
-    const state = useMapState((state) => ({
-        routerLocation: getPathName(state),
+    const appState = useMapState((state) => ({
         currentUser: getCurrentUser(state),
     }));
 
-    const actions = useMapDispatch({
-        pushRoute: push,
+    const dispatch = useMapDispatch({
         fetchCurrentUser: GetCurrentUserCreator,
     });
-    //#endregion
 
-    //#region Lifecycle Methods
     useEffect(() => {
-        if (!state.currentUser && localStorage.getItem("jwtToken")) {
-            actions.fetchCurrentUser();
+        if (!appState.currentUser && localStorage.getItem("jwtToken")) {
+            dispatch.fetchCurrentUser();
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
-        if (!state.currentUser && !window.location.href.includes("/login")) {
-            actions.pushRoute("/login", state.routerLocation);
+        if (!appState.currentUser && !window.location.href.includes("/login")) {
+            push("/login", location.state);
         }
-    }, [actions, state.currentUser, state.routerLocation]);
-    //#endregion
+    }, [push, appState.currentUser, location.state]);
 
-    //#region Render Method
     return (
         <Container id="layout">
-            { state.currentUser &&
+            { appState.currentUser &&
                 <Fragment>
                     <Header
                         title="Gradebook"
                     />
-                    <NavBar
-                        currentUser={state.currentUser}
-                        pushRoute={actions.pushRoute}
-                    />
+                    <NavBar />
                 </Fragment>
             }
             <Switch>
@@ -85,7 +75,7 @@ const Layout = () => {
                     component={AnalysisPage}
                     path="/analysis"
                 />
-                {protectRoute("admin", state.currentUser)(
+                {protectRoute("admin", appState.currentUser)(
                     <Route
                         path="/admin"
                         component={AdminViewUsersPage}
@@ -101,7 +91,6 @@ const Layout = () => {
             />
         </Container>
     );
-    //#endregion
 };
 
 const Container = styled.div`

@@ -1,5 +1,5 @@
 import { Formik, FormikProps } from "formik";
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import * as Yup from "yup";
 import { Grade } from "../../models/Grade";
 import { GradeCategory } from "../../models/GradeCategory";
@@ -24,21 +24,18 @@ interface GradeForm {
 
 const GradeFormModal = ({exitModal, ...props}: Props) => {
 
-    //#region Redux State
-    const actions = useMapDispatch({
+    const dispatch = useMapDispatch({
         createGrade: CreateGradeCreator,
         editGrade: EditGradeCreator,
     });
-    //#endregion
 
-    //#region Private Methods
     const handleFormSubmit = useCallback((values: GradeForm) => {
         if (props.isCreating && props.gradeCategory) {
             const grade = new Grade({
                 gradeCategoryId: props.gradeCategory.id,
                 ...values,
             });
-            actions.createGrade(grade);
+            dispatch.createGrade(grade);
             exitModal();
         } else if (props.originalGrade) {
             const grade = new Grade({
@@ -46,17 +43,13 @@ const GradeFormModal = ({exitModal, ...props}: Props) => {
                 gradeCategoryId: props.originalGrade.gradeCategoryId,
                 ...values,
             });
-            actions.editGrade(grade);
+            dispatch.editGrade(grade);
             exitModal();
         }
-    }, [actions, props.gradeCategory, props.isCreating, props.originalGrade, exitModal]);
-    //#endregion
+    }, [dispatch, props.gradeCategory, props.isCreating, props.originalGrade, exitModal]);
 
-    //#region Display Methods
-    const buildFormValue = useFormBuilder();
-    //#endregion
+    const buildFormValue = useFormBuilder<GradeForm>();
 
-    //#region Render Method
     return (
         <Formik
             initialValues={(!props.isCreating && props.initialValues) || {
@@ -104,7 +97,6 @@ const GradeFormModal = ({exitModal, ...props}: Props) => {
             )}
         </Formik>
     );
-    //#endregion
 };
 
 export default GradeFormModal;

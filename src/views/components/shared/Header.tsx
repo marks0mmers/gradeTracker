@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import styled from "styled-components";
 import { User } from "../../../models/User";
 import { LogoutCreator } from "../../../state/ducks/data/users";
@@ -22,12 +22,9 @@ interface Props {
 
 const Header = (props: Props) => {
 
-    //#region Component State
     const [showPopup, setShowPopup] = useState(false);
-    //#endregion
 
-    //#region Redux State
-    const state = useMapState((state: RootState) => ({
+    const appState = useMapState((state: RootState) => ({
         myViewRequests: getMyViewRequests(state),
         users: getUsers(state),
         currentUser: getCurrentUser(state),
@@ -40,16 +37,12 @@ const Header = (props: Props) => {
         fetchUsers: GetUsersCreator,
         logout: LogoutCreator,
     });
-    //#endregion
 
-    //#region Lifecycle Methods
     useEffect(() => {
         actions.fetchUsers();
         actions.fetchMyViewRequests();
     }, [actions]);
-    //#endregion
 
-    //#region Private Methods
     const togglePopup = useCallback(() => {
         setShowPopup(!showPopup);
     }, [showPopup]);
@@ -61,36 +54,28 @@ const Header = (props: Props) => {
     const handleDeny = useCallback((requestId: string) => {
         actions.denyViewRequest(requestId);
     }, [actions]);
-    //#endregion
 
-    //#region Display Methods
     const getAllRequests = useCallback(() => {
-        const requests = state.myViewRequests
+        const requests = appState.myViewRequests
             .map(request => (
                 <ApproveDenyRequest
                     key={request.id}
                     requestId={request.id}
                     status={request.status}
-                    userFromRequest={state.users.find((u) => request.requester === u._id) || new User()}
+                    userFromRequest={appState.users.find((u) => request.requester === u._id) || new User()}
                     onApprove={handleApprove}
                     onDeny={handleDeny}
                 />
             )).toList();
         return requests.size > 0 ? requests : (<span>No View Requests</span>);
-    }, [handleApprove, handleDeny, state.myViewRequests, state.users]);
-    //#endregion
+    }, [handleApprove, handleDeny, appState.myViewRequests, appState.users]);
 
-    //#region Render Methods
     return (
         <Container id="header">
             {props.title && <Title>{props.title}</Title>}
             <div />
             <CurrentUser>
-                {`${
-                    state.currentUser?.firstName
-                } ${
-                    state.currentUser?.lastName
-                }`}
+                {`${appState.currentUser?.firstName} ${appState.currentUser?.lastName}`}
             </CurrentUser>
             <Button
                 icon="notifications"
@@ -117,10 +102,8 @@ const Header = (props: Props) => {
             />
         </Container>
     );
-    //#endregion
 };
 
-//#region Styles
 const Popover = styled.div`
     position: absolute;
     background: white;
@@ -151,6 +134,5 @@ const Title = styled.span`
     margin: auto 8px;
     font-size: 1.5em;
 `;
-//#endregion
 
 export default Header;

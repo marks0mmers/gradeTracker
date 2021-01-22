@@ -1,20 +1,18 @@
 import { Formik, FormikProps } from "formik";
-import { Map } from "immutable";
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import * as Yup from "yup";
-import { Course } from "../../models/Course";
 import { GradeCategory } from "../../models/GradeCategory";
 import { CreateGradeCategoryCreator, EditGradeCategoryCreator } from "../../state/ducks/data/gradeCategories";
-import { useMapDispatch } from "../../state/hooks";
+import { useMapDispatch, useMapState } from "../../state/hooks";
 import Button from "../components/shared/Button";
 import { useFormBuilder } from "./common/FormBuilder";
+import { getActiveCourse } from "../../state/ducks/control/courses/selectors";
+import { getGradeCategories } from "../../state/ducks/data/gradeCategories/selectors";
 
 interface Props {
     isCreating: boolean;
     initialValues?: CategoryForm;
     originalCategory?: GradeCategory;
-    categories?: Map<string, GradeCategory>;
-    course?: Course;
 
     exitModal: () => void;
 }
@@ -26,24 +24,25 @@ interface CategoryForm {
 }
 
 const CategoryFormModal = ({exitModal, ...props}: Props) => {
+    const appState = useMapState(state => ({
+        course: getActiveCourse(state),
+        categories: getGradeCategories(state),
+    }));
 
-    //#region Redux State
-    const actions = useMapDispatch({
+    const dispatch = useMapDispatch({
         createCategory: CreateGradeCategoryCreator,
         updateCategory: EditGradeCategoryCreator,
     });
-    //#endregion
 
-    //#region Private Methods
     const handleFormSubmit = useCallback((values: CategoryForm) => {
-        if (props.isCreating && props.course) {
+        if (props.isCreating && appState.course) {
             const category = new GradeCategory({
-                courseId: props.course.id,
+                courseId: appState.course.id,
                 title: values.title,
                 percentage: +values.percentage,
                 numberOfGrades: +values.numberOfGrades,
             });
-            actions.createCategory(category, props.course.id || "");
+            dispatch.createCategory(category, appState.course.id || "");
             exitModal();
         } else if (props.originalCategory) {
             const category = new GradeCategory({
@@ -54,17 +53,13 @@ const CategoryFormModal = ({exitModal, ...props}: Props) => {
                 numberOfGrades: +values.numberOfGrades,
                 grades: props.originalCategory.grades,
             });
-            actions.updateCategory(category);
+            dispatch.updateCategory(category);
             exitModal();
         }
-    }, [actions, exitModal, props.course, props.isCreating, props.originalCategory]);
-    //#endregion
+    }, [dispatch, exitModal, appState.course, props.isCreating, props.originalCategory]);
 
-    //#region Display Methods
-    const buildFormValue = useFormBuilder();
-    //#endregion
+    const buildFormValue = useFormBuilder<CategoryForm>();
 
-    //#region Render Method
     return (
         <Formik
             initialValues={(!props.isCreating && props.initialValues) || {
@@ -82,8 +77,8 @@ const CategoryFormModal = ({exitModal, ...props}: Props) => {
                 percentage: Yup
                     .number()
                     .positive("Percentage has to be positive.")
-                    .lessThan(props.categories 
-                        ? 101 - props.categories
+                    .lessThan(appState.categories 
+                        ? 101 - appState.categories
                             .filter((g) => props.originalCategory ? g.id !== props.originalCategory.id : true)
                             .map((g) => g.percentage)
                             .reduce((acc: number, val) => acc += val, 0)
@@ -130,7 +125,6 @@ const CategoryFormModal = ({exitModal, ...props}: Props) => {
             )}
         </Formik>
     );
-    //#endregion
 };
 
 export default CategoryFormModal;

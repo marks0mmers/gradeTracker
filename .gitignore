@@ -4,6 +4,7 @@
 /node_modules
 
 *.code-workspace
+.eslintcache
 
 # testing
 /coverage

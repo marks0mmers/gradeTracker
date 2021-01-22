@@ -1,7 +1,7 @@
-import { push } from "connected-react-router";
-import React, { Fragment, MouseEvent, useCallback, useState , useMemo, useEffect } from "react";
+import { Fragment, MouseEvent, useCallback, useState , useMemo, useEffect } from "react";
 import ReactModal from "react-modal";
 import styled from "styled-components";
+import { useHistory } from "react-router";
 import ActivityLoading from "../components/shared/LoadingMask";
 import { categoryColumns } from "../../constants/columns/CategoryColumns";
 import { GradeCategory } from "../../models/GradeCategory";
@@ -28,14 +28,12 @@ import ModalHeader from "../modals/common/ModalHeader";
 import { getIsLoading } from "../../state/ducks/control/loadingmask/selectors";
 
 const CourseDetailedPage = () => {
+    const { push } = useHistory();
 
-    //#region Component State
     const [isCreating, setIsCreating] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    //#endregion
 
-    //#region Redux State
-    const state = useMapState((state: RootState) => ({
+    const appState = useMapState((state: RootState) => ({
         isLoading: getIsLoading(state),
         categoryElements: getDetailedCourseElements(state),
         selectedCategory: getSelectedGradeCategory(state),
@@ -43,34 +41,29 @@ const CourseDetailedPage = () => {
         course: getActiveCourse(state),
     }));
 
-    const actions = useMapDispatch({
-        pushRoute: push,
+    const dispatch = useMapDispatch({
         selectGradeCategory: SelectGradeCategoryCreator,
         setActiveCourse: SetActiveCourseCreator,
         deleteGradeCategory: DeleteGradeCategoryCreator,
         getGradeCategoriesForCourse: GetGradeCategoryForCourseCreator,
     });
-    //#endregion
 
-    //#region Lifecycle Methods
     useEffect(() => {
-        if (state.course) {
-            document.title = `${state.course.title} Details`;
-            actions.getGradeCategoriesForCourse(state.course.id || "");
+        if (appState.course) {
+            document.title = `${appState.course.title} Details`;
+            dispatch.getGradeCategoriesForCourse(appState.course.id || "");
         }
         return () => {
-            actions.selectGradeCategory(undefined);
+            dispatch.selectGradeCategory(undefined);
         };
-    }, [actions, state.course]);
-    //#endregion
+    }, [dispatch, appState.course]);
 
-    //#region Private Methods
     const handleBodyCellClick = useCallback((event: MouseEvent<HTMLDivElement>, payload: GradeCategory) => {
-        const category = state.categories.find((value) => value.id === payload.id);
+        const category = appState.categories.find((value) => value.id === payload.id);
         if (payload.title !== "Total") {
-            actions.selectGradeCategory(category?.id);
+            dispatch.selectGradeCategory(category?.id);
         }
-    }, [actions, state.categories]);
+    }, [dispatch, appState.categories]);
 
     const handleCreate = useCallback(() => {
         setIsCreating(true);
@@ -78,18 +71,18 @@ const CourseDetailedPage = () => {
     }, []);
 
     const handleEdit = useCallback(() => {
-        if (state.selectedCategory) {
+        if (appState.selectedCategory) {
             setIsCreating(false);
             setIsEditing(true);
         }
-    }, [state.selectedCategory]);
+    }, [appState.selectedCategory]);
 
     const handleDelete = useCallback(() => {
-        if (state.selectedCategory) {
-            actions.deleteGradeCategory(state.selectedCategory);
-            actions.selectGradeCategory(undefined);
+        if (appState.selectedCategory) {
+            dispatch.deleteGradeCategory(appState.selectedCategory);
+            dispatch.selectGradeCategory(undefined);
         }
-    }, [actions, state.selectedCategory]);
+    }, [dispatch, appState.selectedCategory]);
 
     const handleCancel = useCallback(() => {
         setIsCreating(false);
@@ -97,21 +90,19 @@ const CourseDetailedPage = () => {
     }, []);
 
     const handleRootClick = useCallback(() => {
-        actions.setActiveCourse();
-        actions.pushRoute("/");
-    }, [actions]);
+        dispatch.setActiveCourse();
+        push("/");
+    }, [push, dispatch]);
 
     const selected = useMemo(
-        () => state.categories.get(state.selectedCategory || ""),
-        [state.categories, state.selectedCategory],
+        () => appState.categories.get(appState.selectedCategory || ""),
+        [appState.categories, appState.selectedCategory],
     );
-    //#endregion
 
-    //#region Render Method
     return (
         <>
-        { state.isLoading && <ActivityLoading /> }
-        <Container id={`${state.course ? state.course.title : ""}-detailed`}>
+        { appState.isLoading && <ActivityLoading /> }
+        <Container id={`${appState.course?.title ?? ""}-detailed`}>
             <ClickRoute
                 id="click-route"
                 onClick={handleRootClick}
@@ -166,10 +157,8 @@ const CourseDetailedPage = () => {
                     />
                     <CategoryFormModal
                         isCreating={isCreating}
-                        course={state.course}
                         exitModal={handleCancel}
-                        categories={state.categories}
-                        originalCategory={state.categories.get(state.selectedCategory || "")}
+                        originalCategory={appState.categories.get(appState.selectedCategory || "")}
                         initialValues={selected && {
                             title: selected.title,
                             percentage: selected.percentage,
@@ -180,11 +169,11 @@ const CourseDetailedPage = () => {
                 <DataGrid
                     id="grade-category-grid"
                     columnDefinitions={categoryColumns}
-                    elements={state.categoryElements}
+                    elements={appState.categoryElements}
                     onBodyCellClick={handleBodyCellClick}
                 />
                 {
-                    state.selectedCategory &&
+                    appState.selectedCategory &&
                     <Fragment>
                         <Divider
                             isVertical={false}
@@ -192,7 +181,7 @@ const CourseDetailedPage = () => {
                             bottom={10}
                         />
                         <CategoryDetailedPane
-                            selectedCategory={state.categories.get(state.selectedCategory)}
+                            selectedCategory={appState.categories.get(appState.selectedCategory)}
                         />
                     </Fragment>
                 }
@@ -200,10 +189,8 @@ const CourseDetailedPage = () => {
         </Container>
         </>
     );
-    //#endregion
 };
 
-//#region Styles
 const Content = styled.div`
     grid-area: content;
     display: grid;
@@ -241,6 +228,5 @@ const Container = styled.div`
     grid-template-areas: "course buttons buttons"
                         "content content content";
 `;
-//#endregion
 
 export default CourseDetailedPage;

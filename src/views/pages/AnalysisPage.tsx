@@ -1,12 +1,12 @@
 import { Map } from "immutable";
-import React, { useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import styled from "styled-components";
 import ActivityLoading from "../components/shared/LoadingMask";
 import { analysisColumns } from "../../constants/columns/AnalysisColumns";
-import { ViewAnalysisForUserCreator } from "../../state/ducks/control/analysis/actions";
-import { getAnalysisGridData, getAnalysisGridDataForUser } from "../../state/ducks/control/analysis/selectors";
+import { ViewAnalysisForUserCreator } from "../../state/ducks/data/analysis/actions";
+import { getAnalysisGridData, getAnalysisGridDataForUser } from "../../state/ducks/data/analysis/selectors";
 import { SetCoursesForUserCreator } from "../../state/ducks/data/courses/actions/SetCoursesForUser";
 import { GetGradeCategoriesForCurrentUserCreator } from "../../state/ducks/data/gradeCategories";
 import {
@@ -32,55 +32,48 @@ interface Props {
 
 const AnalysisPage = (props: Props) => {
 
-    const { userId } = useParams();
+    const { userId } = useParams<{userId?: string}>();
 
-    //#region Redux State
-    const state = useMapState((state: RootState) => ({
+    const appState = useMapState((state: RootState) => ({
         isLoading: getIsLoading(state),
         elements: userId ? getAnalysisGridDataForUser(state) : getAnalysisGridData(state),
     }));
 
-    const actions = useMapDispatch({
+    const dispatch = useMapDispatch({
         getAllCategories: GetGradeCategoriesForCurrentUserCreator,
         getDataForUser: ViewAnalysisForUserCreator,
         setCoursesForUser: SetCoursesForUserCreator,
         viewAnalysis: ViewAnalysisForUserCreator,
         setGradeCategoriesForUser: SetGradeCategoriesForUserCreator,
     });
-    //#endregion
 
-    //#region Lifecycle Methods
     useEffect(() => {
         document.title = "Grades Analysis";
         if (userId) {
-            actions.viewAnalysis(userId);
-            actions.getDataForUser(userId);
+            dispatch.viewAnalysis(userId);
+            dispatch.getDataForUser(userId);
         } else {
-            actions.getAllCategories();
+            dispatch.getAllCategories();
         }
         return () => {
-            actions.setCoursesForUser(Map());
-            actions.setGradeCategoriesForUser(Map());
+            dispatch.setCoursesForUser(Map());
+            dispatch.setGradeCategoriesForUser(Map());
         };
-    }, [actions, userId]);
-    //#endregion
+    }, [dispatch, userId]);
 
-    //#region Display Methods
     const getGraphData = useCallback(() => {
-        const analysisCourses = state.elements.map((value) => value && value.payload);
+        const analysisCourses = appState.elements.map((value) => value && value.payload);
         return analysisCourses.map((value): GraphData => ({
             Current: value.currentGPA,
             Guarenteed: value.guarenteedGPA,
             Potential: value.potentialGPA,
             name: value.title,
         })).toArray();
-    }, [state.elements]);
-    //#endregion
+    }, [appState.elements]);
 
-    //#region Render Method
     return (
         <>
-        { state.isLoading && <ActivityLoading /> }
+        { appState.isLoading && <ActivityLoading /> }
         <Container id="analysis-page">
             <Route id="route">
                 Analysis
@@ -91,7 +84,7 @@ const AnalysisPage = (props: Props) => {
                 gridArea="grid"
                 rowHeight={30}
                 columnDefinitions={analysisColumns}
-                elements={state.elements}
+                elements={appState.elements}
             />
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={getGraphData()}>
@@ -116,10 +109,8 @@ const AnalysisPage = (props: Props) => {
         </Container>
         </>
     );
-    //#endregion
 };
 
-//#region Styles
 const Route = styled.h2`
     padding: 10px;
     margin-left: 10px;
@@ -135,6 +126,5 @@ const Container = styled.div`
                         "grid"
                         "graph";
 `;
-//#endregion
 
 export default AnalysisPage;

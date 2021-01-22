@@ -1,5 +1,5 @@
 import { List } from "immutable";
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import styled from "styled-components";
 import ListFooter from "../components/ListFooter";
 import ListHeader from "../components/ListHeader";
@@ -24,7 +24,6 @@ interface Props {
 }
 
 const ListControl = (props: Props) => (
-    //#region Render Method
     <Container id="list-control" gridArea={props.gridArea} padding={props.padding}>
         {
             props.header &&
@@ -67,7 +66,6 @@ const ListControl = (props: Props) => (
             </ListFooter>
         }
     </Container>
-    //#endregion
 );
 
 const Body = styled.div`

@@ -1,5 +1,3 @@
-import { connectRouter, RouterState } from "connected-react-router";
-import { History } from "history";
 import { combineReducers } from "redux";
 import { CourseControlReducer, CourseControlState } from "./ducks/control/courses";
 import { LoadingMaskReducer, LoadingMaskState } from "./ducks/control/loadingmask/reducers";
@@ -19,10 +17,9 @@ export interface RootState {
         user: UserDataState;
         viewRequest: ViewRequestDataState;
     };
-    router: RouterState;
 }
 
-export const rootReducer = (history: History) => combineReducers({
+export const rootReducer = combineReducers({
     control: combineReducers({
         course: CourseControlReducer,
         loadingMask: LoadingMaskReducer,
@@ -33,5 +30,4 @@ export const rootReducer = (history: History) => combineReducers({
         user: UserDataReducer,
         viewRequest: ViewRequestDataReducer,
     }),
-    router: connectRouter(history),
 });

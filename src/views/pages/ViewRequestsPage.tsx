@@ -1,5 +1,4 @@
-import { push } from "connected-react-router";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { User } from "../../models/User";
 import { ViewRequestStatus, ViewRequest } from "../../models/ViewRequest";
@@ -15,51 +14,45 @@ import { ListControlElement } from "../controls/list-control/models/ListControlE
 import ListControl from "../controls/list-control/package/ListControl";
 import { getIsLoading } from "../../state/ducks/control/loadingmask/selectors";
 import ActivityLoading from "../components/shared/LoadingMask";
+import { useHistory } from "react-router";
 
 const ViewRequestsPage = () => {
+    const { push } = useHistory();
 
-    //#region Component State
     const [selectedUser, setSelectedUser] = useState<User>();
     const [selectedViewRequest, setSelectedViewRequest] = useState<ViewRequest>();
-    //#endregion
 
-    //#region Redux State
-    const state = useMapState((state: RootState) => ({
+    const appState = useMapState((state: RootState) => ({
         isLoading: getIsLoading(state),
         currentUser: getCurrentUser(state),
         users: getUsers(state),
         pendingViewRequests: getSentViewRequests(state),
     }));
 
-    const actions = useMapDispatch({
+    const dispatch = useMapDispatch({
         fetchUsers: GetUsersCreator,
         fetchSentViewRequests: GetSentViewRequestsCreator,
         sendViewRequest: SendViewRequestCreator,
-        pushRoute: push,
     });
-    //#endregion
 
-    //#region Lifecycle Methods
     useEffect(() => {
-        actions.fetchUsers();
-        actions.fetchSentViewRequests();
-    }, [actions]);
-    //#endregion
+        dispatch.fetchUsers();
+        dispatch.fetchSentViewRequests();
+    }, [dispatch]);
 
-    //#region Private Methods
     const handleRowClick = useCallback((primary: string, secondary?: string) => {
-        const selected = state.users.find((user) => user.email === secondary);
+        const selected = appState.users.find((user) => user.email === secondary);
         if (selected) {
             setSelectedUser(selected);
         }
-    }, [state.users]);
+    }, [appState.users]);
 
     const handleViewRequestClick = useCallback((primary: string) => {
         const receiverName = primary.split(": ")[1];
-        const receiver = state.users.find((user) => `${user.firstName} ${user.lastName}` === receiverName);
-        const request = state.pendingViewRequests.find((req) =>
-            (state.currentUser &&
-            req.requester === state.currentUser._id &&
+        const receiver = appState.users.find((user) => `${user.firstName} ${user.lastName}` === receiverName);
+        const request = appState.pendingViewRequests.find((req) =>
+            (appState.currentUser &&
+            req.requester === appState.currentUser._id &&
             receiver &&
             req.receiver === receiver._id) || false,
         );
@@ -68,45 +61,43 @@ const ViewRequestsPage = () => {
         } else {
             setSelectedViewRequest(undefined);
         }
-    }, [state.currentUser, state.pendingViewRequests, state.users]);
+    }, [appState.currentUser, appState.pendingViewRequests, appState.users]);
 
-    const getSendViewRequestsListData = useCallback(() => state.users
-        .filter((user) => state.currentUser && user._id !== state.currentUser._id)
-        .filter((user) => !state.pendingViewRequests.some((req) => req.receiver === user._id))
+    const getSendViewRequestsListData = useCallback(() => appState.users
+        .filter((user) => appState.currentUser && user._id !== appState.currentUser._id)
+        .filter((user) => !appState.pendingViewRequests.some((req) => req.receiver === user._id))
         .map((user): ListControlElement => ({
             primaryProperty: `${user.firstName} ${user.lastName}`,
             secondaryProperty: user.email,
             isSelected: user === selectedUser,
         }))
         .toList(), 
-    [selectedUser, state.currentUser, state.pendingViewRequests, state.users]);
+    [selectedUser, appState.currentUser, appState.pendingViewRequests, appState.users]);
 
-    const getSentRequestsListData = useCallback(() => state.pendingViewRequests.map((request): ListControlElement => {
-        const receiver = state.users.find((user) => user._id === request.receiver);
+    const getSentRequestsListData = useCallback(() => appState.pendingViewRequests.map((request): ListControlElement => {
+        const receiver = appState.users.find((user) => user._id === request.receiver);
         return {
             primaryProperty: `Sent to: ${receiver && receiver.firstName} ${receiver && receiver.lastName}`,
             secondaryProperty: `Status: ${ViewRequestStatus[request.status]}`,
             isSelected: selectedViewRequest && selectedViewRequest.id === request.id,
         };
-    }).toList(), [selectedViewRequest, state.pendingViewRequests, state.users]);
+    }).toList(), [selectedViewRequest, appState.pendingViewRequests, appState.users]);
 
     const onSendClick = useCallback(() => {
         if (selectedUser) {
-            actions.sendViewRequest(selectedUser._id);
+            dispatch.sendViewRequest(selectedUser._id);
         }
-    }, [actions, selectedUser]);
+    }, [dispatch, selectedUser]);
 
     const onViewUserClick = useCallback(() => {
         if (selectedViewRequest) {
-            actions.pushRoute(`/analysis/${selectedViewRequest.receiver}`);
+            push(`/analysis/${selectedViewRequest.receiver}`);
         }
-    }, [actions, selectedViewRequest]);
-    //#endregion
+    }, [push, selectedViewRequest]);
 
-    //#region Render Method
     return (
         <>
-        { state.isLoading && <ActivityLoading />}
+        { appState.isLoading && <ActivityLoading />}
         <Container>
             <ListControl
                 header={true}
@@ -146,15 +137,12 @@ const ViewRequestsPage = () => {
         </Container>
         </>
     );
-    //#endregion
 };
 
-//#region Styles
 const Container = styled.div`
     margin: 10px;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
 `;
-//#endregion
 
 export default ViewRequestsPage;

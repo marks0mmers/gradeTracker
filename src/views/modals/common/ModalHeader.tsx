@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "styled-components";
 import Button from "../../components/shared/Button";
 import Divider from "../../components/shared/Divider";

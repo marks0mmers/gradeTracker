@@ -1,5 +1,5 @@
 import { Formik, FormikProps } from "formik";
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import * as Yup from "yup";
 import { Course } from "../../models/Course";
 import { CreateNewCourseCreator, EditCourseCreator } from "../../state/ducks/data/courses";
@@ -26,28 +26,23 @@ interface CourseForm {
 
 const CourseFormModal = ({exitModal, ...props}: Props) => {
 
-    //#region Redux State
-    const state = useMapState((state: RootState) => ({currentUser: getCurrentUser(state)}));
+    const appState = useMapState((state: RootState) => ({currentUser: getCurrentUser(state)}));
 
-    const actions = useMapDispatch({
+    const dispatch = useMapDispatch({
         createCourse: CreateNewCourseCreator,
         updateCourse: EditCourseCreator,
     });
-    //#endregion
 
-    //#region Display Methods
-    const buildFormValue = useFormBuilder();
-    //#endregion
+    const buildFormValue = useFormBuilder<CourseForm>();
 
-    //#region Private Methods
     const handleFormSubmit = useCallback((values: CourseForm) => {
-        if (state.currentUser) {
+        if (appState.currentUser) {
             if (props.isCreating) {
                 const course = new Course({
-                    userId: state.currentUser._id,
+                    userId: appState.currentUser._id,
                     ...values,
                 });
-                actions.createCourse(course);
+                dispatch.createCourse(course);
                 exitModal();
             } else if (props.originalCourse) {
                 const course = new Course({
@@ -57,14 +52,12 @@ const CourseFormModal = ({exitModal, ...props}: Props) => {
                     creditHours: values.creditHours,
                     section: values.section,
                 });
-                actions.updateCourse(course);
+                dispatch.updateCourse(course);
                 exitModal();
             }
         }
-    }, [actions, props.isCreating, props.originalCourse, exitModal, state.currentUser]);
-    //#endregion
+    }, [dispatch, props.isCreating, props.originalCourse, exitModal, appState.currentUser]);
 
-    //#region Render Method
     return (
         <Formik
             initialValues={props.initialValues || {
@@ -138,7 +131,6 @@ const CourseFormModal = ({exitModal, ...props}: Props) => {
             )}
         </Formik>
     );
-    //#endregion
 };
 
 export default CourseFormModal;

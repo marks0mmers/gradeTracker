@@ -1,5 +1,5 @@
 import { combineEpics } from "redux-observable";
-import { GetAnalysisInformationForUserEpic } from "./ducks/control/analysis/operations";
+import { GetAnalysisInformationForUserEpic } from "./ducks/data/analysis/operations";
 import { CourseControlEpics } from "./ducks/control/courses";
 import { CourseDataEpics } from "./ducks/data/courses/operations";
 import { GradeCategoryDataEpics } from "./ducks/data/gradeCategories";

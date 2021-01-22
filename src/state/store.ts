@@ -1,11 +1,9 @@
-import { routerMiddleware, RouterState } from "connected-react-router";
-import { AnyAction, applyMiddleware, createStore } from "redux";
+import { applyMiddleware, createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { createEpicMiddleware } from "redux-observable";
-import { ajax } from "rxjs/observable/dom/ajax";
-import history from "./history";
+import { ajax } from "rxjs/internal-compatibility";
 import { rootEpic } from "./rootEpic";
-import { rootReducer, RootState } from "./rootReducer";
+import { rootReducer } from "./rootReducer";
 
 const epicMiddleware = createEpicMiddleware({
     dependencies: {
@@ -21,11 +19,10 @@ const composeEnhancers = composeWithDevTools({
     //
 });
 
-export const store = createStore<RootState, AnyAction, {}, {router: RouterState}>(
-    rootReducer(history),
+export const store = createStore(
+    rootReducer,
     composeEnhancers(
         applyMiddleware(
-            routerMiddleware(history),
             epicMiddleware,
         ),
     ),

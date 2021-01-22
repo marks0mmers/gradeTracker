@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Action, ActionCreator, AnyAction } from "redux";
 import { ofType, StateObservable } from "redux-observable";
-import { empty, Observable, of } from "rxjs";
-import { AjaxResponse } from "rxjs/internal-compatibility";
-import { ajax } from "rxjs/observable/dom/ajax";
+import { Observable, of } from "rxjs";
+import { AjaxResponse, ajax } from "rxjs/internal-compatibility";
 import { catchError, map, mergeMap } from "rxjs/operators";
 import { RootState } from "../../../../state/rootReducer";
 import { Toast } from "../../../../util/Toast";
@@ -27,15 +27,15 @@ export const epicBuilder = <
     type: string,
     requestType: AjaxMethodType,
     routeBuilder: (action: IA, state: RootState) => string,
-    requestHeadersNoAuth: {},
-    requestBody?: (action: IA, state: RootState) => {},
+    requestHeadersNoAuth: any,
+    requestBody?: (action: IA, state: RootState) => unknown,
 ) => (
     action$: Observable<IA>,
     state$: StateObservable<RootState>,
 ): Observable<AnyAction> => action$.pipe(
     ofType(type),
     mergeMap((action: IA) => {
-        let ajaxCall: Observable<AjaxResponse> = empty();
+        let ajaxCall: Observable<AjaxResponse> = of();
         const token = localStorage.getItem("jwtToken");
         const requestHeaders = token
             ? {

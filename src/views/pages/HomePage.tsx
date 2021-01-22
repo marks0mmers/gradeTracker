@@ -1,7 +1,7 @@
-import { push } from "connected-react-router";
-import React, { Fragment, useCallback, useState, useEffect } from "react";
+import { Fragment, useCallback, useState, useEffect } from "react";
 import ReactModal from "react-modal";
 import styled from "styled-components";
+import { useHistory } from "react-router";
 import ActivityLoading from "../components/shared/LoadingMask";
 import { Course } from "../../models/Course";
 import { getCourses } from "../../state/ducks/data/courses";
@@ -14,35 +14,32 @@ import Divider from "../components/shared/Divider";
 import ModalHeader from "../modals/common/ModalHeader";
 import CourseFormModal from "../modals/CourseFormModal";
 import { getIsLoading } from "../../state/ducks/control/loadingmask/selectors";
+import { GetCoursesCurrentUserCreator } from "../../state/ducks/data/courses/actions/GetCoursesCurrentUser";
 
 const HomePage = () => {
+    const { push } = useHistory();
 
-    //#region Component State
     const [isCreating, setIsCreating] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [editingCourse, setEditingCourse] = useState<Course | undefined>(undefined);
-    //#endregion
 
-    //#region Redux State
-    const state = useMapState((state: RootState) => ({
+    const appState = useMapState((state: RootState) => ({
         isLoading: getIsLoading(state),
         courses: getCourses(state),
         currentUser: getCurrentUser(state),
     }));
 
-    const actions = useMapDispatch({pushRoute: push});
-    //#endregion
+    const dispatch = useMapDispatch({fetchCourses: GetCoursesCurrentUserCreator});
 
-    //#region Lifecycle Methods
     useEffect(() => {
         document.title = "Grade Tracker";
-        if (!state.currentUser) {
-            actions.pushRoute("/login");
+        if (!appState.currentUser) {
+            push("/login");
+        } else {
+            dispatch.fetchCourses();
         }
-    }, [actions, state.currentUser]);
-    //#endregion
+    }, [dispatch, appState.currentUser, push]);
 
-    //#region Private Methods
     const handleEditClick = useCallback((course?: Course) => {
         setIsCreating(false);
         setIsEditing(true);
@@ -58,22 +55,18 @@ const HomePage = () => {
         setIsCreating(false);
         setIsEditing(false);
     }, []);
-    //#endregion
 
-    //#region Display Methods
-    const getCourseButtons = useCallback(() => state.courses.map((course, key) => (
+    const getCourseButtons = useCallback(() => appState.courses.map((course, key) => (
         <CourseOverviewButton
             key={key}
             course={course}
             onEditClick={handleEditClick}
         />
-    )).toList(), [handleEditClick, state.courses]);
-    //#endregion
+    )).toList(), [handleEditClick, appState.courses]);
 
-    //#region Render Method
     return (
         <>
-        { state.isLoading && <ActivityLoading /> }
+        { appState.isLoading && <ActivityLoading /> }
         <Container id="home-page">
             <Route id="route">Courses</Route>
             <ButtonWrapper id="button-wrapper">
@@ -130,10 +123,8 @@ const HomePage = () => {
         </Container>
         </>
     );
-    //#endregion
 };
 
-//#region Styles
 const ButtonWrapper = styled.div`
     display: flex;
     margin: auto 0;
@@ -163,6 +154,5 @@ const Container = styled.div`
                         "content content";
     overflow-y: scroll;
 `;
-//#endregion
 
 export default HomePage;

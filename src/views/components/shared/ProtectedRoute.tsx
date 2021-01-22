@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import { Redirect } from "react-router";
 import { Role } from "../../../models/Role";
 import { User } from "../../../models/User";
