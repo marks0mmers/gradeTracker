@@ -14,7 +14,7 @@ import Divider from "../components/shared/Divider";
 import ModalHeader from "../modals/common/ModalHeader";
 import CourseFormModal from "../modals/CourseFormModal";
 import { getIsLoading } from "../../state/ducks/control/loadingmask/selectors";
-import { GetCoursesCurrentUserCreator } from "../../state/ducks/data/courses/actions/GetCoursesCurrentUser";
+import { GetCoursesCurrentUserCreator } from "../../state/ducks/data/courses";
 
 const HomePage = () => {
     const { push } = useHistory();

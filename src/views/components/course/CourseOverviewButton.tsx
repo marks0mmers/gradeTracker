@@ -1,4 +1,4 @@
-import { Fragment, MouseEvent, useCallback} from "react";
+import { MouseEvent, useCallback} from "react";
 import styled from "styled-components";
 import { Course } from "../../../models/Course";
 import { SetActiveCourseCreator } from "../../../state/ducks/control/courses";
@@ -45,45 +45,45 @@ const CourseOverviewButton = ({onEditClick, ...props}: Props) => {
             id={`${props.course.title.toLowerCase()}-button`}
             onClick={handleClick}
         >
-            <CourseInfo>
+            <CourseInfo id="course-info">
                 <h1 className="value">{props.course.description}</h1>
                 <Divider
+                    id="divider"
                     isVertical={false}
                     gridArea="divider1"
                 />
-                <Label>
+                <Label id="label">
                     <span className="value">
                         {`Course: ${props.course.title} ${leadingZeros(3, props.course.section)}`}
                     </span>
                 </Label>
-                <Label>
+                <Label id="label">
                     <span className="value">{`Credit Hours: ${props.course.creditHours}`}</span>
                 </Label>
                 <Divider
+                    id="divider"
                     isVertical={false}
                     gridArea="divider2"
                 />
-                <Buttons>
+                <Buttons id="buttons-container">
                     <span className="value">Course Actions: </span>
-                    <Fragment>
-                        <Button
-                            tooltip="Edit Course"
-                            icon="create"
-                            height={40}
-                            width={60}
-                            marginLeftRight={5}
-                            onClick={handleEditClick}
-                        />
-                        <Button
-                            tooltip="Delete Course"
-                            id="delete_course"
-                            icon="delete_sweep"
-                            height={40}
-                            width={60}
-                            marginLeftRight={5}
-                            onClick={handleDelete}
-                        />
-                    </Fragment>
+                    <Button
+                        tooltip="Edit Course"
+                        icon="create"
+                        height={40}
+                        width={60}
+                        marginLeftRight={5}
+                        onClick={handleEditClick}
+                    />
+                    <Button
+                        tooltip="Delete Course"
+                        id="delete_course"
+                        icon="delete_sweep"
+                        height={40}
+                        width={60}
+                        marginLeftRight={5}
+                        onClick={handleDelete}
+                    />
                 </Buttons>
             </CourseInfo>
         </CourseOverviewButtonContainer>
@@ -93,7 +93,6 @@ const CourseOverviewButton = ({onEditClick, ...props}: Props) => {
 const CourseOverviewButtonContainer = styled.div`
     background: #86b3d1;
     min-height: 135px;
-    border: none;
     display: grid;
     grid-template-columns: 30px 1fr 30px;
     grid-template-areas: " . info . ";

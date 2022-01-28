@@ -5,4 +5,5 @@ export default styled.div`
     justify-content: flex-end;
     border-top: solid black 1px;
     min-height: 40px;
+    padding-top: 10px;
 `;

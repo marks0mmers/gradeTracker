@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState } from "react";
+import {useCallback, useMemo, useState} from "react";
 import ReactModal from "react-modal";
 import styled from "styled-components";
 import { Grade } from "../../../models/Grade";
@@ -22,14 +22,6 @@ const CategoryDetailedPane = (props: Props) => {
     const [isEditing, setIsEditing] = useState(false);
 
     const dispatch = useMapDispatch({deleteGrade: DeleteGradeCreator});
-
-    const getListElements = useCallback(() => props.selectedCategory?.grades.map(
-        (value: Grade): ListControlElement => ({
-            isSelected: value === selectedGrade,
-            primaryProperty: value.name,
-            secondaryProperty: `${value.grade.toString()} %`,
-        }),
-    ).toList(), [props.selectedCategory, selectedGrade]);
 
     const handleCancel = useCallback(() => {
         setIsCreating(false);
@@ -57,20 +49,25 @@ const CategoryDetailedPane = (props: Props) => {
     }, [dispatch, props.selectedCategory, selectedGrade]);
 
     const handleSelectGrade = useCallback((primaryProperty: string) => {
-        // eslint-disable-next-line no-restricted-globals
         const selectedGradeObject = props.selectedCategory?.grades?.find((g: Grade) => g.name === primaryProperty);
         setSelectedGrade(selectedGradeObject);
     }, [props.selectedCategory]);
 
     const buildDisplayLabel = useCallback((label: string, value: string | number, gridArea: string) => (
-        <LabelContainer gridArea={gridArea}>
+        <LabelContainer id="label-container" gridArea={gridArea}>
             <PropLabel>{label}</PropLabel>
             <PropValue>{value}</PropValue>
         </LabelContainer>
     ), []);
 
+    const listElements = useMemo(() => props.selectedCategory?.grades.map((value): ListControlElement => ({
+        isSelected: value === selectedGrade,
+        primaryProperty: value.name,
+        secondaryProperty: `${value.grade.toString()} %`,
+    })).toList(), [props.selectedCategory, selectedGrade]);
+
     return (
-        <GridContainer>
+        <GridContainer id="category-detailed-pane">
             {buildDisplayLabel(
                 "Category Name:",
                 props.selectedCategory?.title ?? "",
@@ -97,22 +94,22 @@ const CategoryDetailedPane = (props: Props) => {
                 "currentAverage",
             )}
             {buildDisplayLabel(
-                "Guarenteed Average:",
+                "Guaranteed Average:",
                 `${props.selectedCategory?.guarenteedAverage.toPrecision(4) ?? ""}`,
-                "guarenteedAverage",
+                "guaranteedAverage",
             )}
             {buildDisplayLabel(
                 "Potential Average:",
                 `${props.selectedCategory?.potentialAverage.toPrecision(4) ?? ""}`,
                 "potentialAverage",
             )}
-            <Grades>
+            <Grades id="grades">
                 <ListControl
                     header={true}
                     headerText="Grades"
                     footer={true}
                     footerContent={
-                        <Fragment>
+                        <>
                             <Button
                                 tooltip="Create New Grade"
                                 icon="add"
@@ -137,9 +134,9 @@ const CategoryDetailedPane = (props: Props) => {
                                 marginLeftRight={5}
                                 onClick={handleDeleteGrade}
                             />
-                        </Fragment>
+                        </>
                     }
-                    elements={getListElements()}
+                    elements={listElements}
                     padding={10}
                     onRowClick={handleSelectGrade}
                 />
@@ -180,7 +177,7 @@ const CategoryDetailedPane = (props: Props) => {
 
 const GridContainer = styled.div`
     display: grid;
-    grid-template-rows: repeat(7, 1fr);
+    grid-template-rows: repeat(7, 40px) 1fr;
     grid-column-gap: 10px;
     grid-template-columns: 1fr 2fr;
     grid-template-areas: "title list"
@@ -188,8 +185,9 @@ const GridContainer = styled.div`
                          "numberGrades list"
                          "gradesRemaining list"
                          "currentAverage list"
-                         "guarenteedAverage list"
-                         "potentialAverage list";
+                         "guaranteedAverage list"
+                         "potentialAverage list"
+                         ".               list";
     @media screen and (max-width: 800px) {
         grid-template-columns: 1fr 1fr;
     }
@@ -217,6 +215,7 @@ const PropValue = styled.div`
 const Grades = styled.div`
     grid-area: list;
     min-height: 0;
+    display: grid;
 `;
 
 export default CategoryDetailedPane;

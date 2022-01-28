@@ -61,7 +61,7 @@ const ListControl = (props: Props) => (
         </Body>
         {
             props.footer &&
-            <ListFooter>
+            <ListFooter id="list-footer">
                 {props.footerContent}
             </ListFooter>
         }
